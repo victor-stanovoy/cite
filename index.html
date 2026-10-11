@@ -147,11 +147,20 @@ input,textarea{transition:border-color .3s}
 .fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0 22px;margin-top:6px}
 .fi.req{border-bottom-color:var(--acc)}
 #flrows .pv{margin-top:10px}
+.hr{flex-wrap:wrap;justify-content:flex-end}
+.kbd{display:inline-block;border:1px solid var(--line);border-bottom-width:2px;border-radius:7px;padding:1px 7px;font:600 12px Inter,sans-serif;background:var(--bg);color:var(--ink)}
+.ta{min-height:110px}
+.tray{display:none;position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));width:min(380px,calc(100vw - 36px));max-height:70vh;overflow:auto;background:var(--panel);border-radius:26px;padding:18px;z-index:70;box-shadow:0 30px 70px -28px rgba(0,0,0,.65);color:var(--ink);font:400 15px/1.5 Inter,system-ui,sans-serif}
+.tray.show{display:block;animation:pop .45s cubic-bezier(.2,.8,.2,1)}
+.tray.pip{position:static;width:auto;max-height:none;min-height:100vh;border-radius:0;box-shadow:none;animation:none}
+.tray .tr{display:flex;align-items:center;gap:8px}
+.ti{display:flex;gap:8px;align-items:center;padding:9px 0;border-top:1px solid var(--line);font-size:14px}
+.ti .tt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 </style>
 </head>
 <body>
 <div class="wrap">
-<header><div class="logo">cite</div><div class="hr"><button class="pill" id="cp"><span id="cn">0</span> credits</button><button class="pill" id="pp"><span class="led"></span><span id="pl">Premium</span></button><button class="pill" id="cartb">Cart <span class="badge" id="cb">0</span></button></div></header>
+<header><div class="logo">cite</div><div class="hr"><button class="pill" id="cp"><span id="cn">0</span> credits</button><button class="pill" id="pp"><span class="led"></span><span id="pl">Premium</span></button><button class="pill" id="gob">Cite as you go <span class="badge" id="gb">0</span></button><button class="pill" id="cartb">Cart <span class="badge" id="cb">0</span></button></div></header>
 <nav class="navbar"><div class="seg" id="nav" role="group" aria-label="Pages"></div></nav>
 <div id="toolbar"><div class="row"><span class="sub">Format</span><div class="seg" id="styles" role="group" aria-label="Citation style"></div></div><div class="row" id="prow" style="margin-top:12px"><span class="sub">I am a</span><div class="seg" id="pers" role="group" aria-label="Who you are"></div><p class="sub" id="sphint" style="flex-basis:100%;margin:0;font-size:13px"></p></div></div>
 
@@ -163,7 +172,7 @@ input,textarea{transition:border-color .3s}
 
 <section class="page" id="pg-fast">
 <h1 class="k2">Fast lane</h1>
-<p class="sub">One source per line. Add details with bars: <b>link | title | author | year</b>. Press Ctrl or Cmd and Enter to check out.</p>
+<p class="sub">Keyboard only: add a source, press Enter, and it tells you what it is.</p><div class="bar" style="margin-top:16px"><input id="kin" placeholder="Add a source and press Enter" autocomplete="off" aria-label="Add a source"></div><div class="box" id="kc" style="display:none"></div><p class="sub" style="margin:12px 0 0;font-size:13px"><span class="kbd">Enter</span> continue &nbsp; <span class="kbd">Tab</span> change type &nbsp; <span class="kbd">Esc</span> cancel &nbsp; <span class="kbd">Enter</span> on an empty line checks out</p><p class="sub" style="margin:22px 0 0">Or paste a whole list, one per line. Add details with bars: <b>link | title | author | year</b>.</p>
 <textarea class="ta" id="fl" aria-label="Sources, one per line" placeholder="https://example.com/article | The title | Jane Doe | 2024&#10;10.1000/xyz123 | Another title | A. Author | 2021&#10;Thinking, Fast and Slow by Daniel Kahneman 2011"></textarea>
 <div id="flrows"></div>
 <div class="cartbar"><span class="sub" id="flinfo"></span><button class="btn p" id="flgo" disabled>Check out all</button></div>
@@ -183,6 +192,13 @@ input,textarea{transition:border-color .3s}
 <p class="sub">One credit gets one citation. Free refills to 3 a day, premium to 25.</p>
 <div class="box" id="shopbox"></div>
 </section>
+</div>
+<div class="tray" id="tray" role="dialog" aria-label="Cite as you go">
+<div class="tr"><b>Cite as you go</b><span class="sub" id="tcount"></span><span class="sp"></span><button class="btn" id="tpop" style="padding:7px 14px" title="Float on top of other windows">Float</button><button class="rm" id="tx" aria-label="Close">×</button></div>
+<input id="tin" placeholder="Paste a website, press Enter" autocomplete="off" aria-label="Add a website" style="margin-top:10px">
+<p class="sub" id="tnote" style="font-size:13px;margin:6px 0 4px">Add sources as you read. Enter on an empty line sends them to the fast lane.</p>
+<div id="tlist"></div>
+<button class="btn p" id="tdone" disabled style="width:100%;margin-top:12px">Ready to cite</button>
 </div>
 <div class="sheet" id="sheet"><button class="x" id="sx" aria-label="Close">×</button><div id="sc"></div></div>
 <div class="veil" id="veil"></div>
@@ -627,11 +643,11 @@ function route(){
  $('toolbar').style.display=(cur==='shop'||cur==='fast')?'':'none';
  drawShop.target=cur==='credits'?$('shopbox'):null; if(cur==='credits') drawShop();
  drawNav();
- if(route.last!==cur){ route.last=cur; window.scrollTo(0,0); if(cur==='fast') setTimeout(()=>$('fl').focus({preventScroll:true}),350); }
+ if(route.last!==cur){ route.last=cur; window.scrollTo(0,0); if(cur==='fast') setTimeout(()=>$('kin').focus({preventScroll:true}),350); }
 }
 function nav(p){ cur=p; try{ if(location.hash!=='#'+p) location.hash=p; }catch(e){} route(); }
 addEventListener('hashchange',()=>{ const h=location.hash.slice(1); if(PAGES.includes(h)&&h!==cur){ cur=h; route(); } });
-addEventListener('keydown',e=>{ if(e.key==='/'&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName)){ e.preventDefault(); if(cur==='fast') $('fl').focus(); else { nav('shop'); $('paste').focus(); } } });
+addEventListener('keydown',e=>{ if(e.key==='/'&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName)){ e.preventDefault(); if(cur==='fast') $('kin').focus(); else { nav('shop'); $('paste').focus(); } } });
 $('tofast').onclick=()=>nav('fast');
 
 // ---- Shelf categories ----
@@ -714,7 +730,7 @@ function flGo(){
  done.forEach(d=>S.list.push(d)); if(!S.active&&S.list.length>3) S.list=S.list.slice(-3);
  save();
  const L=sortBy(done), html=L.map(x=>'<p style="margin:0 0 .6em 2em;text-indent:-2em">'+x.h+'</p>').join('');
- $('fl').value=flRows.filter(r=>!r.ok).map(r=>r.raw).join('\n'); parseFast(); render();
+ $('fl').value=flRows.filter(r=>!r.ok).map(r=>r.raw).join('\n'); parseFast(); render(); $('kin').focus();
  $('flout').innerHTML='<h2>'+n+(n>1?' citations':' citation')+' ready</h2><div class="box">'+L.map(x=>'<p class="pv rcp" style="margin:0 0 12px 2em;text-indent:-2em">'+x.h+'</p>').join('')+'</div><div class="row" style="margin-top:14px"><button class="btn p" id="fcp">Copy all again</button><button class="btn" id="fmd">Copy Markdown</button><button class="btn" id="fnew">Clear results</button></div>';
  $('flout').querySelectorAll('.rcp').forEach(reveal);
  $('fcp').onclick=async()=>toast(await copyText(html)?'Copied':'Copy did not work.');
@@ -726,8 +742,96 @@ $('fl').addEventListener('input',()=>{ clearTimeout(flTimer); flTimer=setTimeout
 $('fl').addEventListener('keydown',e=>{ if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){ e.preventDefault(); flGo(); } });
 $('flgo').onclick=flGo;
 $('lq').oninput=()=>render();
+// ---- Keyboard-only fast lane ----
+let kst=null, kt='web', kv={}, kraw='', karm=0;
+const kTypes=()=>Object.keys(T).filter(k=>!T[k].x||S.active);
+function kReset(){ kst=null; const c=$('kc'); c.style.display='none'; c.innerHTML=''; const i=$('kin'); i.readOnly=false; i.value=''; i.focus(); }
+function kConfirm(note){
+ const c=$('kc'); c.style.display='block';
+ c.innerHTML='<div class="sub">This looks like</div><h2 class="dh" style="margin:2px 0 6px">'+esc(T[kt].n)+'</h2>'+(note?'<p class="sub" style="margin:0 0 10px">'+esc(note)+'</p>':'')+'<p class="sub" style="margin:0"><span class="kbd">Enter</span> continue &nbsp; <span class="kbd">Tab</span> change type &nbsp; <span class="kbd">Esc</span> cancel</p>';
+}
+function kStart(){
+ const t=$('kin').value.trim(); if(!t) return;
+ const r=parseLine(t); kraw=t; kt=r.t; kv={...r.v}; kst='confirm'; $('kin').readOnly=true; kConfirm(r.note);
+}
+function kFields(){
+ kst='fields'; const c=$('kc');
+ if(kt==='web'&&!kv.acc) kv.acc=today; if(kt==='ai'&&!kv.date) kv.date=today;
+ c.innerHTML='<div class="sub">'+esc(T[kt].n)+' details</div><div class="fg" id="kf" style="margin-top:6px"></div><p class="sub" style="margin:12px 0 0"><span class="kbd">Enter</span> next field, and adds it on the last one &nbsp; <span class="kbd">Esc</span> cancel</p>';
+ const key=keyOf({t:kt});
+ T[kt].f.forEach(([f,l,ph])=>{
+  const lab=document.createElement('label'), s=document.createElement('span'), inp=document.createElement('input');
+  s.textContent=l; inp.type=ph==='date'?'date':'text'; if(ph!=='date') inp.placeholder=ph; inp.value=kv[f]||''; inp.autocomplete='off'; inp.className='fi'+(f===key&&!inp.value?' req':'');
+  inp.oninput=()=>{ kv[f]=inp.value; if(f===key) inp.classList.toggle('req',!inp.value.trim()); };
+  inp.onkeydown=ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); const all=[...c.querySelectorAll('.fi')], i=all.indexOf(inp); if(i<all.length-1) all[i+1].focus(); else kCommit(); } else if(ev.key==='Escape'){ ev.preventDefault(); kReset(); } };
+  lab.append(s,inp); $('kf').appendChild(lab);
+ });
+ const all=[...c.querySelectorAll('.fi')]; (all.find(x=>!x.value)||all[0]).focus();
+}
+function kCommit(){
+ if(!readyOf(kt,kv)){ toast('Fill in the highlighted field first.'); const q=document.querySelector('#kc .fi.req'); if(q) q.focus(); return; }
+ const lines=$('fl').value.split('\n').map(s=>s.trim()).filter(Boolean);
+ if(lines.includes(kraw)){ toast('Already in your batch.'); kReset(); return; }
+ fill[kraw]=Object.assign({__t:kt},kv); openMap[kraw]=false; lines.push(kraw); $('fl').value=lines.join('\n'); parseFast(); kReset(); toast('Added. Enter on an empty line checks out.');
+}
+$('kin').addEventListener('keydown',e=>{
+ if(kst==='confirm'){
+  if(e.key==='Enter'){ e.preventDefault(); kFields(); }
+  else if(e.key==='Tab'){ e.preventDefault(); const L=kTypes(), i=L.indexOf(kt); kt=L[(i+(e.shiftKey?L.length-1:1))%L.length]; kConfirm(''); }
+  else if(e.key==='Escape'){ e.preventDefault(); kReset(); }
+  return;
+ }
+ if(e.key==='Enter'){
+  e.preventDefault();
+  if($('kin').value.trim()){ kStart(); return; }
+  const n=flRows.filter(r=>r.ok).length; if(!n){ toast('Add a source first.'); return; }
+  if(karm){ karm=0; flGo(); } else { karm=1; toast('Press Enter again to check out '+n+(n>1?' citations':' citation')); setTimeout(()=>{ karm=0; },4000); }
+ } else if(e.key==='Escape'){ $('kin').value=''; }
+});
+$('kin').addEventListener('paste',()=>setTimeout(()=>{ if(LOC.test($('kin').value.trim())) kStart(); },60));
+
+// ---- Cite as you go ----
+let tray=[], pip=null;
+const trayEl=()=>$('tray');
+function trayOpen(on){ trayEl().classList.toggle('show',on); if(on) setTimeout(()=>$('tin').focus(),60); else if(pip) pip.close(); }
+function trayDraw(){
+ $('gb').textContent=tray.length; $('tcount').textContent=tray.length?'\u00b7 '+tray.length+(tray.length>1?' sources':' source'):''; $('tdone').disabled=!tray.length;
+ $('tlist').innerHTML=tray.map((r,i)=>'<div class="ti"><span class="tg2">'+esc(T[r.t].n)+'</span><span class="tt">'+esc(r.v.title||trimUrl(r.v.url||'')||r.raw)+'</span><button class="rm" data-i="'+i+'" aria-label="Remove">\u00d7</button></div>').join('');
+ $('tlist').querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{ tray.splice(+b.dataset.i,1); trayDraw(); });
+}
+function trayAdd(){
+ const raw=$('tin').value.trim(); if(!raw) return;
+ if(tray.some(x=>x.raw===raw)){ toast('Already added.'); $('tin').value=''; return; }
+ const r=parseLine(raw); r.raw=raw; tray.push(r); $('tin').value=''; trayDraw();
+ $('tnote').textContent='Added a '+T[r.t].n.toLowerCase()+'. '+(r.note||'');
+}
+function trayDone(){
+ if(!tray.length) return;
+ const lines=$('fl').value.split('\n').map(s=>s.trim()).filter(Boolean);
+ tray.forEach(r=>{ if(!lines.includes(r.raw)) lines.push(r.raw); });
+ $('fl').value=lines.join('\n'); parseFast();
+ const n=tray.length; tray=[]; trayDraw(); $('tnote').textContent=n+(n>1?' sources':' source')+' sent to the fast lane.';
+ nav('fast'); toast(n+(n>1?' sources':' source')+' ready in the fast lane');
+}
+async function trayPip(){
+ if(pip){ pip.close(); return; }
+ if(!('documentPictureInPicture' in window)){ toast('Floating windows need Chrome or Edge on a computer. The tray stays in this tab.'); return; }
+ try{
+  pip=await documentPictureInPicture.requestWindow({width:380,height:540});
+  [...document.styleSheets].forEach(ss=>{ try{ const st=document.createElement('style'); st.textContent=[...ss.cssRules].map(r=>r.cssText).join('\n'); pip.document.head.appendChild(st); }catch(e){ if(ss.href){ const l=document.createElement('link'); l.rel='stylesheet'; l.href=ss.href; pip.document.head.appendChild(l); } } });
+  pip.document.body.append(trayEl()); trayEl().classList.add('pip','show');
+  pip.addEventListener('pagehide',()=>{ document.body.append(trayEl()); trayEl().classList.remove('pip'); pip=null; });
+ }catch(e){ pip=null; toast('Your browser blocked the floating window. The tray stays in this tab.'); }
+}
+$('gob').onclick=()=>trayOpen(!trayEl().classList.contains('show'));
+$('tx').onclick=()=>trayOpen(false); $('tpop').onclick=trayPip; $('tdone').onclick=trayDone;
+$('tin').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); if($('tin').value.trim()) trayAdd(); else trayDone(); } else if(e.key==='Escape'&&!pip){ trayOpen(false); } });
+$('tin').addEventListener('paste',()=>setTimeout(()=>{ if(LOC.test($('tin').value.trim())) trayAdd(); },60));
+addEventListener('keydown',e=>{ if(e.key==='g'&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)){ e.preventDefault(); trayOpen(!trayEl().classList.contains('show')); } });
+trayDraw();
 addEventListener('resize',()=>render());
 route(); render();
+
 
 </script>
 </body>
