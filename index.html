@@ -195,24 +195,39 @@ header{padding:20px 0 6px}
 .bar input:focus-visible{outline:none}
 .ask #aq3{background:none;padding:11px 6px;opacity:.7;text-decoration:underline}
 .ask .row{gap:8px}
+#pp,#tofast,#tobm,#rates{display:none}
+.seg .lock.cost{color:var(--mute);font-weight:500}
+.hero{padding:30px 0 6px}
+.hero .k{font-size:clamp(38px,8vw,80px)}
+.navbar{padding:4px 0 14px}
+.shelf{grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;margin-top:18px}
+.tile{min-height:140px;padding:18px 18px 16px}
+.tile .g{font-size:50px}
+.foot{max-width:1040px;margin:0 auto;padding:36px 20px 44px;display:flex;gap:24px;justify-content:center}
+.foot .lnk{color:var(--mute);font-weight:500;padding:0}
+.det summary{cursor:pointer;color:var(--mute);font-weight:500;padding:24px 0 6px;list-style:none}
+.det summary::-webkit-details-marker{display:none}
+.det summary::before{content:'+';display:inline-block;width:18px;color:var(--acc);font-weight:600}
+.det[open] summary::before{content:'\2212'}
 </style>
 </head>
 <body>
 <div class="wrap">
-<header><div class="logo">cite</div><div class="hr"><button class="pill" id="cp"><span id="cn">0</span> credits</button><button class="pill" id="pp"><span class="led"></span><span id="pl">Premium</span></button><button class="pill" id="gob">Cite as you go <span class="badge" id="gb">0</span></button><button class="pill" id="cartb">Cart <span class="badge" id="cb">0</span></button></div></header>
+<header><div class="logo">cite</div><div class="hr"><button class="pill" id="cp"><span class="led" id="cled"></span><span id="cn">0</span> credits</button><button class="pill" id="pp"><span class="led"></span><span id="pl">Premium</span></button><button class="pill" id="gob">Cite as you go <span class="badge" id="gb">0</span></button><button class="pill" id="cartb">Cart <span class="badge" id="cb">0</span></button></div></header>
 <nav class="navbar"><div class="seg" id="nav" role="group" aria-label="Pages"></div></nav>
 <div id="toolbar"><div class="row"><span class="sub">Format</span><div class="seg" id="styles" role="group" aria-label="Citation style"></div></div><p class="sub" id="rates" style="margin:10px 0 0;font-size:13px"></p><div class="row" id="prow" style="margin-top:12px"><span class="sub">I am a</span><div class="seg" id="pers" role="group" aria-label="Who you are"></div><p class="sub" id="sphint" style="flex-basis:100%;margin:0;font-size:13px"></p></div></div>
 
 <section class="page" id="pg-shop">
-<div class="hero"><h1 class="k">Shop for the perfect citation.</h1><p class="sub" style="margin:10px 0 22px">Paste a link or pick a source below. Credits per citation depend on the style you pick.</p><div class="bar"><input id="paste" placeholder="Paste a link, DOI, ISBN, AI chat link or title" autocomplete="off" aria-label="Paste a source"><button class="btn p" id="addp">Find it</button></div><button class="lnk" id="tofast">Have a whole list? Open the fast lane</button><button class="lnk" id="tobm" style="margin-left:18px">Get the Cite this page button</button></div>
-<div class="row" style="margin-top:14px"><div class="seg" id="cats" role="group" aria-label="Shelf"></div></div>
+<div class="hero"><h1 class="k">Shop for the perfect citation.</h1><p class="sub" style="margin:10px 0 22px">Paste a link or pick a source below.</p><div class="bar"><input id="paste" placeholder="Paste a link, DOI, ISBN, AI chat link or title" autocomplete="off" aria-label="Paste a source"><button class="btn p" id="addp">Find it</button></div><button class="lnk" id="tofast">Have a whole list? Open the fast lane</button><button class="lnk" id="tobm" style="margin-left:18px">Get the Cite this page button</button></div>
+<div class="row" id="catrow" style="margin-top:14px;display:none"><div class="seg" id="cats" role="group" aria-label="Shelf"></div></div>
 <div class="shelf" id="shelf"></div>
+<div class="row" style="margin-top:14px;justify-content:center"><button class="lnk" id="moreb" style="padding:8px 0"></button></div>
 </section>
 
 <section class="page" id="pg-fast">
 <h1 class="k2">Fast lane</h1>
-<p class="sub">Keyboard only: add a source, press Enter, and it tells you what it is.</p><div class="bar" style="margin-top:16px"><input id="kin" placeholder="Add a source and press Enter" autocomplete="off" aria-label="Add a source"></div><div class="box" id="kc" style="display:none"></div><p class="sub" style="margin:12px 0 0;font-size:13px"><span class="kbd">Enter</span> continue &nbsp; <span class="kbd">Tab</span> change type &nbsp; <span class="kbd">Esc</span> cancel &nbsp; <span class="kbd">Enter</span> on an empty line checks out</p><p class="sub" style="margin:22px 0 0">Or paste a whole list, one per line. Add details with bars: <b>link | title | author | year</b>.</p>
-<textarea class="ta" id="fl" aria-label="Sources, one per line" placeholder="https://example.com/article | The title | Jane Doe | 2024&#10;10.1000/xyz123 | Another title | A. Author | 2021&#10;Thinking, Fast and Slow by Daniel Kahneman 2011"></textarea>
+<p class="sub">Keyboard only: add a source, press Enter, and it tells you what it is.</p><div class="bar" style="margin-top:16px"><input id="kin" placeholder="Add a source and press Enter" autocomplete="off" aria-label="Add a source"></div><div class="box" id="kc" style="display:none"></div><p class="sub" style="margin:12px 0 0;font-size:13px"><span class="kbd">Enter</span> continue &nbsp; <span class="kbd">Tab</span> change type &nbsp; <span class="kbd">Esc</span> cancel &nbsp; <span class="kbd">Enter</span> on an empty line checks out</p><details class="det"><summary>Paste a whole list instead</summary><p class="sub" style="margin:10px 0 0">One per line. Add details with bars: <b>link | title | author | year</b>.</p>
+<textarea class="ta" id="fl" aria-label="Sources, one per line" placeholder="https://example.com/article | The title | Jane Doe | 2024&#10;10.1000/xyz123 | Another title | A. Author | 2021&#10;Thinking, Fast and Slow by Daniel Kahneman 2011"></textarea></details>
 <div id="flrows"></div>
 <div class="cartbar"><span class="sub" id="flinfo"></span><button class="btn p" id="flgo" disabled>Check out all</button></div>
 <div id="flout"></div>
@@ -236,17 +251,18 @@ header{padding:20px 0 6px}
 
 <section class="page" id="pg-credits">
 <h1 class="k2">Credits</h1>
-<p class="sub">Credits per citation depend on the style. Free refills to 3 a week, premium to 25.</p>
+<p class="sub">Credits per citation depend on the style. Free and premium accounts refill every week.</p>
 <div class="box" id="shopbox"></div>
 </section>
 
 <section class="page" id="pg-settings">
 <h1 class="k2">Settings</h1>
 <div class="box"><b>When I am ready to cite</b><p class="sub" style="margin:6px 0 12px">Used by the Cite as you go window.</p><div class="seg" id="cfgmode" role="group" aria-label="When ready to cite"></div></div>
-<div class="box"><b>Quiet mode</b><p class="sub" style="margin:6px 0 12px">Keeps a tiny Cite as you go window out of the way while you browse. Use the Cite this page button on any site and cite picks it up when you come back.</p><div class="seg" id="bgmode" role="group" aria-label="Quiet mode"></div><p class="sub" style="margin:14px 0 8px">Ask me about quiet mode when I open cite</p><div class="seg" id="askmode" role="group" aria-label="Ask about quiet mode"></div></div>
+<div class="box"><b>Quiet mode</b><p class="sub" style="margin:6px 0 12px">Keeps a tiny Cite as you go window out of the way while you browse. Use the Cite this page button on any site and cite picks it up when you come back.</p><div class="seg" id="bgmode" role="group" aria-label="Quiet mode"></div><p class="sub" style="margin:14px 0 8px">Ask me about quiet mode when I open cite</p><div class="seg" id="askmode" role="group" aria-label="Ask about quiet mode"></div><p class="sub" style="margin:14px 0 8px">Cite this page button</p><button class="btn" id="sbm">Get the button</button></div>
 <div class="box"><b>SparkNews team</b><div id="teambox"></div></div>
 </section>
 </div>
+<footer class="foot"><button class="lnk" id="fcr">Credits</button><button class="lnk" id="fst">Settings</button></footer>
 <div class="ov" id="ov" tabindex="-1"></div>
 <div class="ask" id="askbg" role="dialog" aria-label="Cite as you go"></div>
 <div class="tray" id="tray" role="dialog" aria-label="Cite as you go">
@@ -282,10 +298,11 @@ const end = s => { if(!s) return s; const t=s.replace(/<[^>]+>/g,''); if(/[.?!][
 const today = new Date().toISOString().slice(0,10);
 const plainOf = h => h.replace(/<br\s*\/?>|<\/p>/g,'\n').replace(/<[^>]+>/g,'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"');
 
-let S = {redeemed:false, active:false, credits:5, day:today, list:[], code:'', fails:0, until:0, unl:false, persona:'student'};
+let S = {redeemed:false, active:false, credits:10, day:today, list:[], code:'', fails:0, until:0, unl:false, persona:'student'};
 try { const r = localStorage.getItem('cite.v3'); if (r) S = Object.assign(S, JSON.parse(r)); } catch(e){}
 const save = () => { try { localStorage.setItem('cite.v3', JSON.stringify(S)); } catch(e){} };
-const refill = () => (S.active?25:3);
+const REFILL={free:10,premium:100};
+const refill = () => (S.active?REFILL.premium:REFILL.free);
 if (!S.code) S.code = genCode();
 const wk=(()=>{ const d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()-((d.getDay()+6)%7)); return d.toISOString().slice(0,10); })();
 if (S.day !== wk) { S.day = wk; S.credits = Math.max(S.credits, refill()); }
@@ -524,7 +541,7 @@ function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');cle
 function placeThumb(el){ const p=el.querySelector('[aria-pressed=true]'), th=el.querySelector('.th'); if(!th) return; if(!p||!p.offsetWidth){ th.style.opacity=0; return; } const first=!el._init; if(first) th.style.transition='none'; th.style.opacity=1; th.style.width=p.offsetWidth+'px'; th.style.height=p.offsetHeight+'px'; th.style.transform='translate('+p.offsetLeft+'px,'+p.offsetTop+'px)'; if(first){ void th.offsetWidth; th.style.transition=''; el._init=1; } }
 const relayoutSegs=()=>requestAnimationFrame(()=>document.querySelectorAll('.seg').forEach(placeThumb));
 function seg(el,items,cur,fn){
- const sig=items.map(i=>i[0]).join('|'), lab=i=>esc(i[1])+(i[2]?'<span class="lock">'+(i[2]===true?'Premium':esc(i[2]))+'</span>':'');
+ const sig=items.map(i=>i[0]).join('|'), lab=i=>esc(i[1])+(i[2]?'<span class="lock'+(i[2]===true?'':' cost')+'">'+(i[2]===true?'Premium':esc(i[2]))+'</span>':'');
  if(el._sig!==sig){ el.innerHTML='<span class="th"></span>'; items.forEach(i=>{const b=document.createElement('button');b.dataset.k=i[0];b.dataset.l=lab(i);b.innerHTML=b.dataset.l;el.appendChild(b);}); el._sig=sig; }
  items.forEach((i,x)=>{const b=el.children[x+1]; const l=lab(i); if(b.dataset.l!==l){b.dataset.l=l;b.innerHTML=l;} b.setAttribute('aria-pressed',i[0]===cur); b.onclick=()=>fn(i[0]);});
  requestAnimationFrame(()=>placeThumb(el));
@@ -542,11 +559,11 @@ function openSheet(mode,force){
   $('un').onclick=()=>{S.unl=!S.unl;save();render();openSheet('code');toast(S.unl?'Unlimited credits on for this device':'Unlimited credits off');};
   $('gk').onclick=async()=>{const v=$('gc').value.trim().toUpperCase().replace(/\s/g,''); if(v.length<12){toast('Paste the full device code first.');return;} const k=giftKey(v); $('gv').textContent=k; toast(await copyText(esc(k))?'Key copied':'Select the key and copy it.');};
  } else if(S.active){
-  c.innerHTML='<b>Premium is on.</b><p class="sub" style="'+P+'">SparkNews, MLA, Chicago, more source types, an unlimited list and BibTeX. Type your off code anywhere to switch it off.</p><p class="sub" style="margin:12px 0 0">'+S.credits+' credits left. Refills to 25 each week.</p>';
+  c.innerHTML='<b>Premium is on.</b><p class="sub" style="'+P+'">SparkNews, MLA, Chicago, more source types, an unlimited list and BibTeX. Type your off code anywhere to switch it off.</p><p class="sub" style="margin:12px 0 0">'+S.credits+' credits left. Refills to '+REFILL.premium+' each week.</p>';
  } else if(S.redeemed){
   c.innerHTML='<b>Premium is off.</b><p class="sub" style="'+P+'">Your code has been used on this device. Type your special code anywhere to switch premium back on.</p>';
  } else {
-  c.innerHTML='<b>'+(S.unl?'∞':S.credits)+' credits left.</b><p class="sub" style="'+P+'">Credits per citation depend on the style. Free refills to 3 each week. Premium refills to 25.</p><hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><b>Unlock premium</b><p class="sub" style="margin:6px 0 10px">SparkNews, MLA, Chicago, 16 more source types, an unlimited list, BibTeX and 50 credits.</p><div class="row"><input id="code" placeholder="Code for this device" style="flex:1;min-width:180px" autocomplete="off"><button class="btn p" id="redeem">Unlock</button></div>';
+  c.innerHTML='<b>'+(S.unl?'∞':S.credits)+' credits left.</b><p class="sub" style="'+P+'">Credits per citation depend on the style. Free refills to '+REFILL.free+' each week. Premium refills to '+REFILL.premium+'.</p><hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><b>Unlock premium</b><p class="sub" style="margin:6px 0 10px">SparkNews, MLA, Chicago, 16 more source types, an unlimited list, BibTeX and 50 credits.</p><div class="row"><input id="code" placeholder="Code for this device" style="flex:1;min-width:180px" autocomplete="off"><button class="btn p" id="redeem">Unlock</button></div>';
   $('redeem').onclick=redeem; $('code').onkeydown=e=>{if(e.key==='Enter')redeem();};
  }
  if(mode!=='login'&&mode!=='code'&&mode!=='shop'&&mode!=='bm'&&!S.unl){ c.insertAdjacentHTML('beforeend','<hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><b>Have a key?</b><div class="row" style="margin-top:10px"><input id="uk" placeholder="Paste your key" style="flex:1;min-width:180px" autocomplete="off"><button class="btn" id="ua">Apply</button></div>'); const ap=()=>{ const [ok,m]=redeemKey($('uk').value); toast(m); if(ok) $('sheet').classList.remove('show'); }; $('ua').onclick=ap; $('uk').onkeydown=e=>{if(e.key==='Enter')ap();}; }
@@ -605,9 +622,9 @@ function redeemKey(raw){
 }
 function drawShop(){
  const c=drawShop.target||$('sc');
- c.innerHTML='<b>Credits</b><div class="code" style="font-size:48px;letter-spacing:0">'+(S.unl?'\u221e':S.credits)+'</div><p class="sub">Credits are not for sale. Free accounts refill to 3 each week and premium refills to 25. Need more? Ask the owner for a key.</p><hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><b>Redeem a key</b><div class="row" style="margin-top:10px"><input id="rk" placeholder="Paste your key" style="flex:1;min-width:180px" autocomplete="off"><button class="btn p" id="rkb">Redeem</button></div>';
+ c.innerHTML='<b>Credits</b><div class="code" style="font-size:48px;letter-spacing:0">'+(S.unl?'\u221e':S.credits)+'</div><p class="sub">Credits are not for sale. Free accounts refill to '+REFILL.free+' each week and premium refills to '+REFILL.premium+'. Need more? Ask the owner for a key.</p><p class="sub" style="font-size:13px;margin:0 0 12px">Credits per citation: '+Object.keys(STY).map(k=>STY[k]+': '+costOf('web',k)).join(' · ')+'</p><div class="row"><span class="sub" style="flex:1">'+(S.active?'Premium is on.':'Unlock SparkNews, MLA, Chicago and more sources.')+'</span><button class="btn" id="prem">'+(S.active?'Details':'Unlock')+'</button></div><hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><b>Redeem a key</b><div class="row" style="margin-top:10px"><input id="rk" placeholder="Paste your key" style="flex:1;min-width:180px" autocomplete="off"><button class="btn p" id="rkb">Redeem</button></div>';
  const go=()=>{ const [ok,m]=redeemKey($('rk').value); toast(m); if(ok) drawShop(); };
- $('rkb').onclick=go; $('rk').onkeydown=e=>{ if(e.key==='Enter') go(); };
+ $('rkb').onclick=go; $('prem').onclick=()=>openSheet('info',true); $('rk').onkeydown=e=>{ if(e.key==='Enter') go(); };
 }
 function reveal(el){ let i=0; const walk=n=>{ [...n.childNodes].forEach(c=>{ if(c.nodeType===3){ const f=document.createDocumentFragment(); c.textContent.split(/(\s+)/).forEach(p=>{ if(!p) return; if(/^\s+$/.test(p)) f.append(p); else { const s=document.createElement('span'); s.className='w'; s.style.animationDelay=(i++*35)+'ms'; s.textContent=p; f.append(s); } }); c.replaceWith(f); } else walk(c); }); }; walk(el); }
 async function copyText(html){
@@ -702,11 +719,11 @@ function render(){
  if(style!=='apa'&&!S.active) style='apa';
  $('prow').style.display=style==='spark'?'flex':'none'; $('sphint').textContent=style==='spark'?HINT[S.persona]:''; $('rates').textContent='Credits per citation: '+Object.keys(STY).map(k=>STY[k]+': '+costOf('web',k)).join(' · ');
  const after=()=>{ if(drawerOpen()&&dview==='cart') drawCart(); };
- seg($('styles'),Object.keys(STY).map(k=>[k,STY[k],k==='apa'?false:S.active?(k==='spark'?'Best':false):true]),style,k=>{ if(k!=='apa'&&!S.active){openSheet('info',true);return;} style=k; render(); after(); });
+ seg($('styles'),Object.keys(STY).map(k=>[k,STY[k],(k!=='apa'&&!S.active)?true:costOf('web',k)+' cr']),style,k=>{ if(k!=='apa'&&!S.active){openSheet('info',true);return;} style=k; render(); after(); });
  seg($('pers'),Object.keys(PERS).map(k=>[k,PERS[k]]),S.persona,k=>{ S.persona=k; save(); render(); after(); });
  const cn=S.unl?'\u221e':String(S.credits); if($('cn').textContent!==cn){ $('cn').textContent=cn; bump($('cp')); } $('cp').classList.toggle('inf',!!S.unl);
- const cb=String(basket.length); if($('cb').textContent!==cb){ $('cb').textContent=cb; bump($('cartb')); }
- $('pp').classList.toggle('on',S.active); $('pl').textContent=S.active?'Premium on':'Premium'; 
+ const cb=String(basket.length); if($('cb').textContent!==cb){ $('cb').textContent=cb; bump($('cartb')); } $('cb').style.display=basket.length?'':'none'; $('gb').style.display=tray.length?'':'none';
+ $('pp').classList.toggle('on',S.active); $('cp').classList.toggle('on',S.active); $('pl').textContent=S.active?'Premium on':'Premium'; 
  seg($('cats'),Object.keys(CATS).map(k=>[k,CATS[k][0]]),cat,k=>{ cat=k; render(); });
  seg($('cfgmode'),[['ask','Ask me'],['fast','Fast lane'],['slide','Slideshow']],(S.cfg&&S.cfg.mode)||'ask',k=>{ S.cfg.mode=k; save(); render(); });
  seg($('bgmode'),[['on','On'],['off','Off']],S.cfg.bg?'on':'off',k=>{ S.cfg.bg=k==='on'; save(); render(); if(S.cfg.bg) openMini({min:true}); else if(mini){ try{ mini.close(); }catch(e){} } });
@@ -730,7 +747,7 @@ $('clear').onclick=()=>{S.list=[];save();render();};
 document.querySelectorAll('.k').forEach(k=>{k.innerHTML=k.textContent.split(' ').map((w,i)=>'<span class="w" style="animation-delay:'+(i*70)+'ms">'+esc(w)+'</span>').join(' ');});
 // ---- Pages ----
 const PAGES=['shop','fast','library','prompts','credits','settings'];
-const NAV=[['shop','Shop'],['fast','Fast lane'],['library','Library'],['prompts','Prompt log'],['credits','Credits'],['settings','Settings']];
+const NAV=[['shop','Shop'],['fast','Fast lane'],['library','Library'],['prompts','Prompt log']];
 let cur=(location.hash||'').slice(1); if(!PAGES.includes(cur)) cur='shop';
 function drawNav(){ seg($('nav'),NAV.map(([k,n])=>[k,n,k==='library'&&S.list.length?String(S.list.length):false]),cur,nav); }
 function route(){
@@ -747,10 +764,12 @@ $('tofast').onclick=()=>nav('fast');
 
 // ---- Shelf categories ----
 const CATS={all:['All',null],day:['Everyday',['web','news','post','intv']],acad:['Academic',['book','jour','chap','conf','thesis','ency','case','lect']],media:['Media',['video','pod','film','img']],data:['Data and AI',['ai','data','soft','rep']]};
-let cat='all';
+let cat='all', showAll=false;
 drawShelf=function(){
- const sig=String(S.active)+cat+style; if(sig===shelfSig) return; shelfSig=sig;
- const keys=Object.keys(T).filter(k=>cat==='all'||CATS[cat][1].includes(k));
+ const sig=String(S.active)+cat+style+showAll; if(sig===shelfSig) return; shelfSig=sig;
+ const POP=['web','book','jour','ai','news','video','pod','post'];
+ const keys=showAll?Object.keys(T).filter(k=>cat==='all'||CATS[cat][1].includes(k)):POP;
+ $('moreb').textContent=showAll?'Show fewer sources':'Show all '+Object.keys(T).length+' sources'; $('catrow').style.display=showAll?'flex':'none';
  $('shelf').innerHTML=keys.map((k,i)=>'<button class="tile" data-k="'+k+'" style="animation:sharp .6s '+(i*40)+'ms both"><span class="g">'+esc(glyph(k))+'</span><span><span class="n">'+esc(T[k].n)+'</span><br><span class="pr">'+cr(costOf(k,style))+(T[k].x&&!S.active?' <span class="lock">Premium</span>':'')+'</span></span></button>').join('');
  $('shelf').querySelectorAll('.tile').forEach(b=>b.onclick=()=>chooseType(b.dataset.k));
 };
@@ -903,7 +922,7 @@ async function openMini(opts){
  w.addEventListener('pagehide',()=>{ if(mini!==w) return; mini=null; document.body.append(tray0); tray0.classList.remove('pip','show','min'); if(S.cfg.bg) setTimeout(drawAsk,300); });
 }
 function trayDraw(){
- $('gb').textContent=tray.length; tq('tcount').textContent=tray.length?'\u00b7 '+tray.length+(tray.length>1?' sources':' source'):''; tq('tdone').disabled=!tray.length;
+ $('gb').textContent=tray.length; $('gb').style.display=tray.length?'':'none'; tq('tcount').textContent=tray.length?'\u00b7 '+tray.length+(tray.length>1?' sources':' source'):''; tq('tdone').disabled=!tray.length;
  tq('tlist').innerHTML=tray.map((r,i)=>'<div class="ti"><span class="tg2">'+esc(T[r.t].n)+'</span><span class="tt">'+esc(r.v.title||trimUrl(r.v.url||'')||r.raw)+'</span><button class="rm" data-i="'+i+'" aria-label="Remove">\u00d7</button></div>').join('');
  tq('tlist').querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{ tray.splice(+b.dataset.i,1); trayDraw(); });
 }
@@ -1093,7 +1112,7 @@ $('pcap').addEventListener('paste',()=>setTimeout(()=>{ if(isCiteJson($('pcap').
 $('psave').onclick=()=>{ if(!pf.tool&&!pf.prompt){ toast('Add a tool or a prompt first.'); return; } toast(logPrompt(pf)?'Saved to your prompt log':'Already in your log'); pf={date:today}; drawPrompts(); };
 
 // ---- Rates, quiet mode and batch pickup ----
-const RATES={style:{apa:1,mla:1,chi:2,spark:3},source:{}};
+const RATES={style:{apa:1,mla:1,chi:1,spark:2},source:{}};
 const costOf=(t,s)=>(RATES.style[s]||1)+(RATES.source[t]||0);
 const cr=n=>n+(n===1?' credit':' credits');
 const seenCaps=new Set(S.seenCaps||[]);
@@ -1118,6 +1137,7 @@ setTimeout(drawAsk,900);
 if(document.fonts&&document.fonts.ready) document.fonts.ready.then(relayoutSegs);
 
 trayDraw();
+$('fcr').onclick=()=>nav('credits'); $('fst').onclick=()=>nav('settings'); $('sbm').onclick=()=>openSheet('bm',true); $('moreb').onclick=()=>{ showAll=!showAll; shelfSig=''; drawShelf(); relayoutSegs(); };
 addEventListener('resize',()=>render());
 route(); render();
 
