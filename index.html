@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>cite</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap">
+<style>
+:root{--bg:#e6e6e2;--panel:#f6f6f3;--ink:#000;--mute:#6a6a66;--line:#c9c9c4;--acc:#ff5a1f;--accink:#fff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101010;--panel:#1b1b1b;--ink:#f2f2ee;--mute:#8d8d88;--line:#333}}
+:root[data-theme="dark"]{--bg:#101010;--panel:#1b1b1b;--ink:#f2f2ee;--mute:#8d8d88;--line:#333}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.5 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:820px;margin:0 auto;padding:16px 20px 60px}
+header{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 0 18px}
+.logo{font:italic 400 34px/1 Newsreader,Georgia,serif;letter-spacing:-.02em}
+.hr{display:flex;gap:8px}
+.pill{display:flex;gap:8px;align-items:center;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:8px 14px;border-radius:99px;font:500 13px Inter,sans-serif;cursor:pointer}
+.led{width:9px;height:9px;border-radius:50%;background:var(--line)}
+.on .led{background:var(--acc);box-shadow:0 0 8px var(--acc)}
+.dots{display:flex;gap:6px;margin:0 0 14px}
+.dots i{height:5px;flex:1;border-radius:9px;background:var(--line);transition:background .3s}
+.dots i.d{background:var(--ink)}
+.stage{overflow:hidden;border-radius:30px;background:var(--panel);position:relative;isolation:isolate}
+.track{display:flex;position:relative;z-index:1;transition:transform .65s cubic-bezier(.22,.8,.2,1)}
+.slide{min-width:100%;padding:34px 30px 28px;min-height:min(540px,72vh);display:flex;flex-direction:column;gap:18px;visibility:hidden;opacity:0;transform:scale(.97);transition:visibility 0s .5s,opacity .4s,transform .5s cubic-bezier(.3,.8,.2,1)}
+.slide.a{visibility:visible;opacity:1;transform:none;transition:opacity .5s .1s,transform .6s .05s cubic-bezier(.3,.8,.2,1)}
+.k{font:400 clamp(28px,5.4vw,46px)/1.12 Newsreader,Georgia,serif;letter-spacing:-.02em;margin:0}
+.sub{color:var(--mute);margin:0}
+textarea{width:100%;flex:1;min-height:130px;border:0;background:none;resize:none;color:var(--ink);font:400 clamp(22px,4vw,32px)/1.3 Newsreader,Georgia,serif;padding:0}
+textarea::placeholder{color:var(--mute);opacity:.5}
+textarea:focus,input:focus{outline:none}
+.cite{font:400 clamp(22px,4.2vw,33px)/1.34 Newsreader,Georgia,serif;letter-spacing:-.01em;overflow-wrap:anywhere;margin:0;transition:filter .5s}
+.cite.sm{font-size:clamp(18px,3vw,23px)}
+.cite.lk{filter:blur(9px);user-select:none}
+.cite.empty{color:var(--mute)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.sp{flex:1}
+.btn{border:0;border-radius:99px;padding:13px 22px;font:600 14px Inter,sans-serif;cursor:pointer;background:var(--bg);color:var(--ink)}
+.btn.p{background:var(--acc);color:var(--accink)}
+.btn:disabled{opacity:.4;cursor:default}
+button:focus-visible,input:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+.seg{display:inline-flex;position:relative;background:var(--bg);border-radius:20px;padding:4px;gap:2px;flex-wrap:wrap}
+.seg button{position:relative;z-index:1;border:0;background:none;color:var(--mute);padding:8px 15px;border-radius:99px;font:500 14px Inter,sans-serif;cursor:pointer;transition:color .3s}
+.seg button:not([aria-pressed=true]):hover{color:var(--ink)}
+.seg button[aria-pressed=true]{color:var(--bg)}
+.th{position:absolute;left:0;top:0;z-index:0;background:var(--ink);border-radius:99px;pointer-events:none;transition:transform .45s cubic-bezier(.3,.9,.2,1),width .45s cubic-bezier(.3,.9,.2,1),height .45s,opacity .3s}
+.lock{font-size:11px;margin-left:5px;color:var(--acc)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:2px 28px}
+@media(max-width:620px){.grid{grid-template-columns:1fr}.slide{padding:26px 20px 22px}}
+label{display:block;padding:10px 0 2px}
+label span{display:block;font-size:13px;color:var(--mute)}
+input{width:100%;border:0;border-bottom:1px solid var(--line);background:none;color:var(--ink);padding:4px 0 8px;font:400 23px/1.2 Newsreader,Georgia,serif;border-radius:0}
+input::placeholder{color:var(--mute);opacity:.5}
+input:focus{border-bottom-color:var(--acc)}
+h2{font:500 22px Newsreader,Georgia,serif;margin:40px 0 6px}
+.item{font:400 19px/1.45 Newsreader,Georgia,serif;padding:14px 0 14px 28px;text-indent:-28px;border-top:1px solid var(--line);overflow-wrap:anywhere}
+.sheet{background:var(--panel);border-radius:22px;padding:20px;margin:0 0 16px;display:none}
+.sheet.show{display:block;animation:pop .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes pop{from{opacity:0;transform:translateY(-10px) scale(.985)}}
+.sheet input{font-size:22px}
+.code{font:500 clamp(26px,6vw,40px)/1.2 Newsreader,Georgia,serif;letter-spacing:.06em;margin:10px 0;user-select:all;overflow-wrap:anywhere}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:11px 18px;border-radius:99px;font-weight:500;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90vw;text-align:center}
+.toast.show{opacity:1}
+.ghost{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;z-index:0;overflow:hidden}
+.ghost b{font:italic 400 min(60vw,520px)/1 Newsreader,Georgia,serif;color:var(--ink);opacity:.05;animation:gin .8s cubic-bezier(.2,.8,.2,1)}
+@keyframes gin{from{opacity:0;transform:translateY(10%) scale(.94)}to{opacity:.05;transform:none}}
+.k .w{display:inline-block;animation:rise .8s cubic-bezier(.2,.8,.2,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(.55em);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
+.cite .w{display:inline-block;animation:sharp .6s ease both}
+@keyframes sharp{from{opacity:0;filter:blur(8px);transform:translateY(.35em)}to{opacity:1;filter:none;transform:none}}
+.btn,.pill{transition:transform .3s cubic-bezier(.3,.8,.2,1),box-shadow .35s,background-color .3s,opacity .3s,color .3s}
+.btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 12px 24px -14px rgba(0,0,0,.5)}
+.pill:hover{transform:translateY(-1px)}
+input,textarea{transition:border-color .3s}
+#prow{display:none;align-items:center;gap:10px}
+.pop{animation:rise2 .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes rise2{from{opacity:0;transform:translateY(-8px)}}
+.pg{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-top:14px}
+.pc{position:relative;background:var(--bg);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:4px;transition:transform .4s cubic-bezier(.3,.8,.2,1),box-shadow .4s}
+.pc:hover{transform:translateY(-4px);box-shadow:0 20px 32px -20px rgba(0,0,0,.55)}
+.pc .n{font:400 46px/1 Newsreader,Georgia,serif;letter-spacing:-.03em}
+.pc .tg{position:absolute;top:14px;right:16px;font-size:11px;font-weight:600;color:var(--acc)}
+.cartbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.rc{font:400 18px/1.7 Newsreader,Georgia,serif}
+.rc .ln{display:flex;justify-content:space-between;gap:12px;animation:sharp .6s both}
+.btn:active:not(:disabled),.pill:active{transform:scale(.95)}
+.bump{animation:bump .55s}
+@keyframes bump{40%{transform:scale(1.2);background:var(--acc);color:var(--accink)}}
+.inf{background:linear-gradient(110deg,var(--panel) 30%,rgba(255,90,31,.4) 50%,var(--panel) 70%);background-size:250% 100%;animation:shim 2.6s linear infinite}
+@keyframes shim{to{background-position:-250% 0}}
+.on .led{animation:pulse 2s infinite}
+@keyframes pulse{50%{box-shadow:0 0 15px var(--acc)}}
+@media(prefers-reduced-motion:reduce){*,.ghost b{animation:none!important;transition:none!important}}
+.wrap{max-width:1040px}
+.sheet{position:fixed;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));max-width:600px;margin:0 auto;max-height:78vh;overflow:auto;z-index:60;padding-right:56px;box-shadow:0 30px 80px -30px rgba(0,0,0,.6)}
+.x{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;border:0;background:var(--bg);color:var(--ink);font-size:18px;line-height:1;cursor:pointer;transition:transform .35s cubic-bezier(.3,.8,.2,1)}
+.x:hover{transform:rotate(90deg)}
+.hero{padding:14px 0 6px}
+.hero .k{font-size:clamp(40px,9.5vw,92px);line-height:1;max-width:14ch}
+.bar{display:flex;gap:8px;align-items:center;background:var(--panel);border-radius:99px;padding:8px 8px 8px 26px;transition:box-shadow .35s}
+.bar:focus-within{box-shadow:0 0 0 2px var(--acc)}
+.bar input{border:0;flex:1;min-width:0;font-size:22px;padding:8px 0}
+.badge{background:var(--acc);color:var(--accink);border-radius:99px;padding:1px 8px;font-size:12px;font-weight:600}
+.shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin-top:22px}
+.tile{position:relative;text-align:left;border:0;background:var(--panel);color:var(--ink);border-radius:26px;padding:22px 20px 18px;min-height:176px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;font:inherit;transition:transform .5s cubic-bezier(.3,.8,.2,1),box-shadow .5s}
+.tile:hover{transform:translateY(-6px);box-shadow:0 26px 40px -26px rgba(0,0,0,.6)}
+.tile:active{transform:scale(.97)}
+.tile .g{font:italic 400 66px/1 Newsreader,Georgia,serif;letter-spacing:-.03em}
+.tile .n{font:500 17px Inter,sans-serif}
+.tile .pr{font-size:13px;color:var(--mute)}
+.veil{position:fixed;inset:0;background:rgba(0,0,0,.38);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .45s;z-index:40}
+.veil.show{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(520px,100vw);background:var(--panel);z-index:50;transform:translateX(104%);transition:transform .6s cubic-bezier(.22,.8,.2,1);padding:calc(28px + env(safe-area-inset-top,0px)) 26px calc(24px + env(safe-area-inset-bottom,0px));overflow:auto;display:flex;flex-direction:column;border-radius:30px 0 0 30px}
+.drawer.show{transform:none}
+#dc{display:flex;flex-direction:column;flex:1}
+@media(max-width:620px){.drawer{top:auto;height:90vh;width:100%;border-radius:30px 30px 0 0;transform:translateY(104%)}.drawer.show{transform:none}}
+.dh{font:400 clamp(30px,6vw,40px)/1.1 Newsreader,Georgia,serif;letter-spacing:-.02em;margin:4px 0 14px}
+.pv{font:400 20px/1.45 Newsreader,Georgia,serif;margin:0;overflow-wrap:anywhere;transition:filter .6s}
+.pv.lk{filter:blur(7px);user-select:none}
+.ci{display:flex;gap:12px;justify-content:space-between;align-items:flex-start;border-top:1px solid var(--line);padding:14px 0}
+.rm{border:0;background:var(--bg);color:var(--ink);width:30px;height:30px;border-radius:50%;cursor:pointer;flex:none;transition:transform .3s}
+.rm:hover{transform:rotate(90deg)}
+.item{cursor:pointer;transition:background .3s}
+.item:hover{background:var(--panel)}
+
+.page{display:none}
+.page.on{display:block;animation:pgin .55s cubic-bezier(.2,.8,.2,1)}
+@keyframes pgin{from{opacity:0;transform:translateY(16px)}}
+.navbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;padding:10px 0 12px;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.k2{font:400 clamp(34px,7vw,56px)/1.05 Newsreader,Georgia,serif;letter-spacing:-.02em;margin:18px 0 8px}
+.box{background:var(--panel);border-radius:26px;padding:22px;margin-top:16px}
+.ta{width:100%;min-height:170px;margin-top:16px;background:var(--panel);border-radius:26px;padding:20px 22px;font:400 19px/1.5 Newsreader,Georgia,serif;resize:vertical;border:0;color:var(--ink);transition:box-shadow .35s}
+.ta:focus{outline:none;box-shadow:0 0 0 2px var(--acc)}
+.fr{display:flex;gap:14px;align-items:flex-start;border-top:1px solid var(--line);padding:14px 4px;animation:sharp .45s both}
+.tg2{flex:none;font-size:12px;font-weight:600;background:var(--panel);border-radius:99px;padding:4px 10px;margin-top:3px}
+.fb{flex:1;min-width:0}
+.fi{font-size:19px;margin-top:2px}
+.lnk{border:0;background:none;color:var(--acc);font:600 14px Inter,sans-serif;cursor:pointer;padding:14px 0 0}
+#flrows{margin-top:14px}
+.fr{display:block;animation:sharp .45s both}
+.fh{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.fsel{border:0;background:var(--panel);color:var(--ink);font:600 13px Inter,sans-serif;border-radius:99px;padding:7px 12px;cursor:pointer;transition:background-color .3s}
+.st{font-size:13px;color:var(--mute)}
+.st.ok{color:var(--acc);font-weight:600}
+.fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0 22px;margin-top:6px}
+.fi.req{border-bottom-color:var(--acc)}
+#flrows .pv{margin-top:10px}
+.hr{flex-wrap:wrap;justify-content:flex-end}
+.kbd{display:inline-block;border:1px solid var(--line);border-bottom-width:2px;border-radius:7px;padding:1px 7px;font:600 12px Inter,sans-serif;background:var(--bg);color:var(--ink)}
+.ta{min-height:110px}
+.tray{display:none;position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));width:min(380px,calc(100vw - 36px));max-height:70vh;overflow:auto;background:var(--panel);border-radius:26px;padding:18px;z-index:70;box-shadow:0 30px 70px -28px rgba(0,0,0,.65);color:var(--ink);font:400 15px/1.5 Inter,system-ui,sans-serif}
+.tray.show{display:block;animation:pop .45s cubic-bezier(.2,.8,.2,1)}
+.tray.pip{position:static;width:auto;max-height:none;min-height:100vh;border-radius:0;box-shadow:none;animation:none}
+.tray .tr{display:flex;align-items:center;gap:8px}
+.ti{display:flex;gap:8px;align-items:center;padding:9px 0;border-top:1px solid var(--line);font-size:14px}
+.ti .tt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ov{display:none;position:fixed;inset:0;z-index:80;background:var(--bg);overflow:auto;padding:calc(24px + env(safe-area-inset-top,0px)) 20px 40px}
+.ov.on{display:block;animation:pgin .5s cubic-bezier(.2,.8,.2,1)}
+.ov:focus{outline:none}
+.ovw{max-width:720px;margin:0 auto}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><div class="logo">cite</div><div class="hr"><button class="pill" id="cp"><span id="cn">0</span> credits</button><button class="pill" id="pp"><span class="led"></span><span id="pl">Premium</span></button><button class="pill" id="gob">Cite as you go <span class="badge" id="gb">0</span></button><button class="pill" id="cartb">Cart <span class="badge" id="cb">0</span></button></div></header>
+<nav class="navbar"><div class="seg" id="nav" role="group" aria-label="Pages"></div></nav>
+<div id="toolbar"><div class="row"><span class="sub">Format</span><div class="seg" id="styles" role="group" aria-label="Citation style"></div></div><div class="row" id="prow" style="margin-top:12px"><span class="sub">I am a</span><div class="seg" id="pers" role="group" aria-label="Who you are"></div><p class="sub" id="sphint" style="flex-basis:100%;margin:0;font-size:13px"></p></div></div>
+
+<section class="page" id="pg-shop">
+<div class="hero"><h1 class="k">Shop for the perfect citation.</h1><p class="sub" style="margin:10px 0 22px">Paste a link or pick a source below. Each citation costs one credit.</p><div class="bar"><input id="paste" placeholder="Paste a link, DOI, ISBN, AI chat link or title" autocomplete="off" aria-label="Paste a source"><button class="btn p" id="addp">Find it</button></div><button class="lnk" id="tofast">Have a whole list? Open the fast lane</button><button class="lnk" id="tobm" style="margin-left:18px">Get the Cite this page button</button></div>
+<div class="row" style="margin-top:14px"><div class="seg" id="cats" role="group" aria-label="Shelf"></div></div>
+<div class="shelf" id="shelf"></div>
+</section>
+
+<section class="page" id="pg-fast">
+<h1 class="k2">Fast lane</h1>
+<p class="sub">Keyboard only: add a source, press Enter, and it tells you what it is.</p><div class="bar" style="margin-top:16px"><input id="kin" placeholder="Add a source and press Enter" autocomplete="off" aria-label="Add a source"></div><div class="box" id="kc" style="display:none"></div><p class="sub" style="margin:12px 0 0;font-size:13px"><span class="kbd">Enter</span> continue &nbsp; <span class="kbd">Tab</span> change type &nbsp; <span class="kbd">Esc</span> cancel &nbsp; <span class="kbd">Enter</span> on an empty line checks out</p><p class="sub" style="margin:22px 0 0">Or paste a whole list, one per line. Add details with bars: <b>link | title | author | year</b>.</p>
+<textarea class="ta" id="fl" aria-label="Sources, one per line" placeholder="https://example.com/article | The title | Jane Doe | 2024&#10;10.1000/xyz123 | Another title | A. Author | 2021&#10;Thinking, Fast and Slow by Daniel Kahneman 2011"></textarea>
+<div id="flrows"></div>
+<div class="cartbar"><span class="sub" id="flinfo"></span><button class="btn p" id="flgo" disabled>Check out all</button></div>
+<div id="flout"></div>
+</section>
+
+<section class="page" id="pg-library">
+<h1 class="k2">Your library</h1>
+<p class="sub" id="lsub"></p>
+<input id="lq" placeholder="Search your library" autocomplete="off" aria-label="Search your library" style="margin:14px 0 6px">
+<div id="list"></div>
+<div class="row" style="margin-top:16px"><button class="btn" id="copyall">Copy all</button><button class="btn" id="mdl">Copy Markdown</button><button class="btn" id="bib">Copy BibTeX</button><button class="btn" id="clear">Clear library</button></div>
+</section>
+
+<section class="page" id="pg-prompts">
+<h1 class="k2">AI prompt log</h1>
+<p class="sub">Save the prompts you might cite, with the tool, model, date and link. Turn any of them into a citation in one click.</p>
+<div class="box"><b>Capture from an AI site</b><p class="sub" style="margin:6px 0 10px">Click Cite this page on a ChatGPT, Claude or Gemini chat, then paste here.</p><div class="row"><input id="pcap" placeholder="Paste a capture" autocomplete="off" aria-label="Paste a capture" style="flex:1;min-width:180px"><button class="btn p" id="pcapb">Add</button></div><button class="lnk" id="pbm">Get the Cite this page button</button></div>
+<div class="box"><b>Or add one by hand</b><div class="grid" id="pform"></div><div class="row" style="margin-top:12px"><button class="btn p" id="psave">Save to log</button></div></div>
+<div id="plog"></div>
+</section>
+
+<section class="page" id="pg-credits">
+<h1 class="k2">Credits</h1>
+<p class="sub">One credit gets one citation. Free refills to 3 a week, premium to 25.</p>
+<div class="box" id="shopbox"></div>
+</section>
+
+<section class="page" id="pg-settings">
+<h1 class="k2">Settings</h1>
+<div class="box"><b>When I am ready to cite</b><p class="sub" style="margin:6px 0 12px">Used by the Cite as you go window.</p><div class="seg" id="cfgmode" role="group" aria-label="When ready to cite"></div></div>
+<div class="box"><b>SparkNews team</b><div id="teambox"></div></div>
+</section>
+</div>
+<div class="ov" id="ov" tabindex="-1"></div>
+<div class="tray" id="tray" role="dialog" aria-label="Cite as you go">
+<div class="tr"><b>Cite as you go</b><span class="sub" id="tcount"></span><span class="sp"></span><button class="btn" id="tpaste" style="padding:7px 14px">Paste</button><button class="rm" id="tx" aria-label="Close">×</button></div>
+<input id="tin" placeholder="Paste a website, press Enter" autocomplete="off" aria-label="Add a website" style="margin-top:10px">
+<p class="sub" id="tnote" style="font-size:13px;margin:6px 0 4px">Add sources as you read. Enter on an empty line sends them to the fast lane.</p>
+<button class="lnk" id="tbm" style="padding:2px 0 8px;font-size:13px">Get the Cite this page button</button>
+<div id="tlist"></div>
+<div id="tq" style="display:none;margin-top:12px"><p class="sub" style="margin:0 0 8px" id="tqt"></p><div class="row"><button class="btn p" id="tqf">Fast lane</button><button class="btn p" id="tqs">Slideshow</button></div><label class="sub" style="display:flex;gap:8px;align-items:center;padding:10px 0 0"><input type="checkbox" id="tqr" style="width:auto;border:0"> Remember my choice</label></div>
+<button class="btn p" id="tdone" disabled style="width:100%;margin-top:12px">Ready to cite</button>
+</div>
+<div class="sheet" id="sheet"><button class="x" id="sx" aria-label="Close">×</button><div id="sc"></div></div>
+<div class="veil" id="veil"></div>
+<aside class="drawer" id="drawer" aria-label="Cart"><button class="x" id="dx" aria-label="Close">×</button><div id="dc"></div></aside>
+<div class="toast" id="toast" role="status"></div>
+<script>
+// One-time unlock codes are generated per device and saved locally.
+// Type "getcode" anywhere in the app and sign in to see this device's code.
+// Type "premiumoff" anywhere to switch premium off (and back on).
+// Login is stored as a hash below. This is a convenience gate, not real security:
+// anyone who can read this file can bypass it.
+const LOGIN_HASH = 5928552246817337;
+const cyrb = (str,seed=0)=>{let h1=0xdeadbeef^seed,h2=0x41c6ce57^seed;for(let i=0,ch;i<str.length;i++){ch=str.charCodeAt(i);h1=Math.imul(h1^ch,2654435761);h2=Math.imul(h2^ch,1597334677);}h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);return 4294967296*(2097151&h2)+(h1>>>0);};
+const genCode = () => { const A='ABCDEFGHJKMNPQRSTUVWXYZ23456789'; const r=new Uint8Array(12); try{crypto.getRandomValues(r);}catch(e){for(let i=0;i<12;i++)r[i]=Math.random()*256;} const s=[...r].map(b=>A[b%A.length]).join(''); return s.slice(0,4)+'-'+s.slice(4,8)+'-'+s.slice(8); };
+
+const giftKey = c => { const h=cyrb(c+'|unlimited').toString(36).toUpperCase().padStart(10,'0').slice(-10); return 'UNL-'+h.slice(0,5)+'-'+h.slice(5); };
+const $ = id => document.getElementById(id);
+const esc = s => String(s||'').replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const I = t => t ? '<i>'+esc(t)+'</i>' : '';
+const J = (...p) => p.filter(Boolean).join(' ');
+const jn = (...p) => p.filter(Boolean).join(', ');
+const end = s => { if(!s) return s; const t=s.replace(/<[^>]+>/g,''); if(/[.?!]["\u201d]?$/.test(t)) return s; if(/,\u201d$/.test(s)) return s.slice(0,-2)+'.\u201d'; return /\u201d$/.test(s)?s.slice(0,-1)+'.\u201d':s+'.'; };
+const today = new Date().toISOString().slice(0,10);
+const plainOf = h => h.replace(/<br\s*\/?>|<\/p>/g,'\n').replace(/<[^>]+>/g,'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"');
+
+let S = {redeemed:false, active:false, credits:5, day:today, list:[], code:'', fails:0, until:0, unl:false, persona:'student'};
+try { const r = localStorage.getItem('cite.v3'); if (r) S = Object.assign(S, JSON.parse(r)); } catch(e){}
+const save = () => { try { localStorage.setItem('cite.v3', JSON.stringify(S)); } catch(e){} };
+const refill = () => (S.active?25:3);
+if (!S.code) S.code = genCode();
+const wk=(()=>{ const d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()-((d.getDay()+6)%7)); return d.toISOString().slice(0,10); })();
+if (S.day !== wk) { S.day = wk; S.credits = Math.max(S.credits, refill()); }
+save();
+
+// ---- Source types ----
+const A=['author','Author','Jane Doe'], TI=['title','Title',''], URLF=['url','Link','https://'], DT=['date','Published','date'];
+const T = {
+ web:{n:'Website',f:[A,['title','Page title',''],['site','Site name','The Atlantic'],DT,URLF,['acc','Accessed','date']]},
+ book:{n:'Book',f:[A,TI,['publisher','Publisher',''],['year','Year','2004']]},
+ jour:{n:'Journal',f:[A,['title','Article title',''],['journal','Journal',''],['year','Year',''],['volume','Volume',''],['issue','Issue',''],['pages','Pages','12-30'],URLF]},
+ ai:{n:'AI',f:[['tool','AI tool','Claude'],['company','Company','Anthropic'],['version','Version','Sonnet 5.5'],['date','Date used','date'],['prompt','Your prompt',''],URLF]},
+ news:{x:1,n:'News article',f:[A,['title','Headline',''],['site','Publication',''],DT,URLF]},
+ chap:{x:1,n:'Book chapter',f:[A,['title','Chapter title',''],['site','Book title',''],['extra','Editor',''],['publisher','Publisher',''],['year','Year',''],['pages','Pages','12-30']]},
+ video:{x:1,n:'Video',f:[['author','Channel',''],TI,['site','Platform','YouTube'],DT,URLF]},
+ pod:{x:1,n:'Podcast',f:[['author','Host',''],['title','Episode title',''],['site','Show name',''],DT,URLF]},
+ post:{x:1,n:'Social post',f:[['author','Author or handle',''],['title','Post text',''],['site','Platform','X'],DT,URLF]},
+ film:{x:1,n:'Film',f:[TI,['author','Director',''],['publisher','Studio',''],['year','Year','']]},
+ img:{x:1,n:'Image',f:[['author','Artist or photographer',''],TI,['site','Museum or website',''],['year','Year',''],URLF]},
+ rep:{x:1,n:'Report',f:[['author','Organisation or author',''],TI,['publisher','Publisher',''],['year','Year',''],URLF]},
+ data:{x:1,n:'Dataset',f:[['author','Organisation or author',''],TI,['publisher','Publisher',''],['year','Year',''],URLF]},
+ soft:{x:1,n:'Software',f:[['author','Developer',''],['title','Name',''],['version','Version',''],['publisher','Publisher',''],['year','Year',''],URLF]},
+ thesis:{x:1,n:'Thesis',f:[A,TI,['publisher','University',''],['year','Year',''],['extra','Degree','Doctoral dissertation'],URLF]},
+ intv:{x:1,n:'Interview',f:[['author','Person interviewed',''],['title','Topic',''],['extra','Interviewer',''],DT]},
+ conf:{x:1,n:'Conference paper',f:[A,['title','Paper title',''],['site','Conference',''],['year','Year',''],['pages','Pages',''],URLF]},
+ ency:{x:1,n:'Encyclopedia',f:[['title','Entry title',''],['site','Encyclopedia',''],['publisher','Publisher',''],['year','Year',''],URLF]},
+ case:{x:1,n:'Court case',f:[['title','Case name','Roe v. Wade'],['site','Court','U.S. Supreme Court'],['year','Year',''],['extra','Citation','410 U.S. 113'],URLF]},
+ lect:{x:1,n:'Lecture or slides',f:[A,['title','Title',''],['site','Event or course',''],['publisher','Institution',''],DT,URLF]}
+};
+const STY = {apa:'APA 7',spark:'SparkNews',mla:'MLA 9',chi:'Chicago'};
+let type='web', style='apa', bought=null, step=0;
+const V={}; Object.keys(T).forEach(k=>V[k]={});
+
+// ---- Names and dates ----
+const parse = n => { if(n.includes(',')){const [l,f]=n.split(',').map(x=>x.trim());return{l,f:f||''}} const p=n.split(/\s+/); return{l:p.pop(),f:p.join(' ')}; };
+const people = s => (s||'').split(/;|\band\b|&/i).map(x=>x.trim()).filter(Boolean).map(parse);
+const init = f => f.split(/[\s-]+/).filter(Boolean).map(w=>w[0].toUpperCase()+'.').join(' ');
+const apaA = ps => { const a=ps.map(p=>p.l+(p.f?', '+init(p.f):'')); if(a.length<3) return a.join(', & '); return a.slice(0,-1).join(', ')+', & '+a[a.length-1]; };
+const mlaA = ps => { const f=p=>p.l+(p.f?', '+p.f:''), n=p=>(p.f?p.f+' ':'')+p.l; if(ps.length==1) return f(ps[0]); if(ps.length==2) return f(ps[0])+', and '+n(ps[1]); return f(ps[0])+', et al.'; };
+const chiA = ps => { const x=[ps[0].l+(ps[0].f?', '+ps[0].f:''), ...ps.slice(1).map(p=>(p.f?p.f+' ':'')+p.l)]; if(x.length==1) return x[0]; if(x.length==2) return x[0]+', and '+x[1]; return x.slice(0,-1).join(', ')+', and '+x[x.length-1]; };
+const FULL=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const ABBR=['Jan.','Feb.','Mar.','Apr.','May','June','July','Aug.','Sept.','Oct.','Nov.','Dec.'];
+const D = s => { const m=/^(\d{4})-(\d\d)-(\d\d)$/.exec(s||''); return m?{y:m[1],m:+m[2]-1,d:+m[3]}:null; };
+const dApa = s => { const t=D(s); return t? t.y+', '+FULL[t.m]+' '+t.d : 'n.d.'; };
+const dMla = s => { const t=D(s); return t? t.d+' '+ABBR[t.m]+' '+t.y : ''; };
+const dChi = s => { const t=D(s); return t? FULL[t.m]+' '+t.d+', '+t.y : ''; };
+const q = t => t ? '“'+end(esc(t))+'”' : '';
+const au = (v,f) => { const a=people(v.author); return a.length?end(f(a)):''; };
+const ya = v => '('+(esc(v.year)||'n.d.')+').';
+const org = v => end(esc(v.author));
+
+// ---- Formatters ----
+const F = {
+ web:{
+  apa:v=>{const a=apaA(people(v.author)), d='('+dApa(v.date)+').'; return a? J(end(a),d,end(I(v.title)),end(esc(v.site)),esc(v.url)) : J(end(I(v.title)),d,end(esc(v.site)),esc(v.url));},
+  mla:v=>J(au(v,mlaA),q(v.title),end(jn(I(v.site),dMla(v.date),esc(v.url))),v.acc?'Accessed '+dMla(v.acc)+'.':''),
+  chi:v=>J(au(v,chiA),q(v.title),end(esc(v.site)),end(dChi(v.date)),end(esc(v.url)))
+ },
+ book:{
+  apa:v=>J(end(apaA(people(v.author))),ya(v),end(I(v.title)),end(esc(v.publisher))),
+  mla:v=>J(au(v,mlaA),end(I(v.title)),end(jn(esc(v.publisher),esc(v.year)))),
+  chi:v=>J(au(v,chiA),end(I(v.title)),end(jn(esc(v.publisher),esc(v.year))))
+ },
+ jour:{
+  apa:v=>{const vi=(v.volume?'<i>'+esc(v.volume)+'</i>':'')+(v.issue?'('+esc(v.issue)+')':''); const src=jn(I(v.journal),vi,esc(v.pages)); return J(end(apaA(people(v.author))),ya(v),end(esc(v.title)),src?end(src):'',esc(v.url));},
+  mla:v=>J(au(v,mlaA),q(v.title),end(jn(I(v.journal),v.volume?'vol. '+esc(v.volume):'',v.issue?'no. '+esc(v.issue):'',esc(v.year),v.pages?'pp. '+esc(v.pages):'',esc(v.url)))),
+  chi:v=>J(au(v,chiA),q(v.title),end(J(I(v.journal),esc(v.volume)+(v.issue?', no. '+esc(v.issue):''),v.year?'('+esc(v.year)+')':'')+(v.pages?': '+esc(v.pages):'')),end(esc(v.url)))
+ },
+ ai:{
+  apa:v=>J(end(esc(v.company)),'('+(D(v.date)||{y:'n.d.'}).y+').',I(v.tool),v.version?'('+esc(v.version)+')':'','[Large language model].',esc(v.url)),
+  mla:v=>J(v.prompt?'“'+esc(v.prompt)+'” prompt.':'',end(jn(I(v.tool),esc(v.version),esc(v.company),dMla(v.date),esc(v.url)))),
+  chi:v=>end('Text generated by '+esc(v.tool)+', '+jn(v.prompt?'response to “'+esc(v.prompt)+',”':'',esc(v.company),dChi(v.date),esc(v.url)).replace(/”,, /,',” ').replace(/,” ,/,',”'))
+ },
+ video:{
+  apa:v=>J(end(apaA(people(v.author))),'('+dApa(v.date)+').',end(I(v.title)+' [Video]'),end(esc(v.site)),esc(v.url)),
+  mla:v=>J(q(v.title),end(jn(I(v.site),v.author?'uploaded by '+esc(v.author):'',dMla(v.date),esc(v.url)))),
+  chi:v=>J(au(v,chiA),q(v.title),end('Video, '+esc(v.site)),end(dChi(v.date)),end(esc(v.url)))
+ },
+ pod:{
+  apa:v=>J(end(apaA(people(v.author))+' (Host)'),'('+dApa(v.date)+').',end(esc(v.title)+' [Audio podcast episode]'),'In '+I(v.site)+'.',esc(v.url)),
+  mla:v=>J(q(v.title),end(jn(I(v.site),v.author?'hosted by '+esc(v.author):'',dMla(v.date),esc(v.url)))),
+  chi:v=>J(au(v,chiA),q(v.title),end(I(v.site)+', podcast'),end(dChi(v.date)),end(esc(v.url)))
+ },
+ post:{
+  apa:v=>J(end(apaA(people(v.author))),'('+dApa(v.date)+').',end(I(v.title)+' [Post]'),end(esc(v.site)),esc(v.url)),
+  mla:v=>J(au(v,mlaA),q(v.title),end(jn(esc(v.site),dMla(v.date),esc(v.url)))),
+  chi:v=>J(au(v,chiA),q(v.title),end(esc(v.site)),end(dChi(v.date)),end(esc(v.url)))
+ },
+ rep:{
+  apa:v=>J(org(v),ya(v),end(I(v.title)),end(esc(v.publisher)),esc(v.url)),
+  mla:v=>J(org(v),end(I(v.title)),end(jn(esc(v.publisher),esc(v.year),esc(v.url)))),
+  chi:v=>J(org(v),end(I(v.title)),end(jn(esc(v.publisher),esc(v.year))),end(esc(v.url)))
+ },
+ news:{
+  apa:v=>J(end(apaA(people(v.author))),'('+dApa(v.date)+').',end(esc(v.title)),end(I(v.site)),esc(v.url)),
+  mla:v=>J(au(v,mlaA),q(v.title),end(jn(I(v.site),dMla(v.date),esc(v.url)))),
+  chi:v=>J(au(v,chiA),q(v.title),end(esc(v.site)),end(dChi(v.date)),end(esc(v.url)))
+ },
+ chap:{
+  apa:v=>J(end(apaA(people(v.author))),ya(v),end(esc(v.title)),'In '+(v.extra?esc(v.extra)+' (Ed.), ':'')+I(v.site)+(v.pages?' (pp. '+esc(v.pages)+')':'')+'.',end(esc(v.publisher))),
+  mla:v=>J(au(v,mlaA),q(v.title),end(jn(I(v.site),v.extra?'edited by '+esc(v.extra):'',esc(v.publisher),esc(v.year),v.pages?'pp. '+esc(v.pages):''))),
+  chi:v=>J(au(v,chiA),q(v.title),end('In '+I(v.site)+(v.extra?', edited by '+esc(v.extra):'')+(v.pages?', '+esc(v.pages):'')),end(jn(esc(v.publisher),esc(v.year))))
+ },
+ film:{
+  apa:v=>J(v.author?end(apaA(people(v.author))+' (Director)'):'',ya(v),end(I(v.title)+' [Film]'),end(esc(v.publisher))),
+  mla:v=>J(end(I(v.title)),end(jn(v.author?'Directed by '+esc(v.author):'',esc(v.publisher),esc(v.year)))),
+  chi:v=>J(end(I(v.title)),v.author?end('Directed by '+esc(v.author)):'',end(jn(esc(v.publisher),esc(v.year))))
+ },
+ img:{
+  apa:v=>J(end(apaA(people(v.author))),ya(v),end(I(v.title)+' [Image]'),end(esc(v.site)),esc(v.url)),
+  mla:v=>J(au(v,mlaA),end(I(v.title)),end(jn(esc(v.year),esc(v.site),esc(v.url)))),
+  chi:v=>J(au(v,chiA),end(I(v.title)),end(esc(v.year)),end(esc(v.site)),end(esc(v.url)))
+ },
+ data:{
+  apa:v=>J(org(v),ya(v),end(I(v.title)+' [Data set]'),end(esc(v.publisher)),esc(v.url)),
+  mla:v=>J(org(v),end(I(v.title)),end(jn(esc(v.publisher),esc(v.year),esc(v.url)))),
+  chi:v=>J(org(v),end(I(v.title)),'Dataset.',end(jn(esc(v.publisher),esc(v.year))),end(esc(v.url)))
+ },
+ soft:{
+  apa:v=>J(org(v),ya(v),I(v.title),v.version?'(Version '+esc(v.version)+')':'','[Computer software].',end(esc(v.publisher)),esc(v.url)),
+  mla:v=>J(au(v,mlaA),end(I(v.title)),end(jn(v.version?'Version '+esc(v.version):'',esc(v.publisher),esc(v.year),esc(v.url)))),
+  chi:v=>J(au(v,chiA),end(I(v.title)),v.version?end('Version '+esc(v.version)):'',end(jn(esc(v.publisher),esc(v.year))),end(esc(v.url)))
+ },
+ thesis:{
+  apa:v=>J(end(apaA(people(v.author))),ya(v),I(v.title),'['+esc(v.extra||'Doctoral dissertation')+(v.publisher?', '+esc(v.publisher):'')+'].',esc(v.url)),
+  mla:v=>J(au(v,mlaA),end(I(v.title)),end(esc(v.year)),end(jn(esc(v.publisher),esc(v.extra))),esc(v.url)),
+  chi:v=>J(au(v,chiA),q(v.title),end(jn(esc(v.extra),esc(v.publisher),esc(v.year))),end(esc(v.url)))
+ },
+ intv:{
+  apa:v=>end(jn(esc(v.author),'personal communication',dChi(v.date))),
+  mla:v=>J(au(v,mlaA),'Interview'+(v.extra?' by '+esc(v.extra):'')+'.',end(dMla(v.date))),
+  chi:v=>end(jn(esc(v.author),v.extra?'interview by '+esc(v.extra):'interview',dChi(v.date)))
+ }
+};
+Object.assign(F,{
+ conf:{apa:v=>J(end(apaA(people(v.author))),ya(v),end(esc(v.title)),'In '+I(v.site)+(v.pages?' (pp. '+esc(v.pages)+')':'')+'.',esc(v.url)),mla:v=>J(au(v,mlaA),q(v.title),end(jn(I(v.site),esc(v.year),v.pages?'pp. '+esc(v.pages):'',esc(v.url)))),chi:v=>J(au(v,chiA),q(v.title),end('Paper presented at '+esc(v.site)+(v.year?', '+esc(v.year):'')),end(esc(v.url)))},
+ ency:{apa:v=>J(end(esc(v.title)),ya(v),'In '+I(v.site)+'.',end(esc(v.publisher)),esc(v.url)),mla:v=>J(q(v.title),end(jn(I(v.site),esc(v.publisher),esc(v.year),esc(v.url)))),chi:v=>J(I(v.site)+', s.v. “'+end(esc(v.title))+'”',end(esc(v.year)),end(esc(v.url)))},
+ case:{apa:v=>J(esc(v.title)+(v.extra?', '+esc(v.extra):''),'('+J(esc(v.site),esc(v.year))+').',esc(v.url)),mla:v=>J(end(I(v.title)),end(jn(esc(v.extra),esc(v.site),esc(v.year))),esc(v.url)),chi:v=>J(esc(v.title)+(v.extra?', '+esc(v.extra):''),'('+J(esc(v.site),esc(v.year))+').',esc(v.url))},
+ lect:{apa:v=>J(end(apaA(people(v.author))),'('+dApa(v.date)+').',end(I(v.title)+' [Lecture]'),end(jn(esc(v.site),esc(v.publisher))),esc(v.url)),mla:v=>J(au(v,mlaA),q(v.title),end(jn(I(v.site),esc(v.publisher),dMla(v.date),esc(v.url)))),chi:v=>J(au(v,chiA),q(v.title),end(jn(esc(v.site),esc(v.publisher),dChi(v.date))),end(esc(v.url)))}
+});
+const ready = () => (type==='ai'?V.ai.tool:(type==='intv'||type==='rep'||type==='data')?(V[type].author||V[type].title):V[type].title);
+const make = () => ready() ? (style==='spark'?spark(type,V[type]):F[type][style](V[type])) : '';
+const locked = (t,s) => (T[t].x&&!S.active) || (s!=='apa'&&!S.active);
+const key = () => type+'|'+JSON.stringify(V[type]);
+
+// ---- SparkNews: the best parts of every style, tuned to who you are ----
+const PERS={student:'Student',res:'Researcher',jour:'Journalist',work:'Work',all:'Everyone'};
+const STAND=['book','film','rep','data','soft','thesis','img','video','intv'];
+function norm(t,v){
+ const orgT=t==='ai'||t==='rep'||t==='data';
+ const nat=people(v.author).map(p=>(p.f?p.f+' ':'')+p.l);
+ const names=t==='ai'?[v.company].filter(Boolean):orgT?[v.author].filter(Boolean):nat;
+ return {a:names.length>2?names[0]+' et al.':names.join(' & '), ai:orgT?(names[0]||''):apaA(people(v.author)), ti:t==='ai'?jn(v.tool,v.version):(v.title||''), src:t==='ai'?'':(v.site||v.journal||v.publisher||''), yr:v.year||(D(v.date)||{}).y||'', dt:D(v.date)?dChi(v.date):(v.year||''), url:v.url||'', loc:jn(v.volume?'vol. '+v.volume:'',v.issue?'no. '+v.issue:'',v.pages?'pp. '+v.pages:'')};
+}
+const KIND={video:'Video',pod:'Podcast episode',post:'Social media post',film:'Film',img:'Image',data:'Data set',soft:'Software',thesis:'Thesis',intv:'Interview',lect:'Lecture',ai:'AI-generated'};
+const HINT={student:'Full reference with an access date and a type tag. Closest to MLA.',res:'Year first, with volume and pages. Closest to APA.',jour:'Headline first, plus an archive link so the source survives link rot.',work:'Short and scannable, with a clean link.',all:'Plain English that anyone can read.'};
+const dShort=s=>{ const t=D(s); return t?ABBR[t.m]+' '+t.d+', '+t.y:''; };
+const trimUrl=u=>(u||'').replace(/^https?:\/\/(www\.)?/,'').replace(/\/$/,'');
+const mdOf=h=>plainOf(h.replace(/<i>(.*?)<\/i>/g,'*$1*'));
+function sparkGaps(t,v){
+ const g=[], web=['web','news','video','pod','post','ai','data','soft','img','jour'].includes(t);
+ if(t==='ai'){ if(!v.version) g.push('version'); if(!v.prompt) g.push('prompt'); if(!(v.date||v.year)) g.push('date'); if(!v.url) g.push('link'); return g; }
+ if(!v.author) g.push(t==='film'?'director':'author');
+ if(!(v.date||v.year)) g.push('date');
+ if(!['intv','case'].includes(t)&&!(v.site||v.journal||v.publisher)) g.push('source');
+ if(web&&!v.url) g.push('link');
+ return g;
+}
+function spark(t,v){
+ const n=norm(t,v), P=S.persona, ai=t==='ai';
+ const Tt=ai||STAND.includes(t)?I(n.ti):'\u201c'+esc(n.ti)+'\u201d';
+ const kd=KIND[t]?' ['+KIND[t]+']':'', pr=v.prompt?'Prompt: \u201c'+esc(v.prompt)+'\u201d.':'', u=esc(n.url), us=esc(trimUrl(n.url));
+ const dS=dShort(v.date)||esc(n.dt), meta=jn(esc(n.src),dS);
+ if(P==='res') return J(end(esc(n.ai)),'('+(esc(n.yr)||'n.d.')+').',end(Tt+kd),end(jn(esc(n.src),esc(n.loc))),pr,u);
+ if(P==='jour') return J(end(esc(n.ti)+kd+(meta?' \u2014 '+meta:'')+(n.a?' (by '+esc(n.a)+')':'')),u,n.url&&['web','news','post'].includes(t)?'Archive: https://web.archive.org/web/'+u:'');
+ if(P==='work') return J(end(jn(esc(n.a),Tt+kd,esc(n.src),esc(n.yr))),us);
+ if(P==='all') return J(end(esc(n.ti)+(n.a?' by '+esc(n.a):'')+(n.src?' on '+esc(n.src):'')+(dS?' ('+dS+')':'')),us);
+ return J(end(esc(n.a)),end(Tt+kd),pr,end(jn(esc(n.src),esc(n.dt))),u,n.url?'Accessed '+(dShort(v.acc)||dShort(today))+'.':'');
+}
+
+// ---- In-text citations ----
+function intext(t,s,v){
+ if(s==='spark'){ const n=norm(t,v); return S.persona==='jour'?esc('per '+(n.a?n.a+(n.src?' in '+n.src:''):(n.src||n.ti))+(n.yr?' ('+n.yr+')':'')):S.persona==='work'?'('+esc(n.src||n.a||n.ti)+(n.yr?', '+esc(n.yr):'')+')':S.persona==='all'?'('+esc(n.a||n.ti)+')':intext(t,'apa',v); }
+ const ps=people(v.author), orgn=t==='ai'?v.company:(t==='rep'||t==='data')?v.author:'';
+ const yr=v.year||(D(v.date)||{}).y||'n.d.', st=(v.title||v.tool||'').split(/[:.]/)[0].split(/\s+/).slice(0,4).join(' ');
+ if(t==='intv') return s==='apa'?'('+esc(v.author)+', personal communication, '+esc(dChi(v.date))+')':s==='mla'?'('+esc(ps[0]?ps[0].l:v.author)+')':esc(v.author)+', interview'+(v.extra?' by '+esc(v.extra):'')+'.';
+ if(s==='apa'){ const n=orgn?esc(orgn):!ps.length?'“'+esc(st)+'”':ps.length==1?esc(ps[0].l):ps.length==2?esc(ps[0].l)+' &amp; '+esc(ps[1].l):esc(ps[0].l)+' et al.'; return '('+n+', '+esc(yr)+')'; }
+ if(s==='mla'){ if(t==='ai'&&v.prompt) return '(“'+esc(v.prompt.split(/\s+/).slice(0,6).join(' '))+'…” prompt)'; const n=orgn?esc(orgn):!ps.length?'“'+esc(st)+'”':ps.length==1?esc(ps[0].l):ps.length==2?esc(ps[0].l)+' and '+esc(ps[1].l):esc(ps[0].l)+' et al.'; return '('+n+')'; }
+ const full=orgn?esc(orgn):ps[0]?esc((ps[0].f?ps[0].f+' ':'')+ps[0].l)+(ps.length>1?' et al.':''):'';
+ const qt=['web','news','jour','chap','post','pod'].includes(t);
+ return end(jn(full,qt?'“'+esc(st)+'”':I(st)));
+}
+
+// ---- BibTeX ----
+function bibtex(items){
+ return items.map(it=>{
+  const v=it.v,t=it.t, ps=people(t==='ai'?v.company:v.author), yr=v.year||(D(v.date)||{}).y||'',
+        k=((ps[0]&&ps[0].l||t)+yr).replace(/\W/g,'');
+  const e=t==='book'?'book':t==='jour'?'article':'misc';
+  const f=[['author',(t==='rep'||t==='data')?'{'+v.author+'}':ps.map(p=>p.l+(p.f?', '+p.f:'')).join(' and ')],['title',t==='ai'?jn(v.tool,v.version):v.title],['year',yr],['publisher',v.publisher||(t==='ai'?v.company:'')],['journal',v.journal],['volume',v.volume],['number',v.issue],['pages',v.pages],['howpublished',v.site],['url',v.url]].filter(x=>x[1]);
+  return '@'+e+'{'+k+',\n'+f.map(x=>'  '+x[0]+' = {'+x[1]+'}').join(',\n')+'\n}';
+ }).join('\n\n');
+}
+
+// ---- Paste detection ----
+const AIH = {'chatgpt.com':['ChatGPT','OpenAI'],'chat.openai.com':['ChatGPT','OpenAI'],'claude.ai':['Claude','Anthropic'],'gemini.google.com':['Gemini','Google'],'copilot.microsoft.com':['Copilot','Microsoft'],'perplexity.ai':['Perplexity','Perplexity AI'],'grok.com':['Grok','xAI']};
+const SOC = {'x.com':'X','twitter.com':'X','instagram.com':'Instagram','tiktok.com':'TikTok','threads.net':'Threads','bsky.app':'Bluesky','facebook.com':'Facebook','linkedin.com':'LinkedIn','reddit.com':'Reddit'};
+const cap = s => s.replace(/(^|[-\s])(\w)/g,(m,a,b)=>(a?' ':'')+b.toUpperCase());
+function cleanUrl(u){ [...u.searchParams.keys()].forEach(k=>{ if(/^(utm_|fbclid|gclid|mc_|igshid|ref$|ref_)/i.test(k)) u.searchParams.delete(k); }); u.hash=''; return u.href.replace(/\/$/,''); }
+function detect(raw){
+ const cj=fromJson(raw); if(cj) return cj;
+ const t=raw.trim(); if(!t) return null;
+ const doi=/10\.\d{4,9}\/[^\s]+/.exec(t), isbn=/^(?:ISBN[:\s]*)?((?:97[89][- ]?)?\d[- \d]{8,15}[\dX])$/i.exec(t);
+ if(isbn&&t.replace(/\D/g,'').length>=10) return {type:'book',v:{},note:'We can’t look up ISBNs from here. Add the title, author and publisher.'};
+ if(doi) return {type:'jour',v:{url:'https://doi.org/'+doi[0].replace(/[.,;]$/,'')},note:'DOI saved. Add the article details.'};
+ let u=null; try{ u=new URL(/^https?:\/\//i.test(t)?t:'https://'+t); if(!/\./.test(u.hostname)||/\s/.test(t)) u=null; }catch(e){}
+ if(u){
+  const h=u.hostname.replace(/^www\./,''), url=cleanUrl(u);
+  if(AIH[h]) return {type:'ai',v:{tool:AIH[h][0],company:AIH[h][1],url,date:today},note:'AI chat link found. Add the version and your prompt.'};
+  if(/youtube\.com|youtu\.be/.test(h)) return {type:'video',v:{site:'YouTube',url},note:'Link cleaned. Add the title and channel.'};
+  if(/spotify\.com|podcasts\.apple\.com/.test(h)) return {type:'pod',v:{url},note:'Add the episode and show.'};
+  if(SOC[h]) return {type:'post',v:{site:SOC[h],url},note:'Add the author and post text.'};
+  if(/wikipedia\.org|britannica\.com/.test(h)) return {type:'ency',v:{site:/wiki/.test(h)?'Wikipedia':'Encyclopaedia Britannica',url},note:'Add the entry title and year.'};
+  if(/imdb\.com|letterboxd\.com/.test(h)) return {type:'film',v:{url},note:'Add the title, director and year.'};
+  if(/github\.com|gitlab\.com|npmjs\.com|pypi\.org/.test(h)) return {type:'soft',v:{url,publisher:cap(h.split('.')[0])},note:'Add the name, developer and year.'};
+  if(/\.(png|jpe?g|gif|webp)$/i.test(u.pathname)) return {type:'img',v:{url},note:'Add the artist, title and year.'};
+  if(/\.(csv|xlsx?|json)$/i.test(u.pathname)||/data\./.test(h)) return {type:'data',v:{url},note:'Add the title and publisher.'};
+  if(/nytimes|theguardian|bbc\.|reuters|apnews|washingtonpost|ft\.com|wsj|bloomberg|cnn|npr\.org|theatlantic|economist/.test(h)) return {type:'news',v:{site:cap(h.split('.').slice(-2,-1)[0]),url},note:'Add the headline, author and date.'};
+  return {type:'web',v:{site:cap(h.split('.').slice(-2,-1)[0]||h),url,acc:today},note:'We can’t read the page from here. Add the title and author.'};
+ }
+ const yr=/\b(1[5-9]\d\d|20\d\d)\b/.exec(t), by=/\bby\s+([^,.(]+)/i.exec(t);
+ return {type:T[type].x||type==='ai'?'web':type,v:{title:t.replace(/\s+by\s+[^,.(]+/i,'').replace(/\(?\b(1[5-9]\d\d|20\d\d)\b\)?/,'').trim().replace(/[,.]$/,''),...(by?{author:by[1].trim()}:{}),...(yr?{year:yr[1],date:yr[1]+'-01-01'}:{})},note:'Check the title, author and year.'};
+}
+
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('show'),2300);}
+function seg(el,items,cur,fn){
+ const sig=items.map(i=>i[0]).join('|'), lab=i=>esc(i[1])+(i[2]?'<span class="lock">'+(i[2]===true?'Premium':esc(i[2]))+'</span>':'');
+ if(el._sig!==sig){ el.innerHTML='<span class="th"></span>'; items.forEach(i=>{const b=document.createElement('button');b.dataset.k=i[0];b.dataset.l=lab(i);b.innerHTML=b.dataset.l;el.appendChild(b);}); el._sig=sig; }
+ items.forEach((i,x)=>{const b=el.children[x+1]; const l=lab(i); if(b.dataset.l!==l){b.dataset.l=l;b.innerHTML=l;} b.setAttribute('aria-pressed',i[0]===cur); b.onclick=()=>fn(i[0]);});
+ requestAnimationFrame(()=>{ const p=el.querySelector('[aria-pressed=true]'), th=el.querySelector('.th'); if(!p||!p.offsetWidth){th.style.opacity=0;return;} const first=!el._init; if(first) th.style.transition='none'; th.style.opacity=1; th.style.width=p.offsetWidth+'px'; th.style.height=p.offsetHeight+'px'; th.style.transform='translate('+p.offsetLeft+'px,'+p.offsetTop+'px)'; if(first){ void th.offsetWidth; th.style.transition=''; el._init=1; } });
+}
+function openSheet(mode,force){
+ const s=$('sheet'), c=$('sc'), P='margin:6px 0 0';
+ if(mode==='bm'){ drawBm(); } else if(mode==='shop'){ drawShop.target=null; drawShop(); } else if(mode==='login'){
+  c.innerHTML='<b>Get this device’s code</b><p class="sub" style="'+P+'">Sign in to see the premium code saved on this device.</p><div class="grid"><label><span>Username</span><input id="lu" autocomplete="off"></label><label><span>Password</span><input id="lp" type="password" autocomplete="off"></label></div><div class="row" style="margin-top:12px"><button class="btn p" id="ls">Sign in</button></div>';
+  $('ls').onclick=login; $('lp').onkeydown=e=>{if(e.key==='Enter')login();};
+ } else if(mode==='code'){
+  c.innerHTML='<b>Your code for this device</b><div class="code" id="cv">'+esc(S.code)+'</div><p class="sub">'+(S.redeemed?'It has already been used here.':'Enter it once under Premium to unlock. Each device gets its own code.')+'</p><div class="row" style="margin-top:12px"><button class="btn p" id="cc">Copy code</button><button class="btn" id="un">'+(S.unl?'Unlimited credits: on':'Unlimited credits: off')+'</button></div><hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><b>Give credits to another device</b><p class="sub" style="'+P+'">Paste their device code, then pick what to give.</p><div class="row" style="margin-top:10px"><input id="gc" placeholder="Their code" style="flex:1;min-width:180px" autocomplete="off"></div><div class="row" style="margin-top:10px"><input id="ga" type="number" min="1" max="99999" value="25" style="width:110px"><button class="btn" id="gk2">Make credits key</button><button class="btn" id="gk">Make unlimited key</button></div><div class="code" id="gv" style="font-size:22px"></div>'+empAdminHtml();
+  $('cc').onclick=async()=>toast(await copyText(esc(S.code))?'Code copied':'Select the code and copy it.');
+  c.querySelectorAll('[data-ec]').forEach(b=>b.onclick=async()=>toast(await copyText(esc(empCode(b.dataset.ec)))?'Code copied':'Select the code and copy it.'));
+  $('gk2').onclick=async()=>{const v=$('gc').value.trim().toUpperCase().replace(/\s/g,''); const amt=Math.max(1,Math.min(99999,parseInt($('ga').value)||0)); if(v.length<12){toast('Paste the full device code first.');return;} const A='ABCDEFGHJKMNPQRSTUVWXYZ23456789'; const tok=Array.from({length:4},()=>A[Math.floor(Math.random()*A.length)]).join(''); const k=CKEY(v,amt,tok); $('gv').textContent=k; toast(await copyText(esc(k))?'Key for '+amt+' credits copied':'Select the key and copy it.');};
+  $('un').onclick=()=>{S.unl=!S.unl;save();render();openSheet('code');toast(S.unl?'Unlimited credits on for this device':'Unlimited credits off');};
+  $('gk').onclick=async()=>{const v=$('gc').value.trim().toUpperCase().replace(/\s/g,''); if(v.length<12){toast('Paste the full device code first.');return;} const k=giftKey(v); $('gv').textContent=k; toast(await copyText(esc(k))?'Key copied':'Select the key and copy it.');};
+ } else if(S.active){
+  c.innerHTML='<b>Premium is on.</b><p class="sub" style="'+P+'">SparkNews, MLA, Chicago, more source types, an unlimited list and BibTeX. Type your off code anywhere to switch it off.</p><p class="sub" style="margin:12px 0 0">'+S.credits+' credits left. Refills to 25 each week.</p>';
+ } else if(S.redeemed){
+  c.innerHTML='<b>Premium is off.</b><p class="sub" style="'+P+'">Your code has been used on this device. Type your special code anywhere to switch premium back on.</p>';
+ } else {
+  c.innerHTML='<b>'+(S.unl?'∞':S.credits)+' credits left.</b><p class="sub" style="'+P+'">One credit gets one citation. Free refills to 3 each week. Premium refills to 25.</p><hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><b>Unlock premium</b><p class="sub" style="margin:6px 0 10px">SparkNews, MLA, Chicago, 16 more source types, an unlimited list, BibTeX and 50 credits.</p><div class="row"><input id="code" placeholder="Code for this device" style="flex:1;min-width:180px" autocomplete="off"><button class="btn p" id="redeem">Unlock</button></div>';
+  $('redeem').onclick=redeem; $('code').onkeydown=e=>{if(e.key==='Enter')redeem();};
+ }
+ if(mode!=='login'&&mode!=='code'&&mode!=='shop'&&mode!=='bm'&&!S.unl){ c.insertAdjacentHTML('beforeend','<hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><b>Have a key?</b><div class="row" style="margin-top:10px"><input id="uk" placeholder="Paste your key" style="flex:1;min-width:180px" autocomplete="off"><button class="btn" id="ua">Apply</button></div>'); const ap=()=>{ const [ok,m]=redeemKey($('uk').value); toast(m); if(ok) $('sheet').classList.remove('show'); }; $('ua').onclick=ap; $('uk').onkeydown=e=>{if(e.key==='Enter')ap();}; }
+ s.classList.toggle('show',force===true||mode==='login'||mode==='code'||mode==='bm'?true:!s.classList.contains('show'));
+ const f=$('lu')||$('code'); if(f&&s.classList.contains('show')) f.focus();
+}
+function login(){
+ if(Date.now()<S.until){toast('Too many tries. Wait a minute and try again.');return;}
+ if(cyrb($('lu').value.trim().toLowerCase()+'|'+$('lp').value)===LOGIN_HASH){S.fails=0;save();openSheet('code');}
+ else { S.fails++; if(S.fails>=5){S.until=Date.now()+60000;S.fails=0;} save(); toast('Wrong username or password.'); }
+}
+function redeem(){
+ if(S.redeemed){toast('This code has already been used.');return;}
+ if($('code').value.trim().toUpperCase().replace(/\s/g,'')===S.code){S.redeemed=S.active=true;S.credits+=50;style='spark';save();$('sheet').classList.remove('show');render();toast('Premium unlocked. 50 credits added.');}
+ else toast('That is not this device’s code. Type getcode to find it.');
+}
+$('pp').onclick=()=>openSheet('info'); $('cp').onclick=()=>nav('credits');
+// ---- SparkNews team access ----
+// Add people here as 'lowercase full name':'their email'. Removing a name, or listing it in REVOKED, removes their access.
+const EMPLOYEES={};
+const REVOKED=[];
+const EMP_SALT='change-this-salt';
+const empKey=n=>n.trim().toLowerCase().replace(/\s+/g,' ');
+const empCode=n=>{ const h=cyrb('emp|'+n+'|'+EMP_SALT).toString(36).toUpperCase().padStart(8,'0').slice(-8); return 'SN-'+h.slice(0,4)+'-'+h.slice(4); };
+const empOK=n=>!!EMPLOYEES[n]&&!REVOKED.includes(n);
+function empRestore(){ const p=S.empPrev||{}; S.active=!!p.active; S.redeemed=!!p.redeemed; S.unl=!!p.unl; S.emp=''; save(); }
+function empCheck(){ if(S.emp&&!empOK(S.emp)) empRestore(); }
+function empSignIn(name,code){
+ const k=empKey(name);
+ if(!empOK(k)||code.trim().toUpperCase()!==empCode(k)) return [false,'That name and code do not match.'];
+ if(!S.emp) S.empPrev={active:S.active,redeemed:S.redeemed,unl:S.unl};
+ S.emp=k; S.active=S.redeemed=S.unl=true; style='spark'; save(); render();
+ return [true,'Welcome to the SparkNews team. Premium and unlimited credits are on.'];
+}
+function empAdminHtml(){
+ const names=Object.keys(EMPLOYEES);
+ return '<hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><b>SparkNews team codes</b>'+(names.length?names.map(n=>{ const st=REVOKED.includes(n)?' (revoked)':''; return '<div class="row" style="margin-top:8px"><span style="flex:1;min-width:140px">'+esc(n)+esc(st)+'</span><button class="btn" data-ec="'+esc(n)+'">Copy code</button><a class="btn" style="text-decoration:none" href="mailto:'+esc(EMPLOYEES[n])+'?subject='+encodeURIComponent('Your SparkNews team code')+'&body='+encodeURIComponent('Your code: '+empCode(n)+'\nOpen Settings, choose SparkNews team, and enter your name and this code.')+'">Email code</a></div>'; }).join(''):'<p class="sub" style="margin:6px 0 0">No team members yet. Add names to EMPLOYEES in the file.</p>');
+}
+function drawTeam(){
+ const b=$('teambox');
+ if(S.emp){ b.innerHTML='<p class="sub" style="margin:6px 0 12px">Signed in as <b>'+esc(S.emp)+'</b>. Premium and unlimited credits are on.</p><button class="btn" id="tout">Sign out</button>'; $('tout').onclick=()=>{ empRestore(); render(); drawTeam(); toast('Signed out'); }; return; }
+ b.innerHTML='<p class="sub" style="margin:6px 0 0">Enter your name and the team code you were emailed.</p><div class="grid"><label><span>Name</span><input id="en" autocomplete="off"></label><label><span>Code</span><input id="ecd" autocomplete="off"></label></div><div class="row" style="margin-top:12px"><button class="btn p" id="ein">Sign in</button></div>';
+ const go=()=>{ const [ok,m]=empSignIn($('en').value,$('ecd').value); toast(m); if(ok) drawTeam(); };
+ $('ein').onclick=go; $('ecd').onkeydown=e=>{ if(e.key==='Enter') go(); };
+}
+
+// ---- Credits: given by the owner, never sold ----
+const CKEY=(code,amt,tok)=>'CR-'+amt+'-'+tok+'-'+cyrb(code+'|credits|'+amt+'|'+tok).toString(36).toUpperCase().padStart(8,'0').slice(-6);
+function redeemKey(raw){
+ const k=raw.trim().toUpperCase().replace(/\s/g,'');
+ if(!k) return [false,'Paste a key first.'];
+ if(k===giftKey(S.code)){ S.unl=true; save(); render(); return [true,'Unlimited credits unlocked']; }
+ const m=/^CR-(\d{1,5})-([A-Z0-9]{4})-/.exec(k);
+ if(m&&k===CKEY(S.code,m[1],m[2])){ S.used=S.used||[]; if(S.used.includes(k)) return [false,'This key has already been used.']; S.used.push(k); S.credits+=+m[1]; save(); render(); return [true,m[1]+' credits added']; }
+ return [false,'That key is not for this device.'];
+}
+function drawShop(){
+ const c=drawShop.target||$('sc');
+ c.innerHTML='<b>Credits</b><div class="code" style="font-size:48px;letter-spacing:0">'+(S.unl?'\u221e':S.credits)+'</div><p class="sub">Credits are not for sale. Free accounts refill to 3 each week and premium refills to 25. Need more? Ask the owner for a key.</p><hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><b>Redeem a key</b><div class="row" style="margin-top:10px"><input id="rk" placeholder="Paste your key" style="flex:1;min-width:180px" autocomplete="off"><button class="btn p" id="rkb">Redeem</button></div>';
+ const go=()=>{ const [ok,m]=redeemKey($('rk').value); toast(m); if(ok) drawShop(); };
+ $('rkb').onclick=go; $('rk').onkeydown=e=>{ if(e.key==='Enter') go(); };
+}
+function reveal(el){ let i=0; const walk=n=>{ [...n.childNodes].forEach(c=>{ if(c.nodeType===3){ const f=document.createDocumentFragment(); c.textContent.split(/(\s+)/).forEach(p=>{ if(!p) return; if(/^\s+$/.test(p)) f.append(p); else { const s=document.createElement('span'); s.className='w'; s.style.animationDelay=(i++*35)+'ms'; s.textContent=p; f.append(s); } }); c.replaceWith(f); } else walk(c); }); }; walk(el); }
+async function copyText(html){
+ const plain=plainOf(html);
+ try{ await navigator.clipboard.write([new ClipboardItem({'text/html':new Blob([html],{type:'text/html'}),'text/plain':new Blob([plain],{type:'text/plain'})})]); return true; }catch(e){}
+ try{ await navigator.clipboard.writeText(plain); return true; }catch(e){}
+ try{ const n=document.createElement('div'); n.innerHTML=html; n.style.cssText='position:fixed;opacity:0'; document.body.appendChild(n); const r=document.createRange(); r.selectNodeContents(n); const sel=getSelection(); sel.removeAllRanges(); sel.addRange(r); const ok=document.execCommand('copy'); sel.removeAllRanges(); n.remove(); return ok; }catch(e){ return false; }
+}
+// ---- Secret words, typed anywhere ----
+const W=['premiumoff','getcode']; let buf='';
+addEventListener('keydown',e=>{
+ if(e.key.length!==1||e.ctrlKey||e.metaKey) return;
+ buf=(buf+e.key.toLowerCase()).slice(-10);
+ const w=W.find(x=>buf.endsWith(x)); if(!w) return;
+ e.preventDefault(); buf='';
+ const el=document.activeElement;
+ if(el&&(el.tagName==='INPUT'||el.tagName==='TEXTAREA')&&!['code','lu','lp'].includes(el.id)){el.value=el.value.slice(0,-(w.length-1));el.dispatchEvent(new Event('input'));}
+ if(w==='getcode'){openSheet('login');return;}
+ if(!S.redeemed){toast('Enter your one-time code first.');return;}
+ S.active=!S.active; if(!S.active){ if(T[type].x) type='web'; if(locked(type,style)) style='mla'; } else style='spark';
+ save(); render(); $('sheet').classList.remove('show'); toast(S.active?'Premium on':'Premium off');
+});
+
+// ---- Storefront ----
+let basket=[], dview='cart', ptype='web', pnote='', receipt=[];
+const fresh=k=>{V[k]=k==='web'?{acc:today}:k==='ai'?{date:today}:{};};
+fresh('web'); fresh('ai');
+const readyOf=(t,v)=>t==='ai'?v.tool:(t==='intv'||t==='rep'||t==='data')?(v.author||v.title):v.title;
+const makeOf=(t,v,s)=>readyOf(t,v)?(s==='spark'?spark(t,v):F[t][s](v)):'';
+const glyph=k=>({web:'w',book:'B',jour:'J',ai:'AI'}[k]||T[k].n[0]);
+const bump=el=>{el.classList.remove('bump');void el.offsetWidth;el.classList.add('bump');};
+const drawerOpen=()=>$('drawer').classList.contains('show');
+function openD(v){dview=v;$('drawer').classList.add('show');$('veil').classList.add('show');drawDrawer();}
+function closeD(){$('drawer').classList.remove('show');$('veil').classList.remove('show');}
+function drawDrawer(){ if(dview==='product') drawProduct(); else if(dview==='receipt') drawReceipt(); else drawCart(); }
+
+let shelfSig='';
+var drawShelf=function(){
+ const sig=String(S.active); if(sig===shelfSig) return;
+ const first=!shelfSig; shelfSig=sig;
+ $('shelf').innerHTML=Object.keys(T).map((k,i)=>'<button class="tile" data-k="'+k+'"'+(first?' style="animation:sharp .7s '+(i*45)+'ms both"':'')+'><span class="g">'+esc(glyph(k))+'</span><span><span class="n">'+esc(T[k].n)+'</span><br><span class="pr">1 credit'+(T[k].x&&!S.active?' <span class="lock">Premium</span>':'')+'</span></span></button>').join('');
+ $('shelf').querySelectorAll('.tile').forEach(b=>b.onclick=()=>chooseType(b.dataset.k));
+}
+function chooseType(k){ if(T[k].x&&!S.active){openSheet('info',true);return;} ptype=k; pnote=''; openD('product'); }
+function pasteFind(){
+ const d=detect($('paste').value); if(!d){toast('Paste a link, DOI, ISBN or title first.');return;}
+ if(T[d.type].x&&!S.active){ d.type='web'; d.note='That looks like a premium source type, so we set it up as a website.'; }
+ if(d.type==='ai') logPrompt(d.v); fresh(d.type); Object.assign(V[d.type],d.v); ptype=d.type; pnote=d.note; $('paste').value=''; openD('product');
+}
+function drawProduct(){
+ const c=$('dc'), k=ptype; type=k;
+ c.innerHTML='<div class="sub">New citation</div><h2 class="dh">'+esc(T[k].n)+'</h2>'+(pnote?'<p class="sub">'+esc(pnote)+'</p>':'')+'<div class="grid" id="pf"></div><p class="sub" style="margin-top:18px">Preview in '+esc(STY[style])+'</p><p class="pv lk" id="ppv"></p><p class="sub" id="pgap" style="margin-top:10px"></p><div class="row" style="margin-top:auto;padding-top:20px"><button class="btn" id="pcn">Cancel</button><span class="sp"></span><button class="btn p" id="pa" disabled>Add to cart · 1 credit</button></div>';
+ const pv=()=>{ const h=makeOf(k,V[k],style); $('ppv').innerHTML=h||'<span class="sub">Add a title to see it.</span>'; $('ppv').classList.toggle('lk',!!h); $('pa').disabled=!h; const g=sparkGaps(k,V[k]); $('pgap').textContent=style==='spark'&&h?(g.length?'Add '+g.join(', ')+' for a stronger citation.':'Complete. Nothing missing.'):''; };
+ T[k].f.forEach(([f,l,ph])=>{
+  const lab=document.createElement('label'), sp=document.createElement('span'), inp=document.createElement('input');
+  sp.textContent=l; inp.type=ph==='date'?'date':'text'; if(ph!=='date') inp.placeholder=ph;
+  inp.value=V[k][f]||''; inp.autocomplete='off';
+  inp.oninput=()=>{V[k][f]=inp.value;pv();};
+  inp.onkeydown=e=>{if(e.key==='Enter'&&!$('pa').disabled)$('pa').click();};
+  lab.append(sp,inp); $('pf').appendChild(lab);
+ });
+ $('pcn').onclick=closeD;
+ $('pa').onclick=()=>{ basket.push({id:Math.random().toString(36).slice(2),t:k,v:{...V[k]}}); fresh(k); pnote=''; render(); closeD(); toast('Added to cart'); };
+ pv(); setTimeout(()=>{const f=c.querySelector('input'); if(f) f.focus({preventScroll:true});},500);
+}
+function drawCart(){
+ const c=$('dc'), n=basket.length, have=S.unl?'\u221e':S.credits;
+ c.innerHTML='<div class="sub">Your cart \u00b7 '+esc(STY[style])+(style==='spark'?' \u00b7 '+esc(PERS[S.persona]):'')+'</div><h2 class="dh">'+(n?n+(n>1?' citations':' citation'):'Nothing here yet')+'</h2>'+(n?basket.map(it=>'<div class="ci"><p class="pv lk">'+makeOf(it.t,it.v,style)+'</p><button class="rm" data-r="'+it.id+'" aria-label="Remove">\u00d7</button></div>').join(''):'<p class="sub">Pick a source from the shelf, or paste a link at the top.</p>')+'<div class="cartbar" style="margin-top:auto"><span class="sub">'+(n?n+(n>1?' credits':' credit')+' \u00b7 you have '+have:'You have '+have+' credits')+'</span><button class="btn p" id="pay"'+(n?'':' disabled')+'>Checkout</button></div>';
+ c.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{basket=basket.filter(i=>i.id!==b.dataset.r);render();drawCart();});
+ $('pay').onclick=payCart;
+}
+function payCart(){
+ const n=basket.length; if(!n) return;
+ if(!S.unl&&S.credits<n){ closeD(); nav('credits'); toast('Not enough credits. Ask the owner for a key, or wait for next week\u2019s refill.'); return; }
+ if(!S.unl) S.credits-=n;
+ const done=basket.map(it=>({t:it.t,s:style,v:{...it.v},h:makeOf(it.t,it.v,style)}));
+ done.forEach(d=>S.list.push(d)); if(!S.active&&S.list.length>3) S.list=S.list.slice(-3);
+ basket=[]; receipt=done; save(); render(); dview='receipt'; drawReceipt();
+}
+function drawReceipt(){
+ const c=$('dc'), n=receipt.length;
+ c.innerHTML='<div class="sub">Order complete</div><h2 class="dh">'+n+(n>1?' citations':' citation')+' ready</h2>'+receipt.map((d,i)=>'<div class="ci"><div><p class="pv rcp">'+d.h+'</p><p class="sub" style="margin-top:6px">In-text: '+intext(d.t,d.s,d.v)+'</p></div><button class="btn" data-c="'+i+'">Copy</button></div>').join('')+'<div class="row" style="margin-top:auto;padding-top:20px"><button class="btn" id="rall">Copy all</button><button class="btn" id="rmd">Copy Markdown</button><button class="btn" id="rbib">Copy BibTeX</button><span class="sp"></span><button class="btn p" id="rdone">Keep shopping</button></div>';
+ c.querySelectorAll('.rcp').forEach(reveal);
+ c.querySelectorAll('[data-c]').forEach(b=>b.onclick=async()=>toast(await copyText(receipt[+b.dataset.c].h)?'Copied':'Select the text and copy it manually.'));
+ $('rall').onclick=async()=>toast(await copyText(receipt.map(x=>'<p style="margin:0 0 .6em 2em;text-indent:-2em">'+x.h+'</p>').join(''))?'Copied':'Copy did not work.');
+ $('rbib').onclick=async()=>{ if(!S.active){closeD();openSheet('info',true);return;} toast(await copyText(esc(bibtex(receipt)).replace(/\n/g,'<br>'))?'BibTeX copied':'Copy did not work.'); };
+ $('rmd').onclick=async()=>toast(await copyText(esc(receipt.map(x=>mdOf(x.h)).join('\n\n')).replace(/\n/g,'<br>'))?'Markdown copied':'Copy did not work.');
+ $('rdone').onclick=closeD;
+}
+const sorted=()=>S.active?S.list.slice().sort((a,b)=>plainOf(a.h).replace(/^\u201c/,'').localeCompare(plainOf(b.h).replace(/^\u201c/,''))):S.list;
+function render(){
+ if(style!=='apa'&&!S.active) style='apa';
+ $('prow').style.display=style==='spark'?'flex':'none'; $('sphint').textContent=style==='spark'?HINT[S.persona]:'';
+ const after=()=>{ if(drawerOpen()&&dview==='cart') drawCart(); };
+ seg($('styles'),Object.keys(STY).map(k=>[k,STY[k],k==='apa'?false:S.active?(k==='spark'?'Best':false):true]),style,k=>{ if(k!=='apa'&&!S.active){openSheet('info',true);return;} style=k; render(); after(); });
+ seg($('pers'),Object.keys(PERS).map(k=>[k,PERS[k]]),S.persona,k=>{ S.persona=k; save(); render(); after(); });
+ const cn=S.unl?'\u221e':String(S.credits); if($('cn').textContent!==cn){ $('cn').textContent=cn; bump($('cp')); } $('cp').classList.toggle('inf',!!S.unl);
+ const cb=String(basket.length); if($('cb').textContent!==cb){ $('cb').textContent=cb; bump($('cartb')); }
+ $('pp').classList.toggle('on',S.active); $('pl').textContent=S.active?'Premium on':'Premium'; 
+ seg($('cats'),Object.keys(CATS).map(k=>[k,CATS[k][0]]),cat,k=>{ cat=k; render(); });
+ seg($('cfgmode'),[['ask','Ask me'],['fast','Fast lane'],['slide','Slideshow']],(S.cfg&&S.cfg.mode)||'ask',k=>{ S.cfg.mode=k; save(); render(); });
+ drawShelf(); drawNav();
+ $('lsub').textContent=S.active?'Unlimited. Click an entry to copy it. Copy all sorts A to Z.':'Free keeps your last 3. Click an entry to copy it. Premium keeps everything and exports BibTeX.';
+ const lq=($('lq').value||'').toLowerCase(); $('list').innerHTML=S.list.map((x,i)=>[x,i]).filter(([x])=>plainOf(x.h).toLowerCase().includes(lq)).map(([x,i])=>'<div class="item" data-i="'+i+'">'+x.h+'</div>').join('')||'<p class="sub">'+(S.list.length?'No matches.':'Nothing here yet. Check out a citation and it lands here.')+'</p>';
+ $('list').querySelectorAll('.item').forEach(el=>el.onclick=async()=>toast(await copyText(S.list[+el.dataset.i].h)?'Copied':'Select the text and copy it manually.'));
+ $('copyall').disabled=$('clear').disabled=$('bib').disabled=$('mdl').disabled=!S.list.length;
+ if(cur==='fast'&&!/fi|^fl$/.test(document.activeElement.className+'|'+document.activeElement.id)&&document.activeElement.tagName!=='INPUT') drawRows();
+}
+$('cartb').onclick=()=>openD('cart');
+$('veil').onclick=closeD; $('dx').onclick=closeD; $('sx').onclick=()=>$('sheet').classList.remove('show');
+addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeD(); $('sheet').classList.remove('show'); } });
+$('addp').onclick=pasteFind; $('paste').onkeydown=e=>{ if(e.key==='Enter') pasteFind(); };
+$('paste').addEventListener('paste',()=>setTimeout(()=>{ if($('paste').value.trim()) pasteFind(); },60));
+$('copyall').onclick=async()=>toast(await copyText(sorted().map(x=>'<p style="margin:0 0 .6em 2em;text-indent:-2em">'+x.h+'</p>').join(''))?'Copied':'Copy did not work.');
+$('bib').onclick=async()=>{ if(!S.active){openSheet('info',true);return;} toast(await copyText(esc(bibtex(sorted())).replace(/\n/g,'<br>'))?'BibTeX copied':'Copy did not work.'); };
+$('mdl').onclick=async()=>toast(await copyText(esc(sorted().map(x=>mdOf(x.h)).join('\n\n')).replace(/\n/g,'<br>'))?'Markdown copied':'Copy did not work.');
+$('clear').onclick=()=>{S.list=[];save();render();};
+document.querySelectorAll('.k').forEach(k=>{k.innerHTML=k.textContent.split(' ').map((w,i)=>'<span class="w" style="animation-delay:'+(i*70)+'ms">'+esc(w)+'</span>').join(' ');});
+// ---- Pages ----
+const PAGES=['shop','fast','library','prompts','credits','settings'];
+const NAV=[['shop','Shop'],['fast','Fast lane'],['library','Library'],['prompts','Prompt log'],['credits','Credits'],['settings','Settings']];
+let cur=(location.hash||'').slice(1); if(!PAGES.includes(cur)) cur='shop';
+function drawNav(){ seg($('nav'),NAV.map(([k,n])=>[k,n,k==='library'&&S.list.length?String(S.list.length):false]),cur,nav); }
+function route(){
+ PAGES.forEach(k=>$('pg-'+k).classList.toggle('on',k===cur));
+ $('toolbar').style.display=(cur==='shop'||cur==='fast')?'':'none';
+ drawShop.target=cur==='credits'?$('shopbox'):null; if(cur==='credits') drawShop();
+ drawNav(); if(cur==='settings') drawTeam(); if(cur==='prompts') drawPrompts();
+ if(route.last!==cur){ route.last=cur; window.scrollTo(0,0); if(cur==='fast') setTimeout(()=>$('kin').focus({preventScroll:true}),350); }
+}
+function nav(p){ cur=p; try{ if(location.hash!=='#'+p) location.hash=p; }catch(e){} route(); }
+addEventListener('hashchange',()=>{ const h=location.hash.slice(1); if(PAGES.includes(h)&&h!==cur){ cur=h; route(); } });
+addEventListener('keydown',e=>{ if(e.key==='/'&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName)){ e.preventDefault(); if(cur==='fast') $('kin').focus(); else { nav('shop'); $('paste').focus(); } } });
+$('tofast').onclick=()=>nav('fast');
+
+// ---- Shelf categories ----
+const CATS={all:['All',null],day:['Everyday',['web','news','post','intv']],acad:['Academic',['book','jour','chap','conf','thesis','ency','case','lect']],media:['Media',['video','pod','film','img']],data:['Data and AI',['ai','data','soft','rep']]};
+let cat='all';
+drawShelf=function(){
+ const sig=String(S.active)+cat; if(sig===shelfSig) return; shelfSig=sig;
+ const keys=Object.keys(T).filter(k=>cat==='all'||CATS[cat][1].includes(k));
+ $('shelf').innerHTML=keys.map((k,i)=>'<button class="tile" data-k="'+k+'" style="animation:sharp .6s '+(i*40)+'ms both"><span class="g">'+esc(glyph(k))+'</span><span><span class="n">'+esc(T[k].n)+'</span><br><span class="pr">1 credit'+(T[k].x&&!S.active?' <span class="lock">Premium</span>':'')+'</span></span></button>').join('');
+ $('shelf').querySelectorAll('.tile').forEach(b=>b.onclick=()=>chooseType(b.dataset.k));
+};
+
+// ---- Fast lane ----
+const LOC=/^(https?:\/\/\S+|www\.\S+|10\.\d{4,9}\/\S+|(?:ISBN[:\s]*)?\d[\d- ]{8,15}[\dX]|[\w-]+(\.[\w-]+)+\/\S*)$/i;
+const sortBy=a=>S.active?a.slice().sort((x,y)=>plainOf(x.h).replace(/^\u201c/,'').localeCompare(plainOf(y.h).replace(/^\u201c/,''))):a;
+let flRows=[], fill={}, flTimer=0;
+function parseLine(raw){
+ if(isCiteJson(raw)){ const d=fromJson(raw)||{type:'web',v:{},note:''}; let t=d.type, v={...d.v}; if(T[t].x&&!S.active){ t='web'; v.acc=v.acc||today; } if(t==='web'&&!v.acc) v.acc=today; return {t,v,note:d.note}; }
+ const parts=raw.split('|').map(s=>s.trim()).filter(Boolean);
+ let d=null, rest=[];
+ parts.forEach(p=>{ if(!d&&LOC.test(p)) d=detect(p); else rest.push(p); });
+ const sv=type; type='web';
+ if(!d){ d=detect(parts[0]||raw)||{type:'web',v:{}}; rest=rest.slice(1); }
+ type=sv;
+ let t=d.type, v={...d.v};
+ if(T[t].x&&!S.active){ t='web'; v.acc=v.acc||today; }
+ rest.forEach(p=>{
+  if(/^\d{4}-\d\d-\d\d$/.test(p)){ v.date=p; v.year=p.slice(0,4); }
+  else if(/^\d{4}$/.test(p)){ v.year=p; if(!v.date) v.date=p+'-01-01'; }
+  else if(t==='ai'){ if(!v.version) v.version=p; else if(!v.prompt) v.prompt=p; }
+  else if(!v.title) v.title=p; else if(!v.author) v.author=p; else if(!v.site) v.site=p;
+ });
+ return {t,v,note:(T[d.type].x&&!S.active)?'That looks like a premium source type, so it is set up as a website.':(d.note||'')};
+}
+const keyOf=r=>r.t==='ai'?'tool':(r.t==='intv'||r.t==='rep'||r.t==='data')?'author':'title';
+function parseFast(){
+ flRows=$('fl').value.split('\n').map(s=>s.trim()).filter(Boolean).map(raw=>{
+  const r=parseLine(raw); r.raw=raw;
+  const f=fill[raw]; if(f){ const {__t,...fv}=f; if(__t&&(!T[__t].x||S.active)){ r.t=__t; r.note=''; } Object.assign(r.v,fv); }
+  if(r.t==='web'&&!r.v.acc) r.v.acc=today; if(r.t==='ai'&&!r.v.date) r.v.date=today;
+  r.ok=!!readyOf(r.t,r.v); r.open=(raw in openMap)?openMap[raw]:!r.ok; return r;
+ });
+ drawRows();
+}
+let openMap={};
+function flInfo(){
+ const n=flRows.filter(r=>r.ok).length, miss=flRows.length-n, have=S.unl?'\u221e':S.credits;
+ $('flinfo').textContent=!flRows.length?'Paste your sources to begin.':n?n+(n>1?' credits':' credit')+' \u00b7 you have '+have+(miss?' \u00b7 '+miss+' need details':''):'Nothing ready yet. Fill in the details below.';
+ $('flgo').disabled=!n; $('flgo').textContent=n?'Check out '+n+(n>1?' citations':' citation'):'Check out all';
+}
+function drawRows(){
+ const box=$('flrows'); box.innerHTML='';
+ flRows.forEach(r=>{
+  const row=document.createElement('div'), head=document.createElement('div'), sel=document.createElement('select'), note=document.createElement('span'), chip=document.createElement('span'), gp=document.createElement('span'), sp=document.createElement('span'), tog=document.createElement('button'), rm=document.createElement('button'), grid=document.createElement('div'), pv=document.createElement('p');
+  row.className='fr'; head.className='fh'; sel.className='fsel'; note.className='st'; sp.className='sp'; tog.className='lnk'; tog.style.padding='0'; rm.className='rm'; rm.textContent='\u00d7'; rm.setAttribute('aria-label','Remove this source'); grid.className='fg'; pv.className='pv lk';
+  sel.setAttribute('aria-label','Source type');
+  Object.keys(T).forEach(k=>{ const o=document.createElement('option'); o.value=k; o.textContent=T[k].n+(T[k].x&&!S.active?' (premium)':''); o.disabled=!!T[k].x&&!S.active&&k!==r.t; o.selected=k===r.t; sel.appendChild(o); });
+  sel.onchange=()=>{ fill[r.raw]=Object.assign(fill[r.raw]||{},{__t:sel.value}); openMap[r.raw]=true; parseFast(); };
+  note.textContent=r.note||'';
+  const kf=T[r.t].f.find(x=>x[0]===keyOf(r));
+  const upd=()=>{ chip.textContent=r.ok?'Ready':'Needs '+(kf?kf[1].toLowerCase():'details'); chip.className='st'+(r.ok?' ok':''); pv.style.display=r.ok?'':'none'; pv.innerHTML=r.ok?makeOf(r.t,r.v,style):''; const g=(style==='spark'&&r.ok)?sparkGaps(r.t,r.v):[]; gp.className='st'; gp.textContent=style==='spark'&&r.ok?(g.length?'Add '+g.join(', ')+' for a stronger citation':'Complete'):''; };
+  const show=()=>{ grid.style.display=r.open?'':'none'; tog.textContent=r.open?'Hide details':'Edit details'; };
+  tog.onclick=()=>{ r.open=!r.open; openMap[r.raw]=r.open; show(); };
+  rm.onclick=()=>{ const lines=$('fl').value.split('\n'), i=lines.findIndex(l=>l.trim()===r.raw); if(i>-1) lines.splice(i,1); $('fl').value=lines.join('\n'); parseFast(); };
+  T[r.t].f.forEach(([f,l,ph])=>{
+   const lab=document.createElement('label'), s=document.createElement('span'), inp=document.createElement('input');
+   s.textContent=l; inp.type=ph==='date'?'date':'text'; if(ph!=='date') inp.placeholder=ph; inp.value=r.v[f]||''; inp.autocomplete='off'; inp.className='fi'+(f===keyOf(r)&&!inp.value?' req':'');
+   inp.oninput=()=>{ r.v[f]=inp.value; fill[r.raw]=Object.assign(fill[r.raw]||{},{[f]:inp.value}); r.ok=!!readyOf(r.t,r.v); if(f===keyOf(r)) inp.classList.toggle('req',!inp.value.trim()); upd(); flInfo(); };
+   inp.onkeydown=e=>{ if(e.key==='Enter'){ e.preventDefault(); const all=[...document.querySelectorAll('#flrows .fi')], i=all.indexOf(inp); if(all[i+1]) all[i+1].focus(); else $('flgo').focus(); } };
+   lab.append(s,inp); grid.appendChild(lab);
+  });
+  head.append(sel,chip,gp,note,sp,tog,rm); row.append(head,grid,pv); box.appendChild(row); upd(); show();
+ });
+ flInfo();
+}
+function flGo(){
+ const rows=flRows.filter(r=>r.ok), n=rows.length; if(!n) return;
+ if(!S.unl&&S.credits<n){ toast('Not enough credits. Ask the owner for a key, or wait for next week\u2019s refill.'); nav('credits'); return; }
+ if(!S.unl) S.credits-=n;
+ const done=rows.map(r=>({t:r.t,s:style,v:{...r.v},h:makeOf(r.t,r.v,style)}));
+ done.forEach(d=>S.list.push(d)); if(!S.active&&S.list.length>3) S.list=S.list.slice(-3);
+ save();
+ const L=sortBy(done), html=L.map(x=>'<p style="margin:0 0 .6em 2em;text-indent:-2em">'+x.h+'</p>').join('');
+ $('fl').value=flRows.filter(r=>!r.ok).map(r=>r.raw).join('\n'); parseFast(); render(); $('kin').focus();
+ $('flout').innerHTML='<h2>'+n+(n>1?' citations':' citation')+' ready</h2><div class="box">'+L.map(x=>'<p class="pv rcp" style="margin:0 0 12px 2em;text-indent:-2em">'+x.h+'</p>').join('')+'</div><div class="row" style="margin-top:14px"><button class="btn p" id="fcp">Copy all again</button><button class="btn" id="fmd">Copy Markdown</button><button class="btn" id="fnew">Clear results</button></div>';
+ $('flout').querySelectorAll('.rcp').forEach(reveal);
+ $('fcp').onclick=async()=>toast(await copyText(html)?'Copied':'Copy did not work.');
+ $('fnew').onclick=()=>{ $('flout').innerHTML=''; };
+ $('fmd').onclick=async()=>toast(await copyText(esc(L.map(x=>mdOf(x.h)).join('\n\n')).replace(/\n/g,'<br>'))?'Markdown copied':'Copy did not work.');
+ copyText(html).then(ok=>toast(ok?n+(n>1?' citations':' citation')+' copied'+(S.unl?'':' \u00b7 '+n+(n>1?' credits':' credit')+' used'):'Ready. Copy them below.'));
+}
+$('fl').addEventListener('input',()=>{ clearTimeout(flTimer); flTimer=setTimeout(parseFast,160); });
+$('fl').addEventListener('keydown',e=>{ if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){ e.preventDefault(); flGo(); } });
+$('flgo').onclick=flGo;
+$('lq').oninput=()=>render();
+// ---- Keyboard-only fast lane ----
+let kst=null, kt='web', kv={}, kraw='', karm=0;
+const kTypes=()=>Object.keys(T).filter(k=>!T[k].x||S.active);
+function kReset(){ kst=null; const c=$('kc'); c.style.display='none'; c.innerHTML=''; const i=$('kin'); i.readOnly=false; i.value=''; i.focus(); }
+function kConfirm(note){
+ const c=$('kc'); c.style.display='block';
+ c.innerHTML='<div class="sub">This looks like</div><h2 class="dh" style="margin:2px 0 6px">'+esc(T[kt].n)+'</h2>'+(note?'<p class="sub" style="margin:0 0 10px">'+esc(note)+'</p>':'')+'<p class="sub" style="margin:0"><span class="kbd">Enter</span> continue &nbsp; <span class="kbd">Tab</span> change type &nbsp; <span class="kbd">Esc</span> cancel</p>';
+}
+function kStart(){
+ const t=$('kin').value.trim(); if(!t) return;
+ const r=parseLine(t); kraw=shortRaw(t,r); kt=r.t; kv={...r.v}; kst='confirm'; $('kin').readOnly=true; kConfirm(r.note);
+}
+function kFields(){
+ kst='fields'; const c=$('kc');
+ if(kt==='web'&&!kv.acc) kv.acc=today; if(kt==='ai'&&!kv.date) kv.date=today;
+ c.innerHTML='<div class="sub">'+esc(T[kt].n)+' details</div><div class="fg" id="kf" style="margin-top:6px"></div><p class="sub" style="margin:12px 0 0"><span class="kbd">Enter</span> next field, and adds it on the last one &nbsp; <span class="kbd">Esc</span> cancel</p>';
+ const key=keyOf({t:kt});
+ T[kt].f.forEach(([f,l,ph])=>{
+  const lab=document.createElement('label'), s=document.createElement('span'), inp=document.createElement('input');
+  s.textContent=l; inp.type=ph==='date'?'date':'text'; if(ph!=='date') inp.placeholder=ph; inp.value=kv[f]||''; inp.autocomplete='off'; inp.className='fi'+(f===key&&!inp.value?' req':'');
+  inp.oninput=()=>{ kv[f]=inp.value; if(f===key) inp.classList.toggle('req',!inp.value.trim()); };
+  inp.onkeydown=ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); const all=[...c.querySelectorAll('.fi')], i=all.indexOf(inp); if(i<all.length-1) all[i+1].focus(); else kCommit(); } else if(ev.key==='Escape'){ ev.preventDefault(); kReset(); } };
+  lab.append(s,inp); $('kf').appendChild(lab);
+ });
+ const all=[...c.querySelectorAll('.fi')]; (all.find(x=>!x.value)||all[0]).focus();
+}
+function kCommit(){
+ if(!readyOf(kt,kv)){ toast('Fill in the highlighted field first.'); const q=document.querySelector('#kc .fi.req'); if(q) q.focus(); return; }
+ const lines=$('fl').value.split('\n').map(s=>s.trim()).filter(Boolean);
+ if(lines.includes(kraw)){ toast('Already in your batch.'); kReset(); return; }
+ if(kt==='ai') logPrompt(kv); fill[kraw]=Object.assign({__t:kt},kv); openMap[kraw]=false; lines.push(kraw); $('fl').value=lines.join('\n'); parseFast(); kReset(); toast('Added. Enter on an empty line checks out.');
+}
+$('kin').addEventListener('keydown',e=>{
+ if(kst==='confirm'){
+  if(e.key==='Enter'){ e.preventDefault(); kFields(); }
+  else if(e.key==='Tab'){ e.preventDefault(); const L=kTypes(), i=L.indexOf(kt); kt=L[(i+(e.shiftKey?L.length-1:1))%L.length]; kConfirm(''); }
+  else if(e.key==='Escape'){ e.preventDefault(); kReset(); }
+  return;
+ }
+ if(e.key==='Enter'){
+  e.preventDefault();
+  if($('kin').value.trim()){ kStart(); return; }
+  const n=flRows.filter(r=>r.ok).length; if(!n){ toast('Add a source first.'); return; }
+  if(karm){ karm=0; flGo(); } else { karm=1; toast('Press Enter again to check out '+n+(n>1?' citations':' citation')); setTimeout(()=>{ karm=0; },4000); }
+ } else if(e.key==='Escape'){ $('kin').value=''; }
+});
+$('kin').addEventListener('paste',()=>setTimeout(()=>{ { const v=$('kin').value.trim(); if(LOC.test(v)||isCiteJson(v)) kStart(); } },60));
+
+// ---- Cite as you go (mini window) ----
+let tray=[], mini=null;
+const tray0=$('tray'), tq=id=>tray0.querySelector('#'+id);
+function copyStyles(w){ [...document.styleSheets].forEach(ss=>{ try{ const st=w.document.createElement('style'); st.textContent=[...ss.cssRules].map(r=>r.cssText).join('\n'); w.document.head.appendChild(st); }catch(e){ if(ss.href){ const l=w.document.createElement('link'); l.rel='stylesheet'; l.href=ss.href; w.document.head.appendChild(l); } } }); }
+function trayOpen(on){ tray0.classList.toggle('show',on); if(on) setTimeout(()=>tq('tin').focus(),60); else if(mini){ try{ mini.close(); }catch(e){} } }
+async function openMini(){
+ if(mini){ try{ mini.close(); }catch(e){} return; }
+ if(tray0.classList.contains('show')){ trayOpen(false); return; }
+ let w=null;
+ if('documentPictureInPicture' in window){ try{ w=await documentPictureInPicture.requestWindow({width:380,height:560}); }catch(e){ w=null; } }
+ if(!w){ try{ w=window.open('','citeMini','popup=yes,width=400,height=620'); if(!w||!w.document) w=null; }catch(e){ w=null; } }
+ if(!w){ trayOpen(true); toast('Your browser blocked the mini window, so the tray opened in this tab.'); return; }
+ mini=w; w.addEventListener('focus',()=>clipAdd(true)); w.document.title='Cite as you go'; copyStyles(w); w.document.body.append(tray0); tray0.classList.add('pip','show'); setTimeout(()=>tq('tin').focus(),100);
+ w.addEventListener('pagehide',()=>{ if(mini!==w) return; mini=null; document.body.append(tray0); tray0.classList.remove('pip','show'); });
+}
+function trayDraw(){
+ $('gb').textContent=tray.length; tq('tcount').textContent=tray.length?'\u00b7 '+tray.length+(tray.length>1?' sources':' source'):''; tq('tdone').disabled=!tray.length;
+ tq('tlist').innerHTML=tray.map((r,i)=>'<div class="ti"><span class="tg2">'+esc(T[r.t].n)+'</span><span class="tt">'+esc(r.v.title||trimUrl(r.v.url||'')||r.raw)+'</span><button class="rm" data-i="'+i+'" aria-label="Remove">\u00d7</button></div>').join('');
+ tq('tlist').querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{ tray.splice(+b.dataset.i,1); trayDraw(); });
+}
+function trayAdd(){
+ const raw=tq('tin').value.trim(); if(!raw) return;
+ if(tray.some(x=>x.raw===raw)){ toast('Already added.'); tq('tin').value=''; return; }
+ const r=parseLine(raw); r.raw=shortRaw(raw,r); if(tray.some(x=>x.raw===r.raw)){ toast('Already added.'); tq('tin').value=''; return; } if(r.t==='ai') logPrompt(r.v); tray.push(r); tq('tin').value=''; trayDraw();
+ tq('tnote').textContent='Added a '+T[r.t].n.toLowerCase()+'. '+(r.note||'');
+}
+function sendFast(){
+ const lines=$('fl').value.split('\n').map(s=>s.trim()).filter(Boolean);
+ tray.forEach(r=>{ if(!lines.includes(r.raw)) lines.push(r.raw); });
+ $('fl').value=lines.join('\n'); parseFast();
+ const n=tray.length; tray=[]; trayDraw(); tq('tnote').textContent=n+(n>1?' sources':' source')+' sent to the fast lane.';
+ nav('fast'); try{ window.focus(); }catch(e){} toast(n+(n>1?' sources':' source')+' ready in the fast lane');
+}
+function sendSlide(){ const items=tray.slice(); tray=[]; trayDraw(); tq('tnote').textContent='Opened as a slideshow in the main window.'; slOpen(items); try{ window.focus(); }catch(e){} }
+function trayDone(){
+ if(!tray.length) return;
+ const m=S.cfg.mode; if(m==='fast') return sendFast(); if(m==='slide') return sendSlide();
+ tq('tqt').textContent='How do you want to cite these '+tray.length+(tray.length>1?' sources?':' source?'); tq('tq').style.display='block'; tq('tdone').style.display='none';
+}
+function trayPick(m){ if(tq('tqr').checked){ S.cfg.mode=m; save(); render(); } tq('tq').style.display='none'; tq('tdone').style.display=''; if(m==='fast') sendFast(); else sendSlide(); }
+$('gob').onclick=openMini; $('tx').onclick=()=>trayOpen(false); tq('tdone').onclick=trayDone; tq('tqf').onclick=()=>trayPick('fast'); tq('tqs').onclick=()=>trayPick('slide');
+tq('tin').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); if(tq('tin').value.trim()) trayAdd(); else trayDone(); } else if(e.key==='Escape'){ trayOpen(false); } });
+tq('tin').addEventListener('paste',()=>setTimeout(()=>{ { const v=tq('tin').value.trim(); if(LOC.test(v)||isCiteJson(v)) trayAdd(); } },60));
+addEventListener('keydown',e=>{ if(e.key==='g'&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)){ e.preventDefault(); openMini(); } });
+
+// ---- Slideshow ----
+let sl=null;
+function slOpen(items){ sl={items:items.map(r=>{ const v={...r.v}; if(r.t==='web'&&!v.acc) v.acc=today; if(r.t==='ai'&&!v.date) v.date=today; return {t:r.t,v}; }),i:0}; $('ov').classList.add('on'); drawSl(); $('ov').focus(); }
+function slClose(){ sl=null; $('ov').classList.remove('on'); $('ov').innerHTML=''; }
+function drawSl(){
+ const o=$('ov'), n=sl.items.length, i=sl.i, last=i>=n;
+ let h='<div class="ovw"><div class="row"><span class="sub">Slideshow \u00b7 '+esc(STY[style])+'</span><span class="sp"></span><button class="rm" id="slx" aria-label="Close">\u00d7</button></div><div class="dots" style="margin-top:12px">'+Array.from({length:n+1},(_,k)=>'<i class="'+(k<=i?'d':'')+'"></i>').join('')+'</div>';
+ if(!last) h+='<p class="sub">Source '+(i+1)+' of '+n+'</p><h1 class="k2" style="margin-top:4px">'+esc(T[sl.items[i].t].n)+'</h1><div class="grid" id="slf"></div><p class="pv lk" id="slp" style="margin-top:18px"></p><div class="row" style="margin-top:20px"><button class="btn" id="slb"'+(i?'':' disabled')+'>Back</button><span class="sp"></span><button class="btn p" id="sln">'+(i<n-1?'Next':'Review')+'</button></div>';
+ else h+='<h1 class="k2">'+n+(n>1?' citations':' citation')+' ready to cite</h1><p class="sub">'+n+(n>1?' credits':' credit')+' \u00b7 you have '+(S.unl?'\u221e':S.credits)+'</p><div class="row" style="margin-top:20px"><button class="btn" id="slb">Back</button><span class="sp"></span><button class="btn p" id="slpay">Check out</button></div>';
+ o.innerHTML=h+'</div>';
+ $('slx').onclick=slClose; $('slb').onclick=()=>{ sl.i=Math.max(0,sl.i-1); drawSl(); };
+ if(last){ $('slpay').onclick=slPay; return; }
+ const r=sl.items[i], key=keyOf({t:r.t});
+ const upd=()=>{ const x=makeOf(r.t,r.v,style); $('slp').innerHTML=x||'<span class="sub">Add the required detail to see it.</span>'; $('slp').classList.toggle('lk',!!x); $('sln').disabled=!readyOf(r.t,r.v); };
+ T[r.t].f.forEach(([f,l,ph])=>{
+  const lab=document.createElement('label'), s=document.createElement('span'), inp=document.createElement('input');
+  s.textContent=l; inp.type=ph==='date'?'date':'text'; if(ph!=='date') inp.placeholder=ph; inp.value=r.v[f]||''; inp.autocomplete='off'; inp.className='fi'+(f===key&&!inp.value?' req':'');
+  inp.oninput=()=>{ r.v[f]=inp.value; if(f===key) inp.classList.toggle('req',!inp.value.trim()); upd(); };
+  inp.onkeydown=e=>{ if(e.key==='Enter'){ e.preventDefault(); const all=[...$('slf').querySelectorAll('.fi')], k=all.indexOf(inp); if(k<all.length-1) all[k+1].focus(); else if(!$('sln').disabled) $('sln').click(); } };
+  lab.append(s,inp); $('slf').appendChild(lab);
+ });
+ $('sln').onclick=()=>{ sl.i++; drawSl(); }; upd();
+ const all=[...$('slf').querySelectorAll('.fi')]; (all.find(x=>!x.value)||all[0]).focus();
+}
+function slPay(){
+ const n=sl.items.length;
+ if(!S.unl&&S.credits<n){ toast('Not enough credits. Ask the owner for a key, or wait for next week\u2019s refill.'); slClose(); nav('credits'); return; }
+ if(!S.unl) S.credits-=n;
+ const done=sl.items.map(r=>({t:r.t,s:style,v:{...r.v},h:makeOf(r.t,r.v,style)}));
+ done.forEach(d=>S.list.push(d)); if(!S.active&&S.list.length>3) S.list=S.list.slice(-3); save(); render();
+ const L=sortBy(done), html=L.map(x=>'<p style="margin:0 0 .6em 2em;text-indent:-2em">'+x.h+'</p>').join(''), md=esc(L.map(x=>mdOf(x.h)).join('\n\n')).replace(/\n/g,'<br>');
+ $('ov').innerHTML='<div class="ovw"><div class="row"><span class="sub">Slideshow</span><span class="sp"></span><button class="rm" id="slx" aria-label="Close">\u00d7</button></div><h1 class="k2">'+n+(n>1?' citations':' citation')+' ready</h1><div class="box">'+L.map(x=>'<p class="pv rcp" style="margin:0 0 12px 2em;text-indent:-2em">'+x.h+'</p>').join('')+'</div><div class="row" style="margin-top:14px"><button class="btn p" id="slc">Copy all</button><button class="btn" id="slm">Copy Markdown</button><button class="btn" id="sld">Done</button></div></div>';
+ $('ov').querySelectorAll('.rcp').forEach(reveal);
+ $('slx').onclick=slClose; $('sld').onclick=slClose;
+ $('slc').onclick=async()=>toast(await copyText(html)?'Copied':'Copy did not work.'); $('slm').onclick=async()=>toast(await copyText(md)?'Markdown copied':'Copy did not work.');
+ copyText(html).then(ok=>toast(ok?n+(n>1?' citations':' citation')+' copied':'Ready. Copy them below.'));
+ sl={items:[],i:0};
+}
+$('ov').addEventListener('keydown',e=>{ if(!sl) return; if(e.key==='Escape'){ slClose(); return; } if(/INPUT/.test(e.target.tagName)) return; if(e.key==='ArrowRight'&&$('sln')&&!$('sln').disabled) $('sln').click(); if(e.key==='ArrowLeft'&&$('slb')&&!$('slb').disabled) $('slb').click(); });
+S.cfg=S.cfg||{mode:'ask'}; empCheck(); if(S.active) style='spark';
+
+// ---- Cite this page button and AI prompt log ----
+const bmFn=function(){
+ var d=document,L=location,today=new Date().toISOString().slice(0,10);
+ function q(s){var e=d.querySelector(s);return e?(e.content||e.getAttribute('content')||e.textContent||'').trim():'';}
+ function m(n){return q('meta[name="'+n+'"],meta[property="'+n+'"],meta[itemprop="'+n+'"]');}
+ function all(n){return [].map.call(d.querySelectorAll('meta[name="'+n+'"],meta[property="'+n+'"]'),function(e){return (e.content||'').trim();}).filter(Boolean);}
+ var h=L.hostname.replace(/^www\./,'');
+ var AI={'chatgpt.com':['ChatGPT','OpenAI'],'chat.openai.com':['ChatGPT','OpenAI'],'claude.ai':['Claude','Anthropic'],'gemini.google.com':['Gemini','Google'],'copilot.microsoft.com':['Copilot','Microsoft'],'perplexity.ai':['Perplexity','Perplexity AI'],'grok.com':['Grok','xAI']};
+ var o;
+ if(AI[h]){
+  var last=function(sel){var n=d.querySelectorAll(sel);return n.length?(n[n.length-1].innerText||'').trim():'';};
+  var sel=((window.getSelection()||'')+'').trim();
+  var pr=sel||last('[data-message-author-role="user"]')||last('[data-testid="user-message"]')||last('user-query')||last('.query-text')||'';
+  var ver=q('[data-testid="model-switcher-dropdown-button"]')||q('[data-testid="model-selector-dropdown"]')||'';
+  o={cite:1,kind:'ai',tool:AI[h][0],company:AI[h][1],version:ver.replace(/\s+/g,' ').slice(0,40),date:today,prompt:pr.replace(/\s+/g,' ').slice(0,600),url:L.href};
+ } else {
+  var ld={};
+  try{[].forEach.call(d.querySelectorAll('script[type="application/ld+json"]'),function(s){var j=JSON.parse(s.textContent);[].concat(j['@graph']||j).forEach(function(x){if(x&&!ld.h&&/Article|Posting|WebPage|Report/.test([].concat(x['@type']).join())){ld=x;ld.h=1;}});});}catch(e){}
+  var au=all('citation_author').concat(all('author'),all('article:author'),all('dc.creator'),all('DC.creator')).filter(function(a){return !/^https?:/.test(a);});
+  if(!au.length&&ld.author){au=[].concat(ld.author).map(function(a){return a&&a.name||a;}).filter(function(a){return typeof a==='string';});}
+  var a0=au.join('; ').replace(/\s+/g,' ');
+  if(au.length===1&&/,.*,|\sand\s/.test(a0)){a0=a0.split(/,\s*|\s+and\s+/).join('; ');}
+  var tm=d.querySelector('time[datetime]');
+  var date=(m('citation_publication_date')||m('citation_date')||m('article:published_time')||ld.datePublished||m('dc.date')||m('date')||m('og:updated_time')||(tm&&tm.getAttribute('datetime'))||'').replace(/\//g,'-').slice(0,10);
+  var fp=m('citation_firstpage'),lp=m('citation_lastpage');
+  o={cite:1,url:(d.querySelector('link[rel=canonical]')||{}).href||L.href,title:(m('citation_title')||m('og:title')||ld.headline||m('twitter:title')||d.title||'').trim(),author:a0,date:date,site:m('og:site_name')||m('application-name')||h,journal:m('citation_journal_title'),volume:m('citation_volume'),issue:m('citation_issue'),pages:fp?(lp?fp+'-'+lp:fp):'',doi:m('citation_doi'),publisher:m('citation_publisher')};
+ }
+ var s=JSON.stringify(o);
+ function ok(){var t=d.createElement('div');t.textContent='Copied for cite. Paste it into cite.';t.style.cssText='position:fixed;z-index:2147483647;right:16px;bottom:16px;background:#000;color:#fff;font:600 14px system-ui;padding:12px 18px;border-radius:99px;box-shadow:0 10px 30px rgba(0,0,0,.4)';d.body.appendChild(t);setTimeout(function(){t.remove();},2600);}
+ function fb(){var x=d.createElement('textarea');x.value=s;x.style.cssText='position:fixed;opacity:0';d.body.appendChild(x);x.select();var r=false;try{r=d.execCommand('copy');}catch(e){}x.remove();if(r)ok();else prompt('Copy this, then paste it into cite:',s);}
+ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(s).then(ok,fb);}else{fb();}
+};
+const BM='javascript:('+encodeURIComponent(bmFn.toString())+')()';
+function isCiteJson(t){ return /^\{"cite":1[,}]/.test((t||'').trim()); }
+function fromJson(raw){
+ if(!isCiteJson(raw)) return null;
+ let j; try{ j=JSON.parse(raw.trim()); }catch(e){ return null; }
+ if(j.kind==='ai') return {type:'ai',v:{tool:j.tool||'',company:j.company||'',version:j.version||'',date:j.date||today,prompt:j.prompt||'',url:j.url||''},note:'Captured from an AI chat. Check the model version and your prompt, and use a share link.'};
+ const sv=type; type='web'; const d=j.url?detect(j.url):null; type=sv;
+ let t=d?d.type:'web', v=d?{...d.v}:{};
+ const set=(k,x)=>{ if(x) v[k]=String(x).trim(); };
+ if(j.doi||j.journal||j.volume){ t='jour'; if(j.doi) v.url='https://doi.org/'+String(j.doi).replace(/^https?:\/\/(dx\.)?doi\.org\//,''); else set('url',j.url); }
+ else if(j.url){ try{ v.url=cleanUrl(new URL(j.url)); }catch(e){ set('url',j.url); } }
+ set('title',j.title); set('author',j.author); set('journal',j.journal); set('volume',j.volume); set('issue',j.issue); set('pages',j.pages); set('publisher',j.publisher);
+ if(t!=='jour') set('site',j.site);
+ const dt=j.date||'';
+ if(/^\d{4}-\d\d-\d\d/.test(dt)){ v.date=dt.slice(0,10); v.year=dt.slice(0,4); } else if(/^\d{4}/.test(dt)){ v.year=dt.slice(0,4); v.date=v.year+'-01-01'; }
+ if(t==='web'&&!v.acc) v.acc=today;
+ return {type:t,v,note:'Captured from the page. Check the author and date.'};
+}
+function shortRaw(raw,r){ if(!isCiteJson(raw)) return raw; const line=r.t==='ai'?((r.v.url||'ai')+' | '+(r.v.prompt||'').slice(0,40)):(r.v.url||r.v.title||raw); fill[line]=Object.assign({__t:r.t},r.v); return line; }
+function drawBm(){
+ $('sc').innerHTML='<b>Cite this page button</b><p class="sub" style="margin:6px 0 12px">Add it to your bookmarks bar once. On any page, click it to copy that page\u2019s details, then paste into cite.</p><div class="row"><a class="btn p" id="bma" href="'+BM.replace(/"/g,'&quot;')+'" style="text-decoration:none">Cite this page</a><button class="btn" id="bmc">Copy button code</button></div><p class="sub" style="margin:14px 0 0"><b>1.</b> Drag the orange button to your bookmarks bar. If dragging does not work, make a new bookmark and paste the copied code as its address.<br><b>2.</b> Open an article, paper or AI chat and click it.<br><b>3.</b> Press <span class="kbd">g</span> for the mini window. Click into it and it picks the capture up, or use its Paste button.</p><p class="sub" style="margin:12px 0 0;font-size:13px">On ChatGPT, Claude and Gemini it saves the tool, model, date, link and your last prompt. Select a different prompt first to use that one. Prompts are found from each site\u2019s page layout, so check them. Private chat links only work for you, so share the chat and use the share link.</p>';
+ $('bma').onclick=e=>e.preventDefault();
+ $('bmc').onclick=async()=>toast(await copyText(esc(BM))?'Button code copied':'Select the code and copy it.');
+}
+$('tobm').onclick=()=>openSheet('bm',true); $('pbm').onclick=()=>openSheet('bm',true); tq('tbm').onclick=()=>openSheet('bm',true);
+let lastClip='';
+async function clipAdd(auto){
+ try{
+  const t=((await ((mini&&mini.navigator)||navigator).clipboard.readText())||'').trim();
+  if(!t||t===lastClip){ if(!auto) toast('Nothing new on your clipboard.'); return; }
+  if(isCiteJson(t)||(!auto&&LOC.test(t))){ lastClip=t; tq('tin').value=t; trayAdd(); }
+  else if(!auto) toast('Your clipboard does not hold a page capture or a link.');
+ }catch(e){ if(!auto) toast('Allow clipboard access, or paste with Ctrl or Cmd and V.'); }
+}
+tq('tpaste').onclick=()=>clipAdd(false);
+addEventListener('focus',()=>{ if(tray0.classList.contains('show')&&!mini) clipAdd(true); });
+
+// ---- AI prompt log ----
+let pf={date:today};
+function logPrompt(v){
+ if(!v||(!v.prompt&&!v.tool)) return false;
+ S.prompts=S.prompts||[];
+ const k=p=>(p.url||'')+'|'+(p.prompt||'').slice(0,80)+'|'+(p.date||'');
+ if(S.prompts.some(p=>k(p)===k(v))) return false;
+ S.prompts.unshift({tool:v.tool||'',company:v.company||'',version:v.version||'',date:v.date||today,prompt:v.prompt||'',url:v.url||'',note:v.note||''});
+ S.prompts=S.prompts.slice(0,300); save(); if(cur==='prompts') drawPlog(); return true;
+}
+function drawPlog(){
+ const L=S.prompts||[];
+ $('plog').innerHTML=L.length?L.map((p,i)=>'<div class="ci"><div style="min-width:0;flex:1"><div class="sub">'+esc(p.tool)+(p.version?' \u00b7 '+esc(p.version):'')+' \u00b7 '+esc(dShort(p.date)||p.date||'')+'</div><p class="pv" style="margin-top:4px;font-size:18px">\u201c'+esc(p.prompt||'No prompt saved')+'\u201d</p>'+(p.note?'<p class="sub" style="margin:4px 0 0">'+esc(p.note)+'</p>':'')+'<div class="row" style="margin-top:10px"><button class="btn" data-pc="'+i+'">Cite this</button><button class="btn" data-pp="'+i+'">Copy prompt</button><button class="btn" data-pd="'+i+'">Remove</button></div></div></div>').join(''):'<p class="sub" style="margin-top:16px">Nothing logged yet.</p>';
+ const b=$('plog');
+ b.querySelectorAll('[data-pc]').forEach(x=>x.onclick=()=>{ const p=L[+x.dataset.pc], raw='ai: '+p.tool+' '+(p.date||'')+' '+(p.prompt||'').slice(0,50); fill[raw]={__t:'ai',tool:p.tool,company:p.company,version:p.version,date:p.date,prompt:p.prompt,url:p.url}; openMap[raw]=false; const lines=$('fl').value.split('\n').map(s=>s.trim()).filter(Boolean); if(!lines.includes(raw)) lines.push(raw); $('fl').value=lines.join('\n'); parseFast(); nav('fast'); toast('Added to the fast lane'); });
+ b.querySelectorAll('[data-pp]').forEach(x=>x.onclick=async()=>toast(await copyText(esc(L[+x.dataset.pp].prompt||''))?'Prompt copied':'Select the text and copy it.'));
+ b.querySelectorAll('[data-pd]').forEach(x=>x.onclick=()=>{ S.prompts.splice(+x.dataset.pd,1); save(); drawPlog(); });
+}
+function drawPrompts(){
+ const g=$('pform'); g.innerHTML='';
+ [['tool','AI tool','Claude'],['company','Company','Anthropic'],['version','Version','Sonnet 5.5'],['date','Date used','date'],['prompt','Your prompt',''],['url','Share link','https://'],['note','Why I saved this','']].forEach(([f,l,ph])=>{
+  const lab=document.createElement('label'), s=document.createElement('span'), inp=document.createElement('input');
+  s.textContent=l; inp.type=ph==='date'?'date':'text'; if(ph!=='date') inp.placeholder=ph; inp.value=pf[f]||''; inp.autocomplete='off'; inp.oninput=()=>{ pf[f]=inp.value; };
+  lab.append(s,inp); g.appendChild(lab);
+ });
+ drawPlog();
+}
+function addCap(){
+ const t=$('pcap').value.trim(), d=t?detect(t):null;
+ if(!d||d.type!=='ai'){ toast('That is not a capture from an AI chat. Use the button on a ChatGPT, Claude or Gemini page.'); return; }
+ toast(logPrompt(d.v)?'Saved to your prompt log':'Already in your log'); $('pcap').value=''; drawPlog();
+}
+$('pcapb').onclick=addCap; $('pcap').onkeydown=e=>{ if(e.key==='Enter') addCap(); };
+$('pcap').addEventListener('paste',()=>setTimeout(()=>{ if(isCiteJson($('pcap').value)) addCap(); },60));
+$('psave').onclick=()=>{ if(!pf.tool&&!pf.prompt){ toast('Add a tool or a prompt first.'); return; } toast(logPrompt(pf)?'Saved to your prompt log':'Already in your log'); pf={date:today}; drawPrompts(); };
+
+trayDraw();
+addEventListener('resize',()=>render());
+route(); render();
+
+
+</script>
+</body>
+</html>
