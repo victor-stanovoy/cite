@@ -156,6 +156,10 @@ input,textarea{transition:border-color .3s}
 .tray .tr{display:flex;align-items:center;gap:8px}
 .ti{display:flex;gap:8px;align-items:center;padding:9px 0;border-top:1px solid var(--line);font-size:14px}
 .ti .tt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ov{display:none;position:fixed;inset:0;z-index:80;background:var(--bg);overflow:auto;padding:calc(24px + env(safe-area-inset-top,0px)) 20px 40px}
+.ov.on{display:block;animation:pgin .5s cubic-bezier(.2,.8,.2,1)}
+.ov:focus{outline:none}
+.ovw{max-width:720px;margin:0 auto}
 </style>
 </head>
 <body>
@@ -189,15 +193,23 @@ input,textarea{transition:border-color .3s}
 
 <section class="page" id="pg-credits">
 <h1 class="k2">Credits</h1>
-<p class="sub">One credit gets one citation. Free refills to 3 a day, premium to 25.</p>
+<p class="sub">One credit gets one citation. Free refills to 3 a week, premium to 25.</p>
 <div class="box" id="shopbox"></div>
 </section>
+
+<section class="page" id="pg-settings">
+<h1 class="k2">Settings</h1>
+<div class="box"><b>When I am ready to cite</b><p class="sub" style="margin:6px 0 12px">Used by the Cite as you go window.</p><div class="seg" id="cfgmode" role="group" aria-label="When ready to cite"></div></div>
+<div class="box"><b>SparkNews team</b><div id="teambox"></div></div>
+</section>
 </div>
+<div class="ov" id="ov" tabindex="-1"></div>
 <div class="tray" id="tray" role="dialog" aria-label="Cite as you go">
-<div class="tr"><b>Cite as you go</b><span class="sub" id="tcount"></span><span class="sp"></span><button class="btn" id="tpop" style="padding:7px 14px" title="Float on top of other windows">Float</button><button class="rm" id="tx" aria-label="Close">×</button></div>
+<div class="tr"><b>Cite as you go</b><span class="sub" id="tcount"></span><span class="sp"></span><button class="rm" id="tx" aria-label="Close">×</button></div>
 <input id="tin" placeholder="Paste a website, press Enter" autocomplete="off" aria-label="Add a website" style="margin-top:10px">
 <p class="sub" id="tnote" style="font-size:13px;margin:6px 0 4px">Add sources as you read. Enter on an empty line sends them to the fast lane.</p>
 <div id="tlist"></div>
+<div id="tq" style="display:none;margin-top:12px"><p class="sub" style="margin:0 0 8px" id="tqt"></p><div class="row"><button class="btn p" id="tqf">Fast lane</button><button class="btn p" id="tqs">Slideshow</button></div><label class="sub" style="display:flex;gap:8px;align-items:center;padding:10px 0 0"><input type="checkbox" id="tqr" style="width:auto;border:0"> Remember my choice</label></div>
 <button class="btn p" id="tdone" disabled style="width:100%;margin-top:12px">Ready to cite</button>
 </div>
 <div class="sheet" id="sheet"><button class="x" id="sx" aria-label="Close">×</button><div id="sc"></div></div>
@@ -229,7 +241,8 @@ try { const r = localStorage.getItem('cite.v3'); if (r) S = Object.assign(S, JSO
 const save = () => { try { localStorage.setItem('cite.v3', JSON.stringify(S)); } catch(e){} };
 const refill = () => (S.active?25:3);
 if (!S.code) S.code = genCode();
-if (S.day !== today) { S.day = today; S.credits = Math.max(S.credits, refill()); }
+const wk=(()=>{ const d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()-((d.getDay()+6)%7)); return d.toISOString().slice(0,10); })();
+if (S.day !== wk) { S.day = wk; S.credits = Math.max(S.credits, refill()); }
 save();
 
 // ---- Source types ----
@@ -473,17 +486,18 @@ function openSheet(mode,force){
   c.innerHTML='<b>Get this device’s code</b><p class="sub" style="'+P+'">Sign in to see the premium code saved on this device.</p><div class="grid"><label><span>Username</span><input id="lu" autocomplete="off"></label><label><span>Password</span><input id="lp" type="password" autocomplete="off"></label></div><div class="row" style="margin-top:12px"><button class="btn p" id="ls">Sign in</button></div>';
   $('ls').onclick=login; $('lp').onkeydown=e=>{if(e.key==='Enter')login();};
  } else if(mode==='code'){
-  c.innerHTML='<b>Your code for this device</b><div class="code" id="cv">'+esc(S.code)+'</div><p class="sub">'+(S.redeemed?'It has already been used here.':'Enter it once under Premium to unlock. Each device gets its own code.')+'</p><div class="row" style="margin-top:12px"><button class="btn p" id="cc">Copy code</button><button class="btn" id="un">'+(S.unl?'Unlimited credits: on':'Unlimited credits: off')+'</button></div><hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><b>Give credits to another device</b><p class="sub" style="'+P+'">Paste their device code, then pick what to give.</p><div class="row" style="margin-top:10px"><input id="gc" placeholder="Their code" style="flex:1;min-width:180px" autocomplete="off"></div><div class="row" style="margin-top:10px"><input id="ga" type="number" min="1" max="99999" value="25" style="width:110px"><button class="btn" id="gk2">Make credits key</button><button class="btn" id="gk">Make unlimited key</button></div><div class="code" id="gv" style="font-size:22px"></div>';
+  c.innerHTML='<b>Your code for this device</b><div class="code" id="cv">'+esc(S.code)+'</div><p class="sub">'+(S.redeemed?'It has already been used here.':'Enter it once under Premium to unlock. Each device gets its own code.')+'</p><div class="row" style="margin-top:12px"><button class="btn p" id="cc">Copy code</button><button class="btn" id="un">'+(S.unl?'Unlimited credits: on':'Unlimited credits: off')+'</button></div><hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><b>Give credits to another device</b><p class="sub" style="'+P+'">Paste their device code, then pick what to give.</p><div class="row" style="margin-top:10px"><input id="gc" placeholder="Their code" style="flex:1;min-width:180px" autocomplete="off"></div><div class="row" style="margin-top:10px"><input id="ga" type="number" min="1" max="99999" value="25" style="width:110px"><button class="btn" id="gk2">Make credits key</button><button class="btn" id="gk">Make unlimited key</button></div><div class="code" id="gv" style="font-size:22px"></div>'+empAdminHtml();
   $('cc').onclick=async()=>toast(await copyText(esc(S.code))?'Code copied':'Select the code and copy it.');
+  c.querySelectorAll('[data-ec]').forEach(b=>b.onclick=async()=>toast(await copyText(esc(empCode(b.dataset.ec)))?'Code copied':'Select the code and copy it.'));
   $('gk2').onclick=async()=>{const v=$('gc').value.trim().toUpperCase().replace(/\s/g,''); const amt=Math.max(1,Math.min(99999,parseInt($('ga').value)||0)); if(v.length<12){toast('Paste the full device code first.');return;} const A='ABCDEFGHJKMNPQRSTUVWXYZ23456789'; const tok=Array.from({length:4},()=>A[Math.floor(Math.random()*A.length)]).join(''); const k=CKEY(v,amt,tok); $('gv').textContent=k; toast(await copyText(esc(k))?'Key for '+amt+' credits copied':'Select the key and copy it.');};
   $('un').onclick=()=>{S.unl=!S.unl;save();render();openSheet('code');toast(S.unl?'Unlimited credits on for this device':'Unlimited credits off');};
   $('gk').onclick=async()=>{const v=$('gc').value.trim().toUpperCase().replace(/\s/g,''); if(v.length<12){toast('Paste the full device code first.');return;} const k=giftKey(v); $('gv').textContent=k; toast(await copyText(esc(k))?'Key copied':'Select the key and copy it.');};
  } else if(S.active){
-  c.innerHTML='<b>Premium is on.</b><p class="sub" style="'+P+'">SparkNews, MLA, Chicago, more source types, an unlimited list and BibTeX. Type your off code anywhere to switch it off.</p><p class="sub" style="margin:12px 0 0">'+S.credits+' credits left. Refills to 25 each day.</p>';
+  c.innerHTML='<b>Premium is on.</b><p class="sub" style="'+P+'">SparkNews, MLA, Chicago, more source types, an unlimited list and BibTeX. Type your off code anywhere to switch it off.</p><p class="sub" style="margin:12px 0 0">'+S.credits+' credits left. Refills to 25 each week.</p>';
  } else if(S.redeemed){
   c.innerHTML='<b>Premium is off.</b><p class="sub" style="'+P+'">Your code has been used on this device. Type your special code anywhere to switch premium back on.</p>';
  } else {
-  c.innerHTML='<b>'+(S.unl?'∞':S.credits)+' credits left.</b><p class="sub" style="'+P+'">One credit gets one citation. Free refills to 3 each day. Premium refills to 25.</p><hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><b>Unlock premium</b><p class="sub" style="margin:6px 0 10px">SparkNews, MLA, Chicago, 16 more source types, an unlimited list, BibTeX and 50 credits.</p><div class="row"><input id="code" placeholder="Code for this device" style="flex:1;min-width:180px" autocomplete="off"><button class="btn p" id="redeem">Unlock</button></div>';
+  c.innerHTML='<b>'+(S.unl?'∞':S.credits)+' credits left.</b><p class="sub" style="'+P+'">One credit gets one citation. Free refills to 3 each week. Premium refills to 25.</p><hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><b>Unlock premium</b><p class="sub" style="margin:6px 0 10px">SparkNews, MLA, Chicago, 16 more source types, an unlimited list, BibTeX and 50 credits.</p><div class="row"><input id="code" placeholder="Code for this device" style="flex:1;min-width:180px" autocomplete="off"><button class="btn p" id="redeem">Unlock</button></div>';
   $('redeem').onclick=redeem; $('code').onkeydown=e=>{if(e.key==='Enter')redeem();};
  }
  if(mode!=='login'&&mode!=='code'&&mode!=='shop'&&!S.unl){ c.insertAdjacentHTML('beforeend','<hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><b>Have a key?</b><div class="row" style="margin-top:10px"><input id="uk" placeholder="Paste your key" style="flex:1;min-width:180px" autocomplete="off"><button class="btn" id="ua">Apply</button></div>'); const ap=()=>{ const [ok,m]=redeemKey($('uk').value); toast(m); if(ok) $('sheet').classList.remove('show'); }; $('ua').onclick=ap; $('uk').onkeydown=e=>{if(e.key==='Enter')ap();}; }
@@ -497,10 +511,39 @@ function login(){
 }
 function redeem(){
  if(S.redeemed){toast('This code has already been used.');return;}
- if($('code').value.trim().toUpperCase().replace(/\s/g,'')===S.code){S.redeemed=S.active=true;S.credits+=50;save();$('sheet').classList.remove('show');render();toast('Premium unlocked. 50 credits added.');}
+ if($('code').value.trim().toUpperCase().replace(/\s/g,'')===S.code){S.redeemed=S.active=true;S.credits+=50;style='spark';save();$('sheet').classList.remove('show');render();toast('Premium unlocked. 50 credits added.');}
  else toast('That is not this device’s code. Type getcode to find it.');
 }
 $('pp').onclick=()=>openSheet('info'); $('cp').onclick=()=>nav('credits');
+// ---- SparkNews team access ----
+// Add people here as 'lowercase full name':'their email'. Removing a name, or listing it in REVOKED, removes their access.
+const EMPLOYEES={};
+const REVOKED=[];
+const EMP_SALT='change-this-salt';
+const empKey=n=>n.trim().toLowerCase().replace(/\s+/g,' ');
+const empCode=n=>{ const h=cyrb('emp|'+n+'|'+EMP_SALT).toString(36).toUpperCase().padStart(8,'0').slice(-8); return 'SN-'+h.slice(0,4)+'-'+h.slice(4); };
+const empOK=n=>!!EMPLOYEES[n]&&!REVOKED.includes(n);
+function empRestore(){ const p=S.empPrev||{}; S.active=!!p.active; S.redeemed=!!p.redeemed; S.unl=!!p.unl; S.emp=''; save(); }
+function empCheck(){ if(S.emp&&!empOK(S.emp)) empRestore(); }
+function empSignIn(name,code){
+ const k=empKey(name);
+ if(!empOK(k)||code.trim().toUpperCase()!==empCode(k)) return [false,'That name and code do not match.'];
+ if(!S.emp) S.empPrev={active:S.active,redeemed:S.redeemed,unl:S.unl};
+ S.emp=k; S.active=S.redeemed=S.unl=true; style='spark'; save(); render();
+ return [true,'Welcome to the SparkNews team. Premium and unlimited credits are on.'];
+}
+function empAdminHtml(){
+ const names=Object.keys(EMPLOYEES);
+ return '<hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><b>SparkNews team codes</b>'+(names.length?names.map(n=>{ const st=REVOKED.includes(n)?' (revoked)':''; return '<div class="row" style="margin-top:8px"><span style="flex:1;min-width:140px">'+esc(n)+esc(st)+'</span><button class="btn" data-ec="'+esc(n)+'">Copy code</button><a class="btn" style="text-decoration:none" href="mailto:'+esc(EMPLOYEES[n])+'?subject='+encodeURIComponent('Your SparkNews team code')+'&body='+encodeURIComponent('Your code: '+empCode(n)+'\nOpen Settings, choose SparkNews team, and enter your name and this code.')+'">Email code</a></div>'; }).join(''):'<p class="sub" style="margin:6px 0 0">No team members yet. Add names to EMPLOYEES in the file.</p>');
+}
+function drawTeam(){
+ const b=$('teambox');
+ if(S.emp){ b.innerHTML='<p class="sub" style="margin:6px 0 12px">Signed in as <b>'+esc(S.emp)+'</b>. Premium and unlimited credits are on.</p><button class="btn" id="tout">Sign out</button>'; $('tout').onclick=()=>{ empRestore(); render(); drawTeam(); toast('Signed out'); }; return; }
+ b.innerHTML='<p class="sub" style="margin:6px 0 0">Enter your name and the team code you were emailed.</p><div class="grid"><label><span>Name</span><input id="en" autocomplete="off"></label><label><span>Code</span><input id="ecd" autocomplete="off"></label></div><div class="row" style="margin-top:12px"><button class="btn p" id="ein">Sign in</button></div>';
+ const go=()=>{ const [ok,m]=empSignIn($('en').value,$('ecd').value); toast(m); if(ok) drawTeam(); };
+ $('ein').onclick=go; $('ecd').onkeydown=e=>{ if(e.key==='Enter') go(); };
+}
+
 // ---- Credits: given by the owner, never sold ----
 const CKEY=(code,amt,tok)=>'CR-'+amt+'-'+tok+'-'+cyrb(code+'|credits|'+amt+'|'+tok).toString(36).toUpperCase().padStart(8,'0').slice(-6);
 function redeemKey(raw){
@@ -513,7 +556,7 @@ function redeemKey(raw){
 }
 function drawShop(){
  const c=drawShop.target||$('sc');
- c.innerHTML='<b>Credits</b><div class="code" style="font-size:48px;letter-spacing:0">'+(S.unl?'\u221e':S.credits)+'</div><p class="sub">Credits are not for sale. Free accounts refill to 3 each day and premium refills to 25. Need more? Ask the owner for a key.</p><hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><b>Redeem a key</b><div class="row" style="margin-top:10px"><input id="rk" placeholder="Paste your key" style="flex:1;min-width:180px" autocomplete="off"><button class="btn p" id="rkb">Redeem</button></div>';
+ c.innerHTML='<b>Credits</b><div class="code" style="font-size:48px;letter-spacing:0">'+(S.unl?'\u221e':S.credits)+'</div><p class="sub">Credits are not for sale. Free accounts refill to 3 each week and premium refills to 25. Need more? Ask the owner for a key.</p><hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><b>Redeem a key</b><div class="row" style="margin-top:10px"><input id="rk" placeholder="Paste your key" style="flex:1;min-width:180px" autocomplete="off"><button class="btn p" id="rkb">Redeem</button></div>';
  const go=()=>{ const [ok,m]=redeemKey($('rk').value); toast(m); if(ok) drawShop(); };
  $('rkb').onclick=go; $('rk').onkeydown=e=>{ if(e.key==='Enter') go(); };
 }
@@ -535,7 +578,7 @@ addEventListener('keydown',e=>{
  if(el&&(el.tagName==='INPUT'||el.tagName==='TEXTAREA')&&!['code','lu','lp'].includes(el.id)){el.value=el.value.slice(0,-(w.length-1));el.dispatchEvent(new Event('input'));}
  if(w==='getcode'){openSheet('login');return;}
  if(!S.redeemed){toast('Enter your one-time code first.');return;}
- S.active=!S.active; if(!S.active){ if(T[type].x) type='web'; if(locked(type,style)) style='mla'; }
+ S.active=!S.active; if(!S.active){ if(T[type].x) type='web'; if(locked(type,style)) style='mla'; } else style='spark';
  save(); render(); $('sheet').classList.remove('show'); toast(S.active?'Premium on':'Premium off');
 });
 
@@ -589,7 +632,7 @@ function drawCart(){
 }
 function payCart(){
  const n=basket.length; if(!n) return;
- if(!S.unl&&S.credits<n){ closeD(); nav('credits'); toast('Not enough credits. Ask the owner for a key, or wait for tomorrow\u2019s refill.'); return; }
+ if(!S.unl&&S.credits<n){ closeD(); nav('credits'); toast('Not enough credits. Ask the owner for a key, or wait for next week\u2019s refill.'); return; }
  if(!S.unl) S.credits-=n;
  const done=basket.map(it=>({t:it.t,s:style,v:{...it.v},h:makeOf(it.t,it.v,style)}));
  done.forEach(d=>S.list.push(d)); if(!S.active&&S.list.length>3) S.list=S.list.slice(-3);
@@ -616,6 +659,7 @@ function render(){
  const cb=String(basket.length); if($('cb').textContent!==cb){ $('cb').textContent=cb; bump($('cartb')); }
  $('pp').classList.toggle('on',S.active); $('pl').textContent=S.active?'Premium on':'Premium'; 
  seg($('cats'),Object.keys(CATS).map(k=>[k,CATS[k][0]]),cat,k=>{ cat=k; render(); });
+ seg($('cfgmode'),[['ask','Ask me'],['fast','Fast lane'],['slide','Slideshow']],(S.cfg&&S.cfg.mode)||'ask',k=>{ S.cfg.mode=k; save(); render(); });
  drawShelf(); drawNav();
  $('lsub').textContent=S.active?'Unlimited. Click an entry to copy it. Copy all sorts A to Z.':'Free keeps your last 3. Click an entry to copy it. Premium keeps everything and exports BibTeX.';
  const lq=($('lq').value||'').toLowerCase(); $('list').innerHTML=S.list.map((x,i)=>[x,i]).filter(([x])=>plainOf(x.h).toLowerCase().includes(lq)).map(([x,i])=>'<div class="item" data-i="'+i+'">'+x.h+'</div>').join('')||'<p class="sub">'+(S.list.length?'No matches.':'Nothing here yet. Check out a citation and it lands here.')+'</p>';
@@ -634,15 +678,15 @@ $('mdl').onclick=async()=>toast(await copyText(esc(sorted().map(x=>mdOf(x.h)).jo
 $('clear').onclick=()=>{S.list=[];save();render();};
 document.querySelectorAll('.k').forEach(k=>{k.innerHTML=k.textContent.split(' ').map((w,i)=>'<span class="w" style="animation-delay:'+(i*70)+'ms">'+esc(w)+'</span>').join(' ');});
 // ---- Pages ----
-const PAGES=['shop','fast','library','credits'];
-const NAV=[['shop','Shop'],['fast','Fast lane'],['library','Library'],['credits','Credits']];
+const PAGES=['shop','fast','library','credits','settings'];
+const NAV=[['shop','Shop'],['fast','Fast lane'],['library','Library'],['credits','Credits'],['settings','Settings']];
 let cur=(location.hash||'').slice(1); if(!PAGES.includes(cur)) cur='shop';
 function drawNav(){ seg($('nav'),NAV.map(([k,n])=>[k,n,k==='library'&&S.list.length?String(S.list.length):false]),cur,nav); }
 function route(){
  PAGES.forEach(k=>$('pg-'+k).classList.toggle('on',k===cur));
  $('toolbar').style.display=(cur==='shop'||cur==='fast')?'':'none';
  drawShop.target=cur==='credits'?$('shopbox'):null; if(cur==='credits') drawShop();
- drawNav();
+ drawNav(); if(cur==='settings') drawTeam();
  if(route.last!==cur){ route.last=cur; window.scrollTo(0,0); if(cur==='fast') setTimeout(()=>$('kin').focus({preventScroll:true}),350); }
 }
 function nav(p){ cur=p; try{ if(location.hash!=='#'+p) location.hash=p; }catch(e){} route(); }
@@ -724,7 +768,7 @@ function drawRows(){
 }
 function flGo(){
  const rows=flRows.filter(r=>r.ok), n=rows.length; if(!n) return;
- if(!S.unl&&S.credits<n){ toast('Not enough credits. Ask the owner for a key, or wait for tomorrow\u2019s refill.'); nav('credits'); return; }
+ if(!S.unl&&S.credits<n){ toast('Not enough credits. Ask the owner for a key, or wait for next week\u2019s refill.'); nav('credits'); return; }
  if(!S.unl) S.credits-=n;
  const done=rows.map(r=>({t:r.t,s:style,v:{...r.v},h:makeOf(r.t,r.v,style)}));
  done.forEach(d=>S.list.push(d)); if(!S.active&&S.list.length>3) S.list=S.list.slice(-3);
@@ -790,44 +834,92 @@ $('kin').addEventListener('keydown',e=>{
 });
 $('kin').addEventListener('paste',()=>setTimeout(()=>{ if(LOC.test($('kin').value.trim())) kStart(); },60));
 
-// ---- Cite as you go ----
-let tray=[], pip=null;
-const trayEl=()=>$('tray');
-function trayOpen(on){ trayEl().classList.toggle('show',on); if(on) setTimeout(()=>$('tin').focus(),60); else if(pip) pip.close(); }
+// ---- Cite as you go (mini window) ----
+let tray=[], mini=null;
+const tray0=$('tray'), tq=id=>tray0.querySelector('#'+id);
+function copyStyles(w){ [...document.styleSheets].forEach(ss=>{ try{ const st=w.document.createElement('style'); st.textContent=[...ss.cssRules].map(r=>r.cssText).join('\n'); w.document.head.appendChild(st); }catch(e){ if(ss.href){ const l=w.document.createElement('link'); l.rel='stylesheet'; l.href=ss.href; w.document.head.appendChild(l); } } }); }
+function trayOpen(on){ tray0.classList.toggle('show',on); if(on) setTimeout(()=>tq('tin').focus(),60); else if(mini){ try{ mini.close(); }catch(e){} } }
+async function openMini(){
+ if(mini){ try{ mini.close(); }catch(e){} return; }
+ if(tray0.classList.contains('show')){ trayOpen(false); return; }
+ let w=null;
+ if('documentPictureInPicture' in window){ try{ w=await documentPictureInPicture.requestWindow({width:380,height:560}); }catch(e){ w=null; } }
+ if(!w){ try{ w=window.open('','citeMini','popup=yes,width=400,height=620'); if(!w||!w.document) w=null; }catch(e){ w=null; } }
+ if(!w){ trayOpen(true); toast('Your browser blocked the mini window, so the tray opened in this tab.'); return; }
+ mini=w; w.document.title='Cite as you go'; copyStyles(w); w.document.body.append(tray0); tray0.classList.add('pip','show'); setTimeout(()=>tq('tin').focus(),100);
+ w.addEventListener('pagehide',()=>{ if(mini!==w) return; mini=null; document.body.append(tray0); tray0.classList.remove('pip','show'); });
+}
 function trayDraw(){
- $('gb').textContent=tray.length; $('tcount').textContent=tray.length?'\u00b7 '+tray.length+(tray.length>1?' sources':' source'):''; $('tdone').disabled=!tray.length;
- $('tlist').innerHTML=tray.map((r,i)=>'<div class="ti"><span class="tg2">'+esc(T[r.t].n)+'</span><span class="tt">'+esc(r.v.title||trimUrl(r.v.url||'')||r.raw)+'</span><button class="rm" data-i="'+i+'" aria-label="Remove">\u00d7</button></div>').join('');
- $('tlist').querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{ tray.splice(+b.dataset.i,1); trayDraw(); });
+ $('gb').textContent=tray.length; tq('tcount').textContent=tray.length?'\u00b7 '+tray.length+(tray.length>1?' sources':' source'):''; tq('tdone').disabled=!tray.length;
+ tq('tlist').innerHTML=tray.map((r,i)=>'<div class="ti"><span class="tg2">'+esc(T[r.t].n)+'</span><span class="tt">'+esc(r.v.title||trimUrl(r.v.url||'')||r.raw)+'</span><button class="rm" data-i="'+i+'" aria-label="Remove">\u00d7</button></div>').join('');
+ tq('tlist').querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{ tray.splice(+b.dataset.i,1); trayDraw(); });
 }
 function trayAdd(){
- const raw=$('tin').value.trim(); if(!raw) return;
- if(tray.some(x=>x.raw===raw)){ toast('Already added.'); $('tin').value=''; return; }
- const r=parseLine(raw); r.raw=raw; tray.push(r); $('tin').value=''; trayDraw();
- $('tnote').textContent='Added a '+T[r.t].n.toLowerCase()+'. '+(r.note||'');
+ const raw=tq('tin').value.trim(); if(!raw) return;
+ if(tray.some(x=>x.raw===raw)){ toast('Already added.'); tq('tin').value=''; return; }
+ const r=parseLine(raw); r.raw=raw; tray.push(r); tq('tin').value=''; trayDraw();
+ tq('tnote').textContent='Added a '+T[r.t].n.toLowerCase()+'. '+(r.note||'');
 }
-function trayDone(){
- if(!tray.length) return;
+function sendFast(){
  const lines=$('fl').value.split('\n').map(s=>s.trim()).filter(Boolean);
  tray.forEach(r=>{ if(!lines.includes(r.raw)) lines.push(r.raw); });
  $('fl').value=lines.join('\n'); parseFast();
- const n=tray.length; tray=[]; trayDraw(); $('tnote').textContent=n+(n>1?' sources':' source')+' sent to the fast lane.';
- nav('fast'); toast(n+(n>1?' sources':' source')+' ready in the fast lane');
+ const n=tray.length; tray=[]; trayDraw(); tq('tnote').textContent=n+(n>1?' sources':' source')+' sent to the fast lane.';
+ nav('fast'); try{ window.focus(); }catch(e){} toast(n+(n>1?' sources':' source')+' ready in the fast lane');
 }
-async function trayPip(){
- if(pip){ pip.close(); return; }
- if(!('documentPictureInPicture' in window)){ toast('Floating windows need Chrome or Edge on a computer. The tray stays in this tab.'); return; }
- try{
-  pip=await documentPictureInPicture.requestWindow({width:380,height:540});
-  [...document.styleSheets].forEach(ss=>{ try{ const st=document.createElement('style'); st.textContent=[...ss.cssRules].map(r=>r.cssText).join('\n'); pip.document.head.appendChild(st); }catch(e){ if(ss.href){ const l=document.createElement('link'); l.rel='stylesheet'; l.href=ss.href; pip.document.head.appendChild(l); } } });
-  pip.document.body.append(trayEl()); trayEl().classList.add('pip','show');
-  pip.addEventListener('pagehide',()=>{ document.body.append(trayEl()); trayEl().classList.remove('pip'); pip=null; });
- }catch(e){ pip=null; toast('Your browser blocked the floating window. The tray stays in this tab.'); }
+function sendSlide(){ const items=tray.slice(); tray=[]; trayDraw(); tq('tnote').textContent='Opened as a slideshow in the main window.'; slOpen(items); try{ window.focus(); }catch(e){} }
+function trayDone(){
+ if(!tray.length) return;
+ const m=S.cfg.mode; if(m==='fast') return sendFast(); if(m==='slide') return sendSlide();
+ tq('tqt').textContent='How do you want to cite these '+tray.length+(tray.length>1?' sources?':' source?'); tq('tq').style.display='block'; tq('tdone').style.display='none';
 }
-$('gob').onclick=()=>trayOpen(!trayEl().classList.contains('show'));
-$('tx').onclick=()=>trayOpen(false); $('tpop').onclick=trayPip; $('tdone').onclick=trayDone;
-$('tin').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); if($('tin').value.trim()) trayAdd(); else trayDone(); } else if(e.key==='Escape'&&!pip){ trayOpen(false); } });
-$('tin').addEventListener('paste',()=>setTimeout(()=>{ if(LOC.test($('tin').value.trim())) trayAdd(); },60));
-addEventListener('keydown',e=>{ if(e.key==='g'&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)){ e.preventDefault(); trayOpen(!trayEl().classList.contains('show')); } });
+function trayPick(m){ if(tq('tqr').checked){ S.cfg.mode=m; save(); render(); } tq('tq').style.display='none'; tq('tdone').style.display=''; if(m==='fast') sendFast(); else sendSlide(); }
+$('gob').onclick=openMini; $('tx').onclick=()=>trayOpen(false); tq('tdone').onclick=trayDone; tq('tqf').onclick=()=>trayPick('fast'); tq('tqs').onclick=()=>trayPick('slide');
+tq('tin').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); if(tq('tin').value.trim()) trayAdd(); else trayDone(); } else if(e.key==='Escape'){ trayOpen(false); } });
+tq('tin').addEventListener('paste',()=>setTimeout(()=>{ if(LOC.test(tq('tin').value.trim())) trayAdd(); },60));
+addEventListener('keydown',e=>{ if(e.key==='g'&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)){ e.preventDefault(); openMini(); } });
+
+// ---- Slideshow ----
+let sl=null;
+function slOpen(items){ sl={items:items.map(r=>{ const v={...r.v}; if(r.t==='web'&&!v.acc) v.acc=today; if(r.t==='ai'&&!v.date) v.date=today; return {t:r.t,v}; }),i:0}; $('ov').classList.add('on'); drawSl(); $('ov').focus(); }
+function slClose(){ sl=null; $('ov').classList.remove('on'); $('ov').innerHTML=''; }
+function drawSl(){
+ const o=$('ov'), n=sl.items.length, i=sl.i, last=i>=n;
+ let h='<div class="ovw"><div class="row"><span class="sub">Slideshow \u00b7 '+esc(STY[style])+'</span><span class="sp"></span><button class="rm" id="slx" aria-label="Close">\u00d7</button></div><div class="dots" style="margin-top:12px">'+Array.from({length:n+1},(_,k)=>'<i class="'+(k<=i?'d':'')+'"></i>').join('')+'</div>';
+ if(!last) h+='<p class="sub">Source '+(i+1)+' of '+n+'</p><h1 class="k2" style="margin-top:4px">'+esc(T[sl.items[i].t].n)+'</h1><div class="grid" id="slf"></div><p class="pv lk" id="slp" style="margin-top:18px"></p><div class="row" style="margin-top:20px"><button class="btn" id="slb"'+(i?'':' disabled')+'>Back</button><span class="sp"></span><button class="btn p" id="sln">'+(i<n-1?'Next':'Review')+'</button></div>';
+ else h+='<h1 class="k2">'+n+(n>1?' citations':' citation')+' ready to cite</h1><p class="sub">'+n+(n>1?' credits':' credit')+' \u00b7 you have '+(S.unl?'\u221e':S.credits)+'</p><div class="row" style="margin-top:20px"><button class="btn" id="slb">Back</button><span class="sp"></span><button class="btn p" id="slpay">Check out</button></div>';
+ o.innerHTML=h+'</div>';
+ $('slx').onclick=slClose; $('slb').onclick=()=>{ sl.i=Math.max(0,sl.i-1); drawSl(); };
+ if(last){ $('slpay').onclick=slPay; return; }
+ const r=sl.items[i], key=keyOf({t:r.t});
+ const upd=()=>{ const x=makeOf(r.t,r.v,style); $('slp').innerHTML=x||'<span class="sub">Add the required detail to see it.</span>'; $('slp').classList.toggle('lk',!!x); $('sln').disabled=!readyOf(r.t,r.v); };
+ T[r.t].f.forEach(([f,l,ph])=>{
+  const lab=document.createElement('label'), s=document.createElement('span'), inp=document.createElement('input');
+  s.textContent=l; inp.type=ph==='date'?'date':'text'; if(ph!=='date') inp.placeholder=ph; inp.value=r.v[f]||''; inp.autocomplete='off'; inp.className='fi'+(f===key&&!inp.value?' req':'');
+  inp.oninput=()=>{ r.v[f]=inp.value; if(f===key) inp.classList.toggle('req',!inp.value.trim()); upd(); };
+  inp.onkeydown=e=>{ if(e.key==='Enter'){ e.preventDefault(); const all=[...$('slf').querySelectorAll('.fi')], k=all.indexOf(inp); if(k<all.length-1) all[k+1].focus(); else if(!$('sln').disabled) $('sln').click(); } };
+  lab.append(s,inp); $('slf').appendChild(lab);
+ });
+ $('sln').onclick=()=>{ sl.i++; drawSl(); }; upd();
+ const all=[...$('slf').querySelectorAll('.fi')]; (all.find(x=>!x.value)||all[0]).focus();
+}
+function slPay(){
+ const n=sl.items.length;
+ if(!S.unl&&S.credits<n){ toast('Not enough credits. Ask the owner for a key, or wait for next week\u2019s refill.'); slClose(); nav('credits'); return; }
+ if(!S.unl) S.credits-=n;
+ const done=sl.items.map(r=>({t:r.t,s:style,v:{...r.v},h:makeOf(r.t,r.v,style)}));
+ done.forEach(d=>S.list.push(d)); if(!S.active&&S.list.length>3) S.list=S.list.slice(-3); save(); render();
+ const L=sortBy(done), html=L.map(x=>'<p style="margin:0 0 .6em 2em;text-indent:-2em">'+x.h+'</p>').join(''), md=esc(L.map(x=>mdOf(x.h)).join('\n\n')).replace(/\n/g,'<br>');
+ $('ov').innerHTML='<div class="ovw"><div class="row"><span class="sub">Slideshow</span><span class="sp"></span><button class="rm" id="slx" aria-label="Close">\u00d7</button></div><h1 class="k2">'+n+(n>1?' citations':' citation')+' ready</h1><div class="box">'+L.map(x=>'<p class="pv rcp" style="margin:0 0 12px 2em;text-indent:-2em">'+x.h+'</p>').join('')+'</div><div class="row" style="margin-top:14px"><button class="btn p" id="slc">Copy all</button><button class="btn" id="slm">Copy Markdown</button><button class="btn" id="sld">Done</button></div></div>';
+ $('ov').querySelectorAll('.rcp').forEach(reveal);
+ $('slx').onclick=slClose; $('sld').onclick=slClose;
+ $('slc').onclick=async()=>toast(await copyText(html)?'Copied':'Copy did not work.'); $('slm').onclick=async()=>toast(await copyText(md)?'Markdown copied':'Copy did not work.');
+ copyText(html).then(ok=>toast(ok?n+(n>1?' citations':' citation')+' copied':'Ready. Copy them below.'));
+ sl={items:[],i:0};
+}
+$('ov').addEventListener('keydown',e=>{ if(!sl) return; if(e.key==='Escape'){ slClose(); return; } if(/INPUT/.test(e.target.tagName)) return; if(e.key==='ArrowRight'&&$('sln')&&!$('sln').disabled) $('sln').click(); if(e.key==='ArrowLeft'&&$('slb')&&!$('slb').disabled) $('slb').click(); });
+S.cfg=S.cfg||{mode:'ask'}; empCheck(); if(S.active) style='spark';
+
 trayDraw();
 addEventListener('resize',()=>render());
 route(); render();
