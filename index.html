@@ -160,16 +160,51 @@ input,textarea{transition:border-color .3s}
 .ov.on{display:block;animation:pgin .5s cubic-bezier(.2,.8,.2,1)}
 .ov:focus{outline:none}
 .ovw{max-width:720px;margin:0 auto}
+:root{--hl:rgba(255,255,255,.6)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--hl:rgba(255,255,255,.07)}}
+:root[data-theme="dark"]{--hl:rgba(255,255,255,.07)}
+body{background:radial-gradient(1100px 520px at 90% -8%,color-mix(in srgb,var(--acc) 14%,transparent),transparent 70%),radial-gradient(900px 500px at -10% 6%,color-mix(in srgb,var(--ink) 5%,transparent),transparent 70%),var(--bg);background-attachment:fixed}
+header{padding:20px 0 6px}
+.logo{font-size:42px}
+.pill{background:color-mix(in srgb,var(--panel) 82%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid color-mix(in srgb,var(--ink) 7%,transparent);box-shadow:0 1px 0 var(--hl) inset,0 10px 22px -16px rgba(0,0,0,.4)}
+.navbar{display:flex;justify-content:center;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;padding:10px 0 18px}
+.navbar .seg{background:color-mix(in srgb,var(--panel) 80%,transparent);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid color-mix(in srgb,var(--ink) 8%,transparent);box-shadow:0 1px 0 var(--hl) inset,0 22px 44px -26px rgba(0,0,0,.5);padding:5px;border-radius:99px;max-width:100%}
+.navbar .seg button{padding:10px 18px}
+.seg{border:1px solid color-mix(in srgb,var(--ink) 6%,transparent)}
+.hero .k .w:nth-of-type(4){font-style:italic;color:var(--acc)}
+.bar{padding:10px 10px 10px 28px;border:1px solid color-mix(in srgb,var(--ink) 7%,transparent);box-shadow:0 1px 0 var(--hl) inset,0 26px 50px -30px rgba(0,0,0,.5)}
+.bar input{font-size:23px}
+.btn.p{background:linear-gradient(180deg,color-mix(in srgb,var(--acc) 90%,#fff),var(--acc));box-shadow:0 1px 0 rgba(255,255,255,.35) inset,0 12px 24px -14px var(--acc)}
+.tile{border:1px solid color-mix(in srgb,var(--ink) 6%,transparent);box-shadow:0 1px 0 var(--hl) inset,0 18px 34px -28px rgba(0,0,0,.5)}
+.tile .g{transition:color .4s,transform .5s cubic-bezier(.3,.8,.2,1)}
+.tile:hover .g{color:var(--acc);transform:translateX(4px)}
+.box,.sheet,.drawer,.tray{border:1px solid color-mix(in srgb,var(--ink) 6%,transparent)}
+.box{box-shadow:0 1px 0 var(--hl) inset,0 20px 40px -32px rgba(0,0,0,.45)}
+.k2{margin:22px 0 10px}
+.ask{display:none;position:fixed;left:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));width:min(390px,calc(100vw - 36px));background:var(--ink);color:var(--bg);border-radius:26px;padding:20px;z-index:65;box-shadow:0 30px 70px -28px rgba(0,0,0,.7)}
+.ask.show{display:block;animation:pop .5s cubic-bezier(.2,.8,.2,1)}
+.ask .sub{color:color-mix(in srgb,var(--bg) 60%,var(--ink))}
+.ask .btn{background:color-mix(in srgb,var(--bg) 16%,transparent);color:var(--bg)}
+.ask .btn.p{background:var(--acc);color:var(--accink)}
+.flash{font-size:12px;font-weight:600;color:var(--acc);opacity:0}
+.flash.on{animation:fl 2.6s}
+@keyframes fl{8%,70%{opacity:1}100%{opacity:0}}
+.tray.min{padding:10px 14px;border-radius:99px}
+.tray.pip.min{min-height:0;border-radius:0}
+.tray.min #tin,.tray.min #tnote,.tray.min #tlist,.tray.min #tbm,.tray.min #tq,.tray.min #tdone{display:none!important}
+.bar input:focus-visible{outline:none}
+.ask #aq3{background:none;padding:11px 6px;opacity:.7;text-decoration:underline}
+.ask .row{gap:8px}
 </style>
 </head>
 <body>
 <div class="wrap">
 <header><div class="logo">cite</div><div class="hr"><button class="pill" id="cp"><span id="cn">0</span> credits</button><button class="pill" id="pp"><span class="led"></span><span id="pl">Premium</span></button><button class="pill" id="gob">Cite as you go <span class="badge" id="gb">0</span></button><button class="pill" id="cartb">Cart <span class="badge" id="cb">0</span></button></div></header>
 <nav class="navbar"><div class="seg" id="nav" role="group" aria-label="Pages"></div></nav>
-<div id="toolbar"><div class="row"><span class="sub">Format</span><div class="seg" id="styles" role="group" aria-label="Citation style"></div></div><div class="row" id="prow" style="margin-top:12px"><span class="sub">I am a</span><div class="seg" id="pers" role="group" aria-label="Who you are"></div><p class="sub" id="sphint" style="flex-basis:100%;margin:0;font-size:13px"></p></div></div>
+<div id="toolbar"><div class="row"><span class="sub">Format</span><div class="seg" id="styles" role="group" aria-label="Citation style"></div></div><p class="sub" id="rates" style="margin:10px 0 0;font-size:13px"></p><div class="row" id="prow" style="margin-top:12px"><span class="sub">I am a</span><div class="seg" id="pers" role="group" aria-label="Who you are"></div><p class="sub" id="sphint" style="flex-basis:100%;margin:0;font-size:13px"></p></div></div>
 
 <section class="page" id="pg-shop">
-<div class="hero"><h1 class="k">Shop for the perfect citation.</h1><p class="sub" style="margin:10px 0 22px">Paste a link or pick a source below. Each citation costs one credit.</p><div class="bar"><input id="paste" placeholder="Paste a link, DOI, ISBN, AI chat link or title" autocomplete="off" aria-label="Paste a source"><button class="btn p" id="addp">Find it</button></div><button class="lnk" id="tofast">Have a whole list? Open the fast lane</button><button class="lnk" id="tobm" style="margin-left:18px">Get the Cite this page button</button></div>
+<div class="hero"><h1 class="k">Shop for the perfect citation.</h1><p class="sub" style="margin:10px 0 22px">Paste a link or pick a source below. Credits per citation depend on the style you pick.</p><div class="bar"><input id="paste" placeholder="Paste a link, DOI, ISBN, AI chat link or title" autocomplete="off" aria-label="Paste a source"><button class="btn p" id="addp">Find it</button></div><button class="lnk" id="tofast">Have a whole list? Open the fast lane</button><button class="lnk" id="tobm" style="margin-left:18px">Get the Cite this page button</button></div>
 <div class="row" style="margin-top:14px"><div class="seg" id="cats" role="group" aria-label="Shelf"></div></div>
 <div class="shelf" id="shelf"></div>
 </section>
@@ -201,19 +236,21 @@ input,textarea{transition:border-color .3s}
 
 <section class="page" id="pg-credits">
 <h1 class="k2">Credits</h1>
-<p class="sub">One credit gets one citation. Free refills to 3 a week, premium to 25.</p>
+<p class="sub">Credits per citation depend on the style. Free refills to 3 a week, premium to 25.</p>
 <div class="box" id="shopbox"></div>
 </section>
 
 <section class="page" id="pg-settings">
 <h1 class="k2">Settings</h1>
 <div class="box"><b>When I am ready to cite</b><p class="sub" style="margin:6px 0 12px">Used by the Cite as you go window.</p><div class="seg" id="cfgmode" role="group" aria-label="When ready to cite"></div></div>
+<div class="box"><b>Quiet mode</b><p class="sub" style="margin:6px 0 12px">Keeps a tiny Cite as you go window out of the way while you browse. Use the Cite this page button on any site and cite picks it up when you come back.</p><div class="seg" id="bgmode" role="group" aria-label="Quiet mode"></div><p class="sub" style="margin:14px 0 8px">Ask me about quiet mode when I open cite</p><div class="seg" id="askmode" role="group" aria-label="Ask about quiet mode"></div></div>
 <div class="box"><b>SparkNews team</b><div id="teambox"></div></div>
 </section>
 </div>
 <div class="ov" id="ov" tabindex="-1"></div>
+<div class="ask" id="askbg" role="dialog" aria-label="Cite as you go"></div>
 <div class="tray" id="tray" role="dialog" aria-label="Cite as you go">
-<div class="tr"><b>Cite as you go</b><span class="sub" id="tcount"></span><span class="sp"></span><button class="btn" id="tpaste" style="padding:7px 14px">Paste</button><button class="rm" id="tx" aria-label="Close">×</button></div>
+<div class="tr"><b>Cite as you go</b><span class="sub" id="tcount"></span><span class="flash" id="tflash"></span><span class="sp"></span><button class="btn" id="tpaste" style="padding:7px 14px">Paste</button><button class="rm" id="tmin" aria-label="Minimize" title="Minimize">−</button><button class="rm" id="tx" aria-label="Close">×</button></div>
 <input id="tin" placeholder="Paste a website, press Enter" autocomplete="off" aria-label="Add a website" style="margin-top:10px">
 <p class="sub" id="tnote" style="font-size:13px;margin:6px 0 4px">Add sources as you read. Enter on an empty line sends them to the fast lane.</p>
 <button class="lnk" id="tbm" style="padding:2px 0 8px;font-size:13px">Get the Cite this page button</button>
@@ -484,11 +521,13 @@ function detect(raw){
 }
 
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('show'),2300);}
+function placeThumb(el){ const p=el.querySelector('[aria-pressed=true]'), th=el.querySelector('.th'); if(!th) return; if(!p||!p.offsetWidth){ th.style.opacity=0; return; } const first=!el._init; if(first) th.style.transition='none'; th.style.opacity=1; th.style.width=p.offsetWidth+'px'; th.style.height=p.offsetHeight+'px'; th.style.transform='translate('+p.offsetLeft+'px,'+p.offsetTop+'px)'; if(first){ void th.offsetWidth; th.style.transition=''; el._init=1; } }
+const relayoutSegs=()=>requestAnimationFrame(()=>document.querySelectorAll('.seg').forEach(placeThumb));
 function seg(el,items,cur,fn){
  const sig=items.map(i=>i[0]).join('|'), lab=i=>esc(i[1])+(i[2]?'<span class="lock">'+(i[2]===true?'Premium':esc(i[2]))+'</span>':'');
  if(el._sig!==sig){ el.innerHTML='<span class="th"></span>'; items.forEach(i=>{const b=document.createElement('button');b.dataset.k=i[0];b.dataset.l=lab(i);b.innerHTML=b.dataset.l;el.appendChild(b);}); el._sig=sig; }
  items.forEach((i,x)=>{const b=el.children[x+1]; const l=lab(i); if(b.dataset.l!==l){b.dataset.l=l;b.innerHTML=l;} b.setAttribute('aria-pressed',i[0]===cur); b.onclick=()=>fn(i[0]);});
- requestAnimationFrame(()=>{ const p=el.querySelector('[aria-pressed=true]'), th=el.querySelector('.th'); if(!p||!p.offsetWidth){th.style.opacity=0;return;} const first=!el._init; if(first) th.style.transition='none'; th.style.opacity=1; th.style.width=p.offsetWidth+'px'; th.style.height=p.offsetHeight+'px'; th.style.transform='translate('+p.offsetLeft+'px,'+p.offsetTop+'px)'; if(first){ void th.offsetWidth; th.style.transition=''; el._init=1; } });
+ requestAnimationFrame(()=>placeThumb(el));
 }
 function openSheet(mode,force){
  const s=$('sheet'), c=$('sc'), P='margin:6px 0 0';
@@ -507,7 +546,7 @@ function openSheet(mode,force){
  } else if(S.redeemed){
   c.innerHTML='<b>Premium is off.</b><p class="sub" style="'+P+'">Your code has been used on this device. Type your special code anywhere to switch premium back on.</p>';
  } else {
-  c.innerHTML='<b>'+(S.unl?'∞':S.credits)+' credits left.</b><p class="sub" style="'+P+'">One credit gets one citation. Free refills to 3 each week. Premium refills to 25.</p><hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><b>Unlock premium</b><p class="sub" style="margin:6px 0 10px">SparkNews, MLA, Chicago, 16 more source types, an unlimited list, BibTeX and 50 credits.</p><div class="row"><input id="code" placeholder="Code for this device" style="flex:1;min-width:180px" autocomplete="off"><button class="btn p" id="redeem">Unlock</button></div>';
+  c.innerHTML='<b>'+(S.unl?'∞':S.credits)+' credits left.</b><p class="sub" style="'+P+'">Credits per citation depend on the style. Free refills to 3 each week. Premium refills to 25.</p><hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><b>Unlock premium</b><p class="sub" style="margin:6px 0 10px">SparkNews, MLA, Chicago, 16 more source types, an unlimited list, BibTeX and 50 credits.</p><div class="row"><input id="code" placeholder="Code for this device" style="flex:1;min-width:180px" autocomplete="off"><button class="btn p" id="redeem">Unlock</button></div>';
   $('redeem').onclick=redeem; $('code').onkeydown=e=>{if(e.key==='Enter')redeem();};
  }
  if(mode!=='login'&&mode!=='code'&&mode!=='shop'&&mode!=='bm'&&!S.unl){ c.insertAdjacentHTML('beforeend','<hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><b>Have a key?</b><div class="row" style="margin-top:10px"><input id="uk" placeholder="Paste your key" style="flex:1;min-width:180px" autocomplete="off"><button class="btn" id="ua">Apply</button></div>'); const ap=()=>{ const [ok,m]=redeemKey($('uk').value); toast(m); if(ok) $('sheet').classList.remove('show'); }; $('ua').onclick=ap; $('uk').onkeydown=e=>{if(e.key==='Enter')ap();}; }
@@ -609,7 +648,7 @@ let shelfSig='';
 var drawShelf=function(){
  const sig=String(S.active); if(sig===shelfSig) return;
  const first=!shelfSig; shelfSig=sig;
- $('shelf').innerHTML=Object.keys(T).map((k,i)=>'<button class="tile" data-k="'+k+'"'+(first?' style="animation:sharp .7s '+(i*45)+'ms both"':'')+'><span class="g">'+esc(glyph(k))+'</span><span><span class="n">'+esc(T[k].n)+'</span><br><span class="pr">1 credit'+(T[k].x&&!S.active?' <span class="lock">Premium</span>':'')+'</span></span></button>').join('');
+ $('shelf').innerHTML=Object.keys(T).map((k,i)=>'<button class="tile" data-k="'+k+'"'+(first?' style="animation:sharp .7s '+(i*45)+'ms both"':'')+'><span class="g">'+esc(glyph(k))+'</span><span><span class="n">'+esc(T[k].n)+'</span><br><span class="pr">'+cr(costOf(k,style))+(T[k].x&&!S.active?' <span class="lock">Premium</span>':'')+'</span></span></button>').join('');
  $('shelf').querySelectorAll('.tile').forEach(b=>b.onclick=()=>chooseType(b.dataset.k));
 }
 function chooseType(k){ if(T[k].x&&!S.active){openSheet('info',true);return;} ptype=k; pnote=''; openD('product'); }
@@ -620,7 +659,7 @@ function pasteFind(){
 }
 function drawProduct(){
  const c=$('dc'), k=ptype; type=k;
- c.innerHTML='<div class="sub">New citation</div><h2 class="dh">'+esc(T[k].n)+'</h2>'+(pnote?'<p class="sub">'+esc(pnote)+'</p>':'')+'<div class="grid" id="pf"></div><p class="sub" style="margin-top:18px">Preview in '+esc(STY[style])+'</p><p class="pv lk" id="ppv"></p><p class="sub" id="pgap" style="margin-top:10px"></p><div class="row" style="margin-top:auto;padding-top:20px"><button class="btn" id="pcn">Cancel</button><span class="sp"></span><button class="btn p" id="pa" disabled>Add to cart · 1 credit</button></div>';
+ c.innerHTML='<div class="sub">New citation</div><h2 class="dh">'+esc(T[k].n)+'</h2>'+(pnote?'<p class="sub">'+esc(pnote)+'</p>':'')+'<div class="grid" id="pf"></div><p class="sub" style="margin-top:18px">Preview in '+esc(STY[style])+'</p><p class="pv lk" id="ppv"></p><p class="sub" id="pgap" style="margin-top:10px"></p><div class="row" style="margin-top:auto;padding-top:20px"><button class="btn" id="pcn">Cancel</button><span class="sp"></span><button class="btn p" id="pa" disabled>Add to cart · '+cr(costOf(k,style))+'</button></div>';
  const pv=()=>{ const h=makeOf(k,V[k],style); $('ppv').innerHTML=h||'<span class="sub">Add a title to see it.</span>'; $('ppv').classList.toggle('lk',!!h); $('pa').disabled=!h; const g=sparkGaps(k,V[k]); $('pgap').textContent=style==='spark'&&h?(g.length?'Add '+g.join(', ')+' for a stronger citation.':'Complete. Nothing missing.'):''; };
  T[k].f.forEach(([f,l,ph])=>{
   const lab=document.createElement('label'), sp=document.createElement('span'), inp=document.createElement('input');
@@ -635,15 +674,15 @@ function drawProduct(){
  pv(); setTimeout(()=>{const f=c.querySelector('input'); if(f) f.focus({preventScroll:true});},500);
 }
 function drawCart(){
- const c=$('dc'), n=basket.length, have=S.unl?'\u221e':S.credits;
- c.innerHTML='<div class="sub">Your cart \u00b7 '+esc(STY[style])+(style==='spark'?' \u00b7 '+esc(PERS[S.persona]):'')+'</div><h2 class="dh">'+(n?n+(n>1?' citations':' citation'):'Nothing here yet')+'</h2>'+(n?basket.map(it=>'<div class="ci"><p class="pv lk">'+makeOf(it.t,it.v,style)+'</p><button class="rm" data-r="'+it.id+'" aria-label="Remove">\u00d7</button></div>').join(''):'<p class="sub">Pick a source from the shelf, or paste a link at the top.</p>')+'<div class="cartbar" style="margin-top:auto"><span class="sub">'+(n?n+(n>1?' credits':' credit')+' \u00b7 you have '+have:'You have '+have+' credits')+'</span><button class="btn p" id="pay"'+(n?'':' disabled')+'>Checkout</button></div>';
+ const c=$('dc'), n=basket.length, tot=basket.reduce((a,it)=>a+costOf(it.t,style),0), have=S.unl?'\u221e':S.credits;
+ c.innerHTML='<div class="sub">Your cart \u00b7 '+esc(STY[style])+(style==='spark'?' \u00b7 '+esc(PERS[S.persona]):'')+'</div><h2 class="dh">'+(n?n+(n>1?' citations':' citation'):'Nothing here yet')+'</h2>'+(n?basket.map(it=>'<div class="ci"><p class="pv lk">'+makeOf(it.t,it.v,style)+'</p><button class="rm" data-r="'+it.id+'" aria-label="Remove">\u00d7</button></div>').join(''):'<p class="sub">Pick a source from the shelf, or paste a link at the top.</p>')+'<div class="cartbar" style="margin-top:auto"><span class="sub">'+(n?cr(tot)+' \u00b7 you have '+have:'You have '+have+' credits')+'</span><button class="btn p" id="pay"'+(n?'':' disabled')+'>Checkout'+(n?' \u00b7 '+cr(tot):'')+'</button></div>';
  c.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{basket=basket.filter(i=>i.id!==b.dataset.r);render();drawCart();});
  $('pay').onclick=payCart;
 }
 function payCart(){
- const n=basket.length; if(!n) return;
- if(!S.unl&&S.credits<n){ closeD(); nav('credits'); toast('Not enough credits. Ask the owner for a key, or wait for next week\u2019s refill.'); return; }
- if(!S.unl) S.credits-=n;
+ const n=basket.length; if(!n) return; const cost=basket.reduce((a,it)=>a+costOf(it.t,style),0);
+ if(!S.unl&&S.credits<cost){ closeD(); nav('credits'); toast('Not enough credits. Ask the owner for a key, or wait for next week\u2019s refill.'); return; }
+ if(!S.unl) S.credits-=cost;
  const done=basket.map(it=>({t:it.t,s:style,v:{...it.v},h:makeOf(it.t,it.v,style)}));
  done.forEach(d=>S.list.push(d)); if(!S.active&&S.list.length>3) S.list=S.list.slice(-3);
  basket=[]; receipt=done; save(); render(); dview='receipt'; drawReceipt();
@@ -661,7 +700,7 @@ function drawReceipt(){
 const sorted=()=>S.active?S.list.slice().sort((a,b)=>plainOf(a.h).replace(/^\u201c/,'').localeCompare(plainOf(b.h).replace(/^\u201c/,''))):S.list;
 function render(){
  if(style!=='apa'&&!S.active) style='apa';
- $('prow').style.display=style==='spark'?'flex':'none'; $('sphint').textContent=style==='spark'?HINT[S.persona]:'';
+ $('prow').style.display=style==='spark'?'flex':'none'; $('sphint').textContent=style==='spark'?HINT[S.persona]:''; $('rates').textContent='Credits per citation: '+Object.keys(STY).map(k=>STY[k]+': '+costOf('web',k)).join(' · ');
  const after=()=>{ if(drawerOpen()&&dview==='cart') drawCart(); };
  seg($('styles'),Object.keys(STY).map(k=>[k,STY[k],k==='apa'?false:S.active?(k==='spark'?'Best':false):true]),style,k=>{ if(k!=='apa'&&!S.active){openSheet('info',true);return;} style=k; render(); after(); });
  seg($('pers'),Object.keys(PERS).map(k=>[k,PERS[k]]),S.persona,k=>{ S.persona=k; save(); render(); after(); });
@@ -670,11 +709,13 @@ function render(){
  $('pp').classList.toggle('on',S.active); $('pl').textContent=S.active?'Premium on':'Premium'; 
  seg($('cats'),Object.keys(CATS).map(k=>[k,CATS[k][0]]),cat,k=>{ cat=k; render(); });
  seg($('cfgmode'),[['ask','Ask me'],['fast','Fast lane'],['slide','Slideshow']],(S.cfg&&S.cfg.mode)||'ask',k=>{ S.cfg.mode=k; save(); render(); });
+ seg($('bgmode'),[['on','On'],['off','Off']],S.cfg.bg?'on':'off',k=>{ S.cfg.bg=k==='on'; save(); render(); if(S.cfg.bg) openMini({min:true}); else if(mini){ try{ mini.close(); }catch(e){} } });
+ seg($('askmode'),[['yes','Yes'],['no','No']],S.cfg.askBg===false?'no':'yes',k=>{ S.cfg.askBg=(k==='yes'); save(); render(); });
  drawShelf(); drawNav();
  $('lsub').textContent=S.active?'Unlimited. Click an entry to copy it. Copy all sorts A to Z.':'Free keeps your last 3. Click an entry to copy it. Premium keeps everything and exports BibTeX.';
  const lq=($('lq').value||'').toLowerCase(); $('list').innerHTML=S.list.map((x,i)=>[x,i]).filter(([x])=>plainOf(x.h).toLowerCase().includes(lq)).map(([x,i])=>'<div class="item" data-i="'+i+'">'+x.h+'</div>').join('')||'<p class="sub">'+(S.list.length?'No matches.':'Nothing here yet. Check out a citation and it lands here.')+'</p>';
  $('list').querySelectorAll('.item').forEach(el=>el.onclick=async()=>toast(await copyText(S.list[+el.dataset.i].h)?'Copied':'Select the text and copy it manually.'));
- $('copyall').disabled=$('clear').disabled=$('bib').disabled=$('mdl').disabled=!S.list.length;
+ $('copyall').disabled=$('clear').disabled=$('bib').disabled=$('mdl').disabled=!S.list.length; relayoutSegs();
  if(cur==='fast'&&!/fi|^fl$/.test(document.activeElement.className+'|'+document.activeElement.id)&&document.activeElement.tagName!=='INPUT') drawRows();
 }
 $('cartb').onclick=()=>openD('cart');
@@ -696,7 +737,7 @@ function route(){
  PAGES.forEach(k=>$('pg-'+k).classList.toggle('on',k===cur));
  $('toolbar').style.display=(cur==='shop'||cur==='fast')?'':'none';
  drawShop.target=cur==='credits'?$('shopbox'):null; if(cur==='credits') drawShop();
- drawNav(); if(cur==='settings') drawTeam(); if(cur==='prompts') drawPrompts();
+ drawNav(); if(cur==='settings') drawTeam(); if(cur==='prompts') drawPrompts(); relayoutSegs();
  if(route.last!==cur){ route.last=cur; window.scrollTo(0,0); if(cur==='fast') setTimeout(()=>$('kin').focus({preventScroll:true}),350); }
 }
 function nav(p){ cur=p; try{ if(location.hash!=='#'+p) location.hash=p; }catch(e){} route(); }
@@ -708,9 +749,9 @@ $('tofast').onclick=()=>nav('fast');
 const CATS={all:['All',null],day:['Everyday',['web','news','post','intv']],acad:['Academic',['book','jour','chap','conf','thesis','ency','case','lect']],media:['Media',['video','pod','film','img']],data:['Data and AI',['ai','data','soft','rep']]};
 let cat='all';
 drawShelf=function(){
- const sig=String(S.active)+cat; if(sig===shelfSig) return; shelfSig=sig;
+ const sig=String(S.active)+cat+style; if(sig===shelfSig) return; shelfSig=sig;
  const keys=Object.keys(T).filter(k=>cat==='all'||CATS[cat][1].includes(k));
- $('shelf').innerHTML=keys.map((k,i)=>'<button class="tile" data-k="'+k+'" style="animation:sharp .6s '+(i*40)+'ms both"><span class="g">'+esc(glyph(k))+'</span><span><span class="n">'+esc(T[k].n)+'</span><br><span class="pr">1 credit'+(T[k].x&&!S.active?' <span class="lock">Premium</span>':'')+'</span></span></button>').join('');
+ $('shelf').innerHTML=keys.map((k,i)=>'<button class="tile" data-k="'+k+'" style="animation:sharp .6s '+(i*40)+'ms both"><span class="g">'+esc(glyph(k))+'</span><span><span class="n">'+esc(T[k].n)+'</span><br><span class="pr">'+cr(costOf(k,style))+(T[k].x&&!S.active?' <span class="lock">Premium</span>':'')+'</span></span></button>').join('');
  $('shelf').querySelectorAll('.tile').forEach(b=>b.onclick=()=>chooseType(b.dataset.k));
 };
 
@@ -748,8 +789,8 @@ function parseFast(){
 }
 let openMap={};
 function flInfo(){
- const n=flRows.filter(r=>r.ok).length, miss=flRows.length-n, have=S.unl?'\u221e':S.credits;
- $('flinfo').textContent=!flRows.length?'Paste your sources to begin.':n?n+(n>1?' credits':' credit')+' \u00b7 you have '+have+(miss?' \u00b7 '+miss+' need details':''):'Nothing ready yet. Fill in the details below.';
+ const n=flRows.filter(r=>r.ok).length, cost=flRows.filter(r=>r.ok).reduce((a,r)=>a+costOf(r.t,style),0), miss=flRows.length-n, have=S.unl?'\u221e':S.credits;
+ $('flinfo').textContent=!flRows.length?'Paste your sources to begin.':n?cr(cost)+' \u00b7 you have '+have+(miss?' \u00b7 '+miss+' need details':''):'Nothing ready yet. Fill in the details below.';
  $('flgo').disabled=!n; $('flgo').textContent=n?'Check out '+n+(n>1?' citations':' citation'):'Check out all';
 }
 function drawRows(){
@@ -778,9 +819,9 @@ function drawRows(){
  flInfo();
 }
 function flGo(){
- const rows=flRows.filter(r=>r.ok), n=rows.length; if(!n) return;
- if(!S.unl&&S.credits<n){ toast('Not enough credits. Ask the owner for a key, or wait for next week\u2019s refill.'); nav('credits'); return; }
- if(!S.unl) S.credits-=n;
+ const rows=flRows.filter(r=>r.ok), n=rows.length; if(!n) return; const cost=rows.reduce((a,r)=>a+costOf(r.t,style),0);
+ if(!S.unl&&S.credits<cost){ toast('Not enough credits. Ask the owner for a key, or wait for next week\u2019s refill.'); nav('credits'); return; }
+ if(!S.unl) S.credits-=cost;
  const done=rows.map(r=>({t:r.t,s:style,v:{...r.v},h:makeOf(r.t,r.v,style)}));
  done.forEach(d=>S.list.push(d)); if(!S.active&&S.list.length>3) S.list=S.list.slice(-3);
  save();
@@ -791,7 +832,7 @@ function flGo(){
  $('fcp').onclick=async()=>toast(await copyText(html)?'Copied':'Copy did not work.');
  $('fnew').onclick=()=>{ $('flout').innerHTML=''; };
  $('fmd').onclick=async()=>toast(await copyText(esc(L.map(x=>mdOf(x.h)).join('\n\n')).replace(/\n/g,'<br>'))?'Markdown copied':'Copy did not work.');
- copyText(html).then(ok=>toast(ok?n+(n>1?' citations':' citation')+' copied'+(S.unl?'':' \u00b7 '+n+(n>1?' credits':' credit')+' used'):'Ready. Copy them below.'));
+ copyText(html).then(ok=>toast(ok?n+(n>1?' citations':' citation')+' copied'+(S.unl?'':' \u00b7 '+cr(cost)+' used'):'Ready. Copy them below.'));
 }
 $('fl').addEventListener('input',()=>{ clearTimeout(flTimer); flTimer=setTimeout(parseFast,160); });
 $('fl').addEventListener('keydown',e=>{ if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){ e.preventDefault(); flGo(); } });
@@ -843,33 +884,38 @@ $('kin').addEventListener('keydown',e=>{
   if(karm){ karm=0; flGo(); } else { karm=1; toast('Press Enter again to check out '+n+(n>1?' citations':' citation')); setTimeout(()=>{ karm=0; },4000); }
  } else if(e.key==='Escape'){ $('kin').value=''; }
 });
-$('kin').addEventListener('paste',()=>setTimeout(()=>{ { const v=$('kin').value.trim(); if(LOC.test(v)||isCiteJson(v)) kStart(); } },60));
+$('kin').addEventListener('paste',e=>{ const L=capLines((e.clipboardData&&e.clipboardData.getData('text'))||''); if(L.length>1){ e.preventDefault(); addBatchFast(L); return; } setTimeout(()=>{ const v=$('kin').value.trim(); if(LOC.test(v)||isCiteJson(v)) kStart(); },60); });
 
 // ---- Cite as you go (mini window) ----
 let tray=[], mini=null;
 const tray0=$('tray'), tq=id=>tray0.querySelector('#'+id);
 function copyStyles(w){ [...document.styleSheets].forEach(ss=>{ try{ const st=w.document.createElement('style'); st.textContent=[...ss.cssRules].map(r=>r.cssText).join('\n'); w.document.head.appendChild(st); }catch(e){ if(ss.href){ const l=w.document.createElement('link'); l.rel='stylesheet'; l.href=ss.href; w.document.head.appendChild(l); } } }); }
 function trayOpen(on){ tray0.classList.toggle('show',on); if(on) setTimeout(()=>tq('tin').focus(),60); else if(mini){ try{ mini.close(); }catch(e){} } }
-async function openMini(){
+async function openMini(opts){
+ const min=!!(opts&&opts.min===true);
  if(mini){ try{ mini.close(); }catch(e){} return; }
  if(tray0.classList.contains('show')){ trayOpen(false); return; }
  let w=null;
- if('documentPictureInPicture' in window){ try{ w=await documentPictureInPicture.requestWindow({width:380,height:560}); }catch(e){ w=null; } }
- if(!w){ try{ w=window.open('','citeMini','popup=yes,width=400,height=620'); if(!w||!w.document) w=null; }catch(e){ w=null; } }
- if(!w){ trayOpen(true); toast('Your browser blocked the mini window, so the tray opened in this tab.'); return; }
- mini=w; w.addEventListener('focus',()=>clipAdd(true)); w.document.title='Cite as you go'; copyStyles(w); w.document.body.append(tray0); tray0.classList.add('pip','show'); setTimeout(()=>tq('tin').focus(),100);
- w.addEventListener('pagehide',()=>{ if(mini!==w) return; mini=null; document.body.append(tray0); tray0.classList.remove('pip','show'); });
+ if('documentPictureInPicture' in window){ try{ w=await documentPictureInPicture.requestWindow({width:min?330:380,height:min?84:560}); }catch(e){ w=null; } }
+ if(!w){ try{ w=window.open('','citeMini','popup=yes,width='+(min?340:400)+',height='+(min?110:620)); if(!w||!w.document) w=null; }catch(e){ w=null; } }
+ if(!w){ trayOpen(true); setMin(min); toast('Your browser blocked the mini window, so the tray opened in this tab.'); return; }
+ mini=w; w.addEventListener('focus',()=>clipAdd(true)); w.document.title='Cite as you go'; copyStyles(w); w.document.body.append(tray0); tray0.classList.add('pip','show'); setMin(min); setTimeout(()=>{ if(!min) tq('tin').focus(); },100);
+ w.addEventListener('pagehide',()=>{ if(mini!==w) return; mini=null; document.body.append(tray0); tray0.classList.remove('pip','show','min'); if(S.cfg.bg) setTimeout(drawAsk,300); });
 }
 function trayDraw(){
  $('gb').textContent=tray.length; tq('tcount').textContent=tray.length?'\u00b7 '+tray.length+(tray.length>1?' sources':' source'):''; tq('tdone').disabled=!tray.length;
  tq('tlist').innerHTML=tray.map((r,i)=>'<div class="ti"><span class="tg2">'+esc(T[r.t].n)+'</span><span class="tt">'+esc(r.v.title||trimUrl(r.v.url||'')||r.raw)+'</span><button class="rm" data-i="'+i+'" aria-label="Remove">\u00d7</button></div>').join('');
  tq('tlist').querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{ tray.splice(+b.dataset.i,1); trayDraw(); });
 }
-function trayAdd(){
- const raw=tq('tin').value.trim(); if(!raw) return;
- if(tray.some(x=>x.raw===raw)){ toast('Already added.'); tq('tin').value=''; return; }
- const r=parseLine(raw); r.raw=shortRaw(raw,r); if(tray.some(x=>x.raw===r.raw)){ toast('Already added.'); tq('tin').value=''; return; } if(r.t==='ai') logPrompt(r.v); tray.push(r); tq('tin').value=''; trayDraw();
+function trayAdd(raw0,quiet){
+ const own=typeof raw0!=='string', raw=(own?tq('tin').value:raw0).trim(); if(!raw) return false;
+ const h=String(cyrb(raw)), r=parseLine(raw); r.raw=shortRaw(raw,r);
+ if(tray.some(x=>x.raw===r.raw)||(isCiteJson(raw)&&seenCaps.has(h))){ if(!quiet) toast('Already added.'); if(own) tq('tin').value=''; return false; }
+ if(isCiteJson(raw)){ seenCaps.add(h); S.seenCaps=[...seenCaps].slice(-300); save(); }
+ if(r.t==='ai') logPrompt(r.v);
+ tray.push(r); if(own) tq('tin').value=''; trayDraw();
  tq('tnote').textContent='Added a '+T[r.t].n.toLowerCase()+'. '+(r.note||'');
+ return true;
 }
 function sendFast(){
  const lines=$('fl').value.split('\n').map(s=>s.trim()).filter(Boolean);
@@ -887,7 +933,7 @@ function trayDone(){
 function trayPick(m){ if(tq('tqr').checked){ S.cfg.mode=m; save(); render(); } tq('tq').style.display='none'; tq('tdone').style.display=''; if(m==='fast') sendFast(); else sendSlide(); }
 $('gob').onclick=openMini; $('tx').onclick=()=>trayOpen(false); tq('tdone').onclick=trayDone; tq('tqf').onclick=()=>trayPick('fast'); tq('tqs').onclick=()=>trayPick('slide');
 tq('tin').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); if(tq('tin').value.trim()) trayAdd(); else trayDone(); } else if(e.key==='Escape'){ trayOpen(false); } });
-tq('tin').addEventListener('paste',()=>setTimeout(()=>{ { const v=tq('tin').value.trim(); if(LOC.test(v)||isCiteJson(v)) trayAdd(); } },60));
+tq('tin').addEventListener('paste',e=>{ const L=capLines((e.clipboardData&&e.clipboardData.getData('text'))||''); if(L.length){ e.preventDefault(); let n=0; L.forEach(l=>{ if(trayAdd(l,true)) n++; }); toast(n?n+(n===1?' source':' sources')+' saved':'Already added.'); return; } setTimeout(()=>{ const v=tq('tin').value.trim(); if(LOC.test(v)) trayAdd(); },60); });
 addEventListener('keydown',e=>{ if(e.key==='g'&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)){ e.preventDefault(); openMini(); } });
 
 // ---- Slideshow ----
@@ -898,7 +944,7 @@ function drawSl(){
  const o=$('ov'), n=sl.items.length, i=sl.i, last=i>=n;
  let h='<div class="ovw"><div class="row"><span class="sub">Slideshow \u00b7 '+esc(STY[style])+'</span><span class="sp"></span><button class="rm" id="slx" aria-label="Close">\u00d7</button></div><div class="dots" style="margin-top:12px">'+Array.from({length:n+1},(_,k)=>'<i class="'+(k<=i?'d':'')+'"></i>').join('')+'</div>';
  if(!last) h+='<p class="sub">Source '+(i+1)+' of '+n+'</p><h1 class="k2" style="margin-top:4px">'+esc(T[sl.items[i].t].n)+'</h1><div class="grid" id="slf"></div><p class="pv lk" id="slp" style="margin-top:18px"></p><div class="row" style="margin-top:20px"><button class="btn" id="slb"'+(i?'':' disabled')+'>Back</button><span class="sp"></span><button class="btn p" id="sln">'+(i<n-1?'Next':'Review')+'</button></div>';
- else h+='<h1 class="k2">'+n+(n>1?' citations':' citation')+' ready to cite</h1><p class="sub">'+n+(n>1?' credits':' credit')+' \u00b7 you have '+(S.unl?'\u221e':S.credits)+'</p><div class="row" style="margin-top:20px"><button class="btn" id="slb">Back</button><span class="sp"></span><button class="btn p" id="slpay">Check out</button></div>';
+ else h+='<h1 class="k2">'+n+(n>1?' citations':' citation')+' ready to cite</h1><p class="sub">'+cr(sl.items.reduce((a,r)=>a+costOf(r.t,style),0))+' \u00b7 you have '+(S.unl?'\u221e':S.credits)+'</p><div class="row" style="margin-top:20px"><button class="btn" id="slb">Back</button><span class="sp"></span><button class="btn p" id="slpay">Check out</button></div>';
  o.innerHTML=h+'</div>';
  $('slx').onclick=slClose; $('slb').onclick=()=>{ sl.i=Math.max(0,sl.i-1); drawSl(); };
  if(last){ $('slpay').onclick=slPay; return; }
@@ -915,9 +961,9 @@ function drawSl(){
  const all=[...$('slf').querySelectorAll('.fi')]; (all.find(x=>!x.value)||all[0]).focus();
 }
 function slPay(){
- const n=sl.items.length;
- if(!S.unl&&S.credits<n){ toast('Not enough credits. Ask the owner for a key, or wait for next week\u2019s refill.'); slClose(); nav('credits'); return; }
- if(!S.unl) S.credits-=n;
+ const n=sl.items.length, cost=sl.items.reduce((a,r)=>a+costOf(r.t,style),0);
+ if(!S.unl&&S.credits<cost){ toast('Not enough credits. Ask the owner for a key, or wait for next week\u2019s refill.'); slClose(); nav('credits'); return; }
+ if(!S.unl) S.credits-=cost;
  const done=sl.items.map(r=>({t:r.t,s:style,v:{...r.v},h:makeOf(r.t,r.v,style)}));
  done.forEach(d=>S.list.push(d)); if(!S.active&&S.list.length>3) S.list=S.list.slice(-3); save(); render();
  const L=sortBy(done), html=L.map(x=>'<p style="margin:0 0 .6em 2em;text-indent:-2em">'+x.h+'</p>').join(''), md=esc(L.map(x=>mdOf(x.h)).join('\n\n')).replace(/\n/g,'<br>');
@@ -959,9 +1005,15 @@ const bmFn=function(){
   o={cite:1,url:(d.querySelector('link[rel=canonical]')||{}).href||L.href,title:(m('citation_title')||m('og:title')||ld.headline||m('twitter:title')||d.title||'').trim(),author:a0,date:date,site:m('og:site_name')||m('application-name')||h,journal:m('citation_journal_title'),volume:m('citation_volume'),issue:m('citation_issue'),pages:fp?(lp?fp+'-'+lp:fp):'',doi:m('citation_doi'),publisher:m('citation_publisher')};
  }
  var s=JSON.stringify(o);
- function ok(){var t=d.createElement('div');t.textContent='Copied for cite. Paste it into cite.';t.style.cssText='position:fixed;z-index:2147483647;right:16px;bottom:16px;background:#000;color:#fff;font:600 14px system-ui;padding:12px 18px;border-radius:99px;box-shadow:0 10px 30px rgba(0,0,0,.4)';d.body.appendChild(t);setTimeout(function(){t.remove();},2600);}
- function fb(){var x=d.createElement('textarea');x.value=s;x.style.cssText='position:fixed;opacity:0';d.body.appendChild(x);x.select();var r=false;try{r=d.execCommand('copy');}catch(e){}x.remove();if(r)ok();else prompt('Copy this, then paste it into cite:',s);}
- if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(s).then(ok,fb);}else{fb();}
+ function ok(n){var t=d.createElement('div');t.textContent=n>1?('Saved for cite. '+n+' in your batch.'):'Saved for cite.';t.style.cssText='position:fixed;z-index:2147483647;right:16px;bottom:16px;background:#000;color:#fff;font:600 14px system-ui;padding:12px 18px;border-radius:99px;box-shadow:0 10px 30px rgba(0,0,0,.4)';d.body.appendChild(t);setTimeout(function(){t.remove();},2600);}
+ function put(txt,n){
+  function fb(){var x=d.createElement('textarea');x.value=txt;x.style.cssText='position:fixed;opacity:0';d.body.appendChild(x);x.select();var r=false;try{r=d.execCommand('copy');}catch(e){}x.remove();if(r)ok(n);else prompt('Copy this, then paste it into cite:',txt);}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){ok(n);},fb);}else{fb();}
+ }
+ var isC=function(l){return /^\{"cite":1/.test(l);};
+ if(navigator.clipboard&&navigator.clipboard.readText){
+  navigator.clipboard.readText().then(function(old){var ls=(old||'').split('\n').map(function(x){return x.trim();}).filter(isC);if(ls.indexOf(s)<0)ls.push(s);put(ls.join('\n'),ls.length);},function(){put(s,1);});
+ }else{put(s,1);}
 };
 const BM='javascript:('+encodeURIComponent(bmFn.toString())+')()';
 function isCiteJson(t){ return /^\{"cite":1[,}]/.test((t||'').trim()); }
@@ -983,7 +1035,7 @@ function fromJson(raw){
 }
 function shortRaw(raw,r){ if(!isCiteJson(raw)) return raw; const line=r.t==='ai'?((r.v.url||'ai')+' | '+(r.v.prompt||'').slice(0,40)):(r.v.url||r.v.title||raw); fill[line]=Object.assign({__t:r.t},r.v); return line; }
 function drawBm(){
- $('sc').innerHTML='<b>Cite this page button</b><p class="sub" style="margin:6px 0 12px">Add it to your bookmarks bar once. On any page, click it to copy that page\u2019s details, then paste into cite.</p><div class="row"><a class="btn p" id="bma" href="'+BM.replace(/"/g,'&quot;')+'" style="text-decoration:none">Cite this page</a><button class="btn" id="bmc">Copy button code</button></div><p class="sub" style="margin:14px 0 0"><b>1.</b> Drag the orange button to your bookmarks bar. If dragging does not work, make a new bookmark and paste the copied code as its address.<br><b>2.</b> Open an article, paper or AI chat and click it.<br><b>3.</b> Press <span class="kbd">g</span> for the mini window. Click into it and it picks the capture up, or use its Paste button.</p><p class="sub" style="margin:12px 0 0;font-size:13px">On ChatGPT, Claude and Gemini it saves the tool, model, date, link and your last prompt. Select a different prompt first to use that one. Prompts are found from each site\u2019s page layout, so check them. Private chat links only work for you, so share the chat and use the share link.</p>';
+ $('sc').innerHTML='<b>Cite this page button</b><p class="sub" style="margin:6px 0 12px">Add it to your bookmarks bar once. On any page, click it to copy that page\u2019s details, then paste into cite.</p><div class="row"><a class="btn p" id="bma" href="'+BM.replace(/"/g,'&quot;')+'" style="text-decoration:none">Cite this page</a><button class="btn" id="bmc">Copy button code</button></div><p class="sub" style="margin:14px 0 0"><b>1.</b> Drag the orange button to your bookmarks bar. If dragging does not work, make a new bookmark and paste the copied code as its address.<br><b>2.</b> Open an article, paper or AI chat and click it.<br><b>3.</b> Keep clicking it as you read. Each click adds to a batch on your clipboard, so avoid copying other things meanwhile. Come back to cite, or click the tiny mini window, and it picks the whole batch up.</p><p class="sub" style="margin:12px 0 0;font-size:13px">On ChatGPT, Claude and Gemini it saves the tool, model, date, link and your last prompt. Select a different prompt first to use that one. Prompts are found from each site\u2019s page layout, so check them. Private chat links only work for you, so share the chat and use the share link.</p>';
  $('bma').onclick=e=>e.preventDefault();
  $('bmc').onclick=async()=>toast(await copyText(esc(BM))?'Button code copied':'Select the code and copy it.');
 }
@@ -993,12 +1045,16 @@ async function clipAdd(auto){
  try{
   const t=((await ((mini&&mini.navigator)||navigator).clipboard.readText())||'').trim();
   if(!t||t===lastClip){ if(!auto) toast('Nothing new on your clipboard.'); return; }
-  if(isCiteJson(t)||(!auto&&LOC.test(t))){ lastClip=t; tq('tin').value=t; trayAdd(); }
+  const L=capLines(t);
+  if(L.length){ lastClip=t; let n=0; L.forEach(l=>{ if(trayAdd(l,true)) n++; }); if(n) flash(n); else if(!auto) toast('Those are already saved.'); }
+  else if(!auto&&LOC.test(t)){ lastClip=t; trayAdd(t); }
   else if(!auto) toast('Your clipboard does not hold a page capture or a link.');
  }catch(e){ if(!auto) toast('Allow clipboard access, or paste with Ctrl or Cmd and V.'); }
 }
+function flash(n){ const el=tq('tflash'); el.textContent='+'+n+' saved'; el.classList.remove('on'); void el.offsetWidth; el.classList.add('on'); toast(n+(n===1?' source':' sources')+' saved from your browsing'); }
 tq('tpaste').onclick=()=>clipAdd(false);
-addEventListener('focus',()=>{ if(tray0.classList.contains('show')&&!mini) clipAdd(true); });
+addEventListener('focus',()=>{ if((S.cfg.bg||tray0.classList.contains('show'))&&!mini) clipAdd(true); });
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden&&S.cfg.bg&&!mini) setTimeout(()=>clipAdd(true),250); });
 
 // ---- AI prompt log ----
 let pf={date:today};
@@ -1035,6 +1091,31 @@ function addCap(){
 $('pcapb').onclick=addCap; $('pcap').onkeydown=e=>{ if(e.key==='Enter') addCap(); };
 $('pcap').addEventListener('paste',()=>setTimeout(()=>{ if(isCiteJson($('pcap').value)) addCap(); },60));
 $('psave').onclick=()=>{ if(!pf.tool&&!pf.prompt){ toast('Add a tool or a prompt first.'); return; } toast(logPrompt(pf)?'Saved to your prompt log':'Already in your log'); pf={date:today}; drawPrompts(); };
+
+// ---- Rates, quiet mode and batch pickup ----
+const RATES={style:{apa:1,mla:1,chi:2,spark:3},source:{}};
+const costOf=(t,s)=>(RATES.style[s]||1)+(RATES.source[t]||0);
+const cr=n=>n+(n===1?' credit':' credits');
+const seenCaps=new Set(S.seenCaps||[]);
+function capLines(t){ return (t||'').split('\n').map(s=>s.trim()).filter(isCiteJson); }
+function setMin(on){ tray0.classList.toggle('min',on); const b=tq('tmin'); b.textContent=on?'+':'\u2212'; b.title=on?'Expand':'Minimize'; if(mini){ try{ mini.resizeTo(on?330:380,on?84:560); }catch(e){} } }
+tq('tmin').onclick=()=>setMin(!tray0.classList.contains('min'));
+function addBatchFast(L){
+ const lines=$('fl').value.split('\n').map(s=>s.trim()).filter(Boolean); let n=0;
+ L.forEach(l=>{ const r=parseLine(l), raw=shortRaw(l,r); if(r.t==='ai') logPrompt(r.v); if(!lines.includes(raw)){ lines.push(raw); n++; } });
+ $('fl').value=lines.join('\n'); parseFast(); toast(n+(n===1?' source':' sources')+' added');
+}
+$('paste').addEventListener('paste',e=>{ const L=capLines((e.clipboardData&&e.clipboardData.getData('text'))||''); if(L.length>1){ e.preventDefault(); addBatchFast(L); nav('fast'); } });
+function drawAsk(){
+ const a=$('askbg'); if(!S.cfg.bg&&S.cfg.askBg===false) return; if(S.cfg.bg&&mini) return;
+ a.innerHTML=S.cfg.bg?'<b>Quiet mode is on</b><p class="sub" style="margin:6px 0 14px">Bring back the tiny mini window so cite can keep collecting while you browse.</p><div class="row"><button class="btn p" id="aq1">Open it quietly</button><button class="btn" id="aq2">Turn off</button></div>':'<b>Collect citations while you browse?</b><p class="sub" style="margin:6px 0 14px">Use the Cite this page button on any site. cite keeps collecting quietly in a tiny window, so you never lose your place, and picks everything up when you come back.</p><div class="row"><button class="btn p" id="aq1">Yes, start quietly</button><button class="btn" id="aq2">Not now</button><button class="btn" id="aq3">Don\u2019t ask again</button></div>';
+ a.classList.add('show');
+ $('aq1').onclick=()=>{ S.cfg.bg=true; S.cfg.askBg=false; save(); a.classList.remove('show'); openMini({min:true}); if(!S.cfg.bmSeen){ S.cfg.bmSeen=true; save(); openSheet('bm',true); } render(); };
+ $('aq2').onclick=()=>{ if(S.cfg.bg){ S.cfg.bg=false; save(); } a.classList.remove('show'); render(); };
+ if($('aq3')) $('aq3').onclick=()=>{ S.cfg.askBg=false; save(); a.classList.remove('show'); };
+}
+setTimeout(drawAsk,900);
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(relayoutSegs);
 
 trayDraw();
 addEventListener('resize',()=>render());
