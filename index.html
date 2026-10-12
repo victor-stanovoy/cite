@@ -209,6 +209,21 @@ header{padding:20px 0 6px}
 .det summary::-webkit-details-marker{display:none}
 .det summary::before{content:'+';display:inline-block;width:18px;color:var(--acc);font-weight:600}
 .det[open] summary::before{content:'\2212'}
+.li{border-top:1px solid var(--line)}
+.li .item{border-top:0}
+.lm{display:flex;gap:10px;align-items:center;padding:0 0 14px 28px}
+.lm select{border:0;background:var(--panel);color:var(--ink);font:600 12px Inter,sans-serif;border-radius:99px;padding:6px 10px;cursor:pointer}
+.lm input{font-size:15px;padding:2px 0 6px}
+#projrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+#hout .ci,#eout .sub{font-size:14px}
+.printbib p{font:12pt/2 'Times New Roman',Times,serif;margin:0;padding-left:.5in;text-indent:-.5in}
+@media print{body>*:not(#ov){display:none!important}body{background:#fff!important}.ov{position:static;background:#fff;padding:0;display:block;overflow:visible}.noprint{display:none!important}.printbib p,.ov h1{color:#000}}
+.cmd{display:none;position:fixed;left:50%;top:14vh;transform:translateX(-50%);width:min(560px,calc(100vw - 32px));background:var(--panel);border-radius:26px;padding:10px;z-index:90;box-shadow:0 40px 90px -30px rgba(0,0,0,.7);border:1px solid color-mix(in srgb,var(--ink) 8%,transparent)}
+.cmd.show{display:block;animation:pop .35s cubic-bezier(.2,.8,.2,1)}
+.cmd input{border:0;font:400 21px Newsreader,Georgia,serif;padding:12px 14px;background:transparent}
+.cmd .ci2{padding:11px 14px;border-radius:14px;cursor:pointer;font-size:15px;transition:background-color .2s}
+.cmd .ci2.on,.cmd .ci2:hover{background:var(--bg)}
+.trialbox{margin-bottom:12px}
 </style>
 </head>
 <body>
@@ -235,10 +250,30 @@ header{padding:20px 0 6px}
 
 <section class="page" id="pg-library">
 <h1 class="k2">Your library</h1>
-<p class="sub" id="lsub"></p>
-<input id="lq" placeholder="Search your library" autocomplete="off" aria-label="Search your library" style="margin:14px 0 6px">
+<div id="projrow"></div>
+<p class="sub" id="lsub" style="margin-top:10px"></p>
+<input id="lq" placeholder="Search your library" autocomplete="off" aria-label="Search your library" style="margin:12px 0 6px">
 <div id="list"></div>
-<div class="row" style="margin-top:16px"><button class="btn" id="copyall">Copy all</button><button class="btn" id="mdl">Copy Markdown</button><button class="btn" id="bib">Copy BibTeX</button><button class="btn" id="clear">Clear library</button></div>
+<div class="row" style="margin-top:16px"><button class="btn" id="copyall">Copy all</button><button class="btn" id="mdl">Copy Markdown</button><button class="btn" id="clear">Clear</button></div>
+<details class="det" id="tools"><summary>More tools</summary>
+<div class="box" style="margin-top:10px">
+<b>Export</b>
+<div class="row" style="margin-top:10px"><button class="btn" id="bib">BibTeX</button><button class="btn" id="ris">RIS</button><button class="btn" id="prt">Print-ready</button><button class="btn" id="fnb">Numbered notes</button></div>
+<b style="display:block;margin-top:20px">Restyle the whole library</b>
+<div class="seg" id="restyle" style="margin-top:10px" role="group" aria-label="Restyle"></div>
+<b style="display:block;margin-top:20px">Library health</b>
+<p class="sub" style="margin:6px 0 10px">Finds duplicates, missing details, very old sources and pages that need an archive copy.</p>
+<button class="btn" id="hc">Check my library</button><div id="hout"></div>
+<b style="display:block;margin-top:20px">Import</b>
+<p class="sub" style="margin:6px 0 10px">Paste BibTeX, or a plain list of references and they go to the fast lane.</p>
+<textarea class="ta" id="imp" style="min-height:90px;margin-top:0" aria-label="Paste references"></textarea>
+<button class="btn" id="impb" style="margin-top:10px">Import</button>
+<b style="display:block;margin-top:20px">Check an essay</b>
+<p class="sub" style="margin:6px 0 10px">Paste your text. cite compares its (Author, Year) citations with this library.</p>
+<textarea class="ta" id="ess" style="min-height:110px;margin-top:0" aria-label="Paste your essay"></textarea>
+<button class="btn" id="essb" style="margin-top:10px">Check citations</button><div id="eout"></div>
+</div>
+</details>
 </section>
 
 <section class="page" id="pg-prompts">
@@ -259,11 +294,13 @@ header{padding:20px 0 6px}
 <h1 class="k2">Settings</h1>
 <div class="box"><b>When I am ready to cite</b><p class="sub" style="margin:6px 0 12px">Used by the Cite as you go window.</p><div class="seg" id="cfgmode" role="group" aria-label="When ready to cite"></div></div>
 <div class="box"><b>Quiet mode</b><p class="sub" style="margin:6px 0 12px">Keeps a tiny Cite as you go window out of the way while you browse. Use the Cite this page button on any site and cite picks it up when you come back.</p><div class="seg" id="bgmode" role="group" aria-label="Quiet mode"></div><p class="sub" style="margin:14px 0 8px">Ask me about quiet mode when I open cite</p><div class="seg" id="askmode" role="group" aria-label="Ask about quiet mode"></div><p class="sub" style="margin:14px 0 8px">Cite this page button</p><button class="btn" id="sbm">Get the button</button></div>
+<div class="box"><b>Paste style</b><p class="sub" style="margin:6px 0 12px">How a copied bibliography looks when you paste it into a document.</p><div class="seg" id="fmtseg" role="group" aria-label="Paste style"></div><p class="sub" style="margin:16px 0 8px">House style code</p><div class="row"><input id="hsin" placeholder="HS-spark-student" autocomplete="off" style="flex:1;min-width:160px"><button class="btn" id="hsb">Apply</button></div></div>
 <div class="box"><b>SparkNews team</b><div id="teambox"></div></div>
 </section>
 </div>
-<footer class="foot"><button class="lnk" id="fcr">Credits</button><button class="lnk" id="fst">Settings</button></footer>
+<footer class="foot"><button class="lnk" id="fcr">Credits</button><button class="lnk" id="fst">Settings</button><span class="sub" style="font-size:13px">Press <span class="kbd">Ctrl</span> <span class="kbd">K</span> for commands</span></footer>
 <div class="ov" id="ov" tabindex="-1"></div>
+<div class="cmd" id="cmd" role="dialog" aria-label="Command palette"><input id="cmdin" placeholder="Type a command" autocomplete="off" aria-label="Command"><div id="cmdl"></div></div>
 <div class="ask" id="askbg" role="dialog" aria-label="Cite as you go"></div>
 <div class="tray" id="tray" role="dialog" aria-label="Cite as you go">
 <div class="tr"><b>Cite as you go</b><span class="sub" id="tcount"></span><span class="flash" id="tflash"></span><span class="sp"></span><button class="btn" id="tpaste" style="padding:7px 14px">Paste</button><button class="rm" id="tmin" aria-label="Minimize" title="Minimize">−</button><button class="rm" id="tx" aria-label="Close">×</button></div>
@@ -315,11 +352,11 @@ const T = {
  book:{n:'Book',f:[A,TI,['publisher','Publisher',''],['year','Year','2004']]},
  jour:{n:'Journal',f:[A,['title','Article title',''],['journal','Journal',''],['year','Year',''],['volume','Volume',''],['issue','Issue',''],['pages','Pages','12-30'],URLF]},
  ai:{n:'AI',f:[['tool','AI tool','Claude'],['company','Company','Anthropic'],['version','Version','Sonnet 5.5'],['date','Date used','date'],['prompt','Your prompt',''],URLF]},
- news:{x:1,n:'News article',f:[A,['title','Headline',''],['site','Publication',''],DT,URLF]},
+ news:{n:'News article',f:[A,['title','Headline',''],['site','Publication',''],DT,URLF]},
  chap:{x:1,n:'Book chapter',f:[A,['title','Chapter title',''],['site','Book title',''],['extra','Editor',''],['publisher','Publisher',''],['year','Year',''],['pages','Pages','12-30']]},
- video:{x:1,n:'Video',f:[['author','Channel',''],TI,['site','Platform','YouTube'],DT,URLF]},
+ video:{n:'Video',f:[['author','Channel',''],TI,['site','Platform','YouTube'],DT,URLF]},
  pod:{x:1,n:'Podcast',f:[['author','Host',''],['title','Episode title',''],['site','Show name',''],DT,URLF]},
- post:{x:1,n:'Social post',f:[['author','Author or handle',''],['title','Post text',''],['site','Platform','X'],DT,URLF]},
+ post:{n:'Social post',f:[['author','Author or handle',''],['title','Post text',''],['site','Platform','X'],DT,URLF]},
  film:{x:1,n:'Film',f:[TI,['author','Director',''],['publisher','Studio',''],['year','Year','']]},
  img:{x:1,n:'Image',f:[['author','Artist or photographer',''],TI,['site','Museum or website',''],['year','Year',''],URLF]},
  rep:{x:1,n:'Report',f:[['author','Organisation or author',''],TI,['publisher','Publisher',''],['year','Year',''],URLF]},
@@ -342,7 +379,8 @@ const people = s => (s||'').split(/;|\band\b|&/i).map(x=>x.trim()).filter(Boolea
 const init = f => f.split(/[\s-]+/).filter(Boolean).map(w=>w[0].toUpperCase()+'.').join(' ');
 const apaA = ps => { const a=ps.map(p=>p.l+(p.f?', '+init(p.f):'')); if(a.length<3) return a.join(', & '); return a.slice(0,-1).join(', ')+', & '+a[a.length-1]; };
 const mlaA = ps => { const f=p=>p.l+(p.f?', '+p.f:''), n=p=>(p.f?p.f+' ':'')+p.l; if(ps.length==1) return f(ps[0]); if(ps.length==2) return f(ps[0])+', and '+n(ps[1]); return f(ps[0])+', et al.'; };
-const chiA = ps => { const x=[ps[0].l+(ps[0].f?', '+ps[0].f:''), ...ps.slice(1).map(p=>(p.f?p.f+' ':'')+p.l)]; if(x.length==1) return x[0]; if(x.length==2) return x[0]+', and '+x[1]; return x.slice(0,-1).join(', ')+', and '+x[x.length-1]; };
+var noteMode=false;
+const chiA = ps => { if(noteMode){ const n=ps.map(p=>(p.f?p.f+' ':'')+p.l); return n.length==1?n[0]:n.length==2?n[0]+' and '+n[1]:n.slice(0,-1).join(', ')+', and '+n[n.length-1]; } const x=[ps[0].l+(ps[0].f?', '+ps[0].f:''), ...ps.slice(1).map(p=>(p.f?p.f+' ':'')+p.l)]; if(x.length==1) return x[0]; if(x.length==2) return x[0]+', and '+x[1]; return x.slice(0,-1).join(', ')+', and '+x[x.length-1]; };
 const FULL=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const ABBR=['Jan.','Feb.','Mar.','Apr.','May','June','July','Aug.','Sept.','Oct.','Nov.','Dec.'];
 const D = s => { const m=/^(\d{4})-(\d\d)-(\d\d)$/.exec(s||''); return m?{y:m[1],m:+m[2]-1,d:+m[3]}:null; };
@@ -445,7 +483,7 @@ Object.assign(F,{
 });
 const ready = () => (type==='ai'?V.ai.tool:(type==='intv'||type==='rep'||type==='data')?(V[type].author||V[type].title):V[type].title);
 const make = () => ready() ? (style==='spark'?spark(type,V[type]):F[type][style](V[type])) : '';
-const locked = (t,s) => (T[t].x&&!S.active) || (s!=='apa'&&!S.active);
+const locked = (t,s) => (T[t].x&&!S.active) || (s==='spark'&&!S.active);
 const key = () => type+'|'+JSON.stringify(V[type]);
 
 // ---- SparkNews: the best parts of every style, tuned to who you are ----
@@ -516,7 +554,7 @@ function detect(raw){
  const cj=fromJson(raw); if(cj) return cj;
  const t=raw.trim(); if(!t) return null;
  const doi=/10\.\d{4,9}\/[^\s]+/.exec(t), isbn=/^(?:ISBN[:\s]*)?((?:97[89][- ]?)?\d[- \d]{8,15}[\dX])$/i.exec(t);
- if(isbn&&t.replace(/\D/g,'').length>=10) return {type:'book',v:{},note:'We can’t look up ISBNs from here. Add the title, author and publisher.'};
+ if(isbn&&t.replace(/\D/g,'').length>=10) return {type:'book',v:{isbn:t.replace(/[^0-9X]/gi,'')},note:'We can’t look up ISBNs from here. Add the title, author and publisher.'};
  if(doi) return {type:'jour',v:{url:'https://doi.org/'+doi[0].replace(/[.,;]$/,'')},note:'DOI saved. Add the article details.'};
  let u=null; try{ u=new URL(/^https?:\/\//i.test(t)?t:'https://'+t); if(!/\./.test(u.hostname)||/\s/.test(t)) u=null; }catch(e){}
  if(u){
@@ -563,9 +601,10 @@ function openSheet(mode,force){
  } else if(S.redeemed){
   c.innerHTML='<b>Premium is off.</b><p class="sub" style="'+P+'">Your code has been used on this device. Type your special code anywhere to switch premium back on.</p>';
  } else {
-  c.innerHTML='<b>'+(S.unl?'∞':S.credits)+' credits left.</b><p class="sub" style="'+P+'">Credits per citation depend on the style. Free refills to '+REFILL.free+' each week. Premium refills to '+REFILL.premium+'.</p><hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><b>Unlock premium</b><p class="sub" style="margin:6px 0 10px">SparkNews, MLA, Chicago, 16 more source types, an unlimited list, BibTeX and 50 credits.</p><div class="row"><input id="code" placeholder="Code for this device" style="flex:1;min-width:180px" autocomplete="off"><button class="btn p" id="redeem">Unlock</button></div>';
+  c.innerHTML='<b>'+(S.unl?'∞':S.credits)+' credits left.</b><p class="sub" style="'+P+'">Credits per citation depend on the style. Free refills to '+REFILL.free+' each week. Premium refills to '+REFILL.premium+'.</p><hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><b>Unlock premium</b><p class="sub" style="margin:6px 0 10px">SparkNews, 13 more source types, batch capture, the slideshow, an unlimited list, BibTeX and 50 credits.</p><div class="row"><input id="code" placeholder="Code for this device" style="flex:1;min-width:180px" autocomplete="off"><button class="btn p" id="redeem">Unlock</button></div>';
   $('redeem').onclick=redeem; $('code').onkeydown=e=>{if(e.key==='Enter')redeem();};
  }
+ if(mode!=='login'&&mode!=='code'&&mode!=='shop'&&mode!=='bm'){ const tl=trialLeft(); if(tl>0) c.insertAdjacentHTML('afterbegin','<div class="trialbox"><b>Free trial</b> <span class="sub">'+fmtLeft(tl)+' left</span></div><hr style="border:0;border-top:1px solid var(--line);margin:0 0 14px">'); else if(!S.trialUsed&&!S.active){ c.insertAdjacentHTML('afterbegin','<div><b>Try premium free for 72 hours</b><p class="sub" style="margin:6px 0 10px">SparkNews, 13 more source types, batch capture, the slideshow and an unlimited library with projects and tools. No code needed.</p><button class="btn p" id="trialb">Start free trial</button></div><hr style="border:0;border-top:1px solid var(--line);margin:14px 0">'); const tb=c.querySelector('#trialb'); tb.onclick=()=>{ startTrial(); s.classList.remove('show'); }; } }
  if(mode!=='login'&&mode!=='code'&&mode!=='shop'&&mode!=='bm'&&!S.unl){ c.insertAdjacentHTML('beforeend','<hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><b>Have a key?</b><div class="row" style="margin-top:10px"><input id="uk" placeholder="Paste your key" style="flex:1;min-width:180px" autocomplete="off"><button class="btn" id="ua">Apply</button></div>'); const ap=()=>{ const [ok,m]=redeemKey($('uk').value); toast(m); if(ok) $('sheet').classList.remove('show'); }; $('ua').onclick=ap; $('uk').onkeydown=e=>{if(e.key==='Enter')ap();}; }
  s.classList.toggle('show',force===true||mode==='login'||mode==='code'||mode==='bm'?true:!s.classList.contains('show'));
  const f=$('lu')||$('code'); if(f&&s.classList.contains('show')) f.focus();
@@ -583,7 +622,7 @@ function redeem(){
 $('pp').onclick=()=>openSheet('info'); $('cp').onclick=()=>nav('credits');
 // ---- SparkNews team access ----
 // Add people here as 'lowercase full name':'their email'. Removing a name, or listing it in REVOKED, removes their access.
-const EMPLOYEES='victor stanovoy':'victors2030@student.vis.ac.at'};
+const EMPLOYEES={};
 const REVOKED=[];
 const EMP_SALT='change-this-salt';
 const empKey=n=>n.trim().toLowerCase().replace(/\s+/g,' ');
@@ -600,7 +639,7 @@ function empSignIn(name,code){
 }
 function empAdminHtml(){
  const names=Object.keys(EMPLOYEES);
- return '<hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><b>SparkNews team codes</b>'+(names.length?names.map(n=>{ const st=REVOKED.includes(n)?' (revoked)':''; return '<div class="row" style="margin-top:8px"><span style="flex:1;min-width:140px">'+esc(n)+esc(st)+'</span><button class="btn" data-ec="'+esc(n)+'">Copy code</button><a class="btn" style="text-decoration:none" href="mailto:'+esc(EMPLOYEES[n])+'?subject='+encodeURIComponent('Your SparkNews team code')+'&body='+encodeURIComponent('Your code: '+empCode(n)+'\nOpen Settings, choose SparkNews team, and enter your name and this code.')+'">Email code</a></div>'; }).join(''):'<p class="sub" style="margin:6px 0 0">No team members yet. Add names to EMPLOYEES in the file.</p>');
+ return '<hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><b>SparkNews team codes</b>'+(names.length?names.map(n=>{ const st=REVOKED.includes(n)?' (revoked)':''; return '<div class="row" style="margin-top:8px"><span style="flex:1;min-width:140px">'+esc(n)+esc(st)+'</span><button class="btn" data-ec="'+esc(n)+'">Copy code</button><a class="btn" style="text-decoration:none" href="mailto:'+esc(EMPLOYEES[n])+'?subject='+encodeURIComponent('Your SparkNews team code')+'&body='+encodeURIComponent('Your code: '+empCode(n)+'\nOpen Settings, choose SparkNews team, and enter your name and this code.')+'">Email code</a></div>'; }).join(''):'<p class="sub" style="margin:6px 0 0">No team members yet. Add names to EMPLOYEES in the file.</p>')+'<hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><b>House style codes</b><p class="sub" style="margin:6px 0 0">Give your team a code like HS-spark-jour. Styles: apa, mla, chi, spark. People: student, res, jour, work, all. They enter it under Settings.</p>';
 }
 function drawTeam(){
  const b=$('teambox');
@@ -622,9 +661,9 @@ function redeemKey(raw){
 }
 function drawShop(){
  const c=drawShop.target||$('sc');
- c.innerHTML='<b>Credits</b><div class="code" style="font-size:48px;letter-spacing:0">'+(S.unl?'\u221e':S.credits)+'</div><p class="sub">Credits are not for sale. Free accounts refill to '+REFILL.free+' each week and premium refills to '+REFILL.premium+'. Need more? Ask the owner for a key.</p><p class="sub" style="font-size:13px;margin:0 0 12px">Credits per citation: '+Object.keys(STY).map(k=>STY[k]+': '+costOf('web',k)).join(' · ')+'</p><div class="row"><span class="sub" style="flex:1">'+(S.active?'Premium is on.':'Unlock SparkNews, MLA, Chicago and more sources.')+'</span><button class="btn" id="prem">'+(S.active?'Details':'Unlock')+'</button></div><hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><b>Redeem a key</b><div class="row" style="margin-top:10px"><input id="rk" placeholder="Paste your key" style="flex:1;min-width:180px" autocomplete="off"><button class="btn p" id="rkb">Redeem</button></div>';
+ c.innerHTML='<b>Credits</b><div class="code" style="font-size:48px;letter-spacing:0">'+(S.unl?'\u221e':S.credits)+'</div><p class="sub">Credits are not for sale. Free accounts refill to '+REFILL.free+' each week and premium refills to '+REFILL.premium+'. Need more? Ask the owner for a key.</p><p class="sub" style="font-size:13px;margin:0 0 12px">Credits per citation: '+Object.keys(STY).map(k=>STY[k]+': '+costOf('web',k)).join(' · ')+'</p><div class="row"><span class="sub" style="flex:1">'+(S.trialEnd>Date.now()?'Free trial: '+fmtLeft(trialLeft())+' left.':(S.active?'Premium is on.':'Unlock SparkNews and more sources.'))+'</span><button class="btn" id="prem">'+(S.active?'Details':'Unlock')+'</button></div>'+(!S.trialUsed&&!S.active?'<button class="btn p" id="trialb2" style="margin-top:10px">Start your free 72-hour trial</button>':'')+'<hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><b>Redeem a key</b><div class="row" style="margin-top:10px"><input id="rk" placeholder="Paste your key" style="flex:1;min-width:180px" autocomplete="off"><button class="btn p" id="rkb">Redeem</button></div>';
  const go=()=>{ const [ok,m]=redeemKey($('rk').value); toast(m); if(ok) drawShop(); };
- $('rkb').onclick=go; $('prem').onclick=()=>openSheet('info',true); $('rk').onkeydown=e=>{ if(e.key==='Enter') go(); };
+ $('rkb').onclick=go; $('prem').onclick=()=>openSheet('info',true); const tb2=$('trialb2'); if(tb2) tb2.onclick=()=>{ startTrial(); drawShop(); }; $('rk').onkeydown=e=>{ if(e.key==='Enter') go(); };
 }
 function reveal(el){ let i=0; const walk=n=>{ [...n.childNodes].forEach(c=>{ if(c.nodeType===3){ const f=document.createDocumentFragment(); c.textContent.split(/(\s+)/).forEach(p=>{ if(!p) return; if(/^\s+$/.test(p)) f.append(p); else { const s=document.createElement('span'); s.className='w'; s.style.animationDelay=(i++*35)+'ms'; s.textContent=p; f.append(s); } }); c.replaceWith(f); } else walk(c); }); }; walk(el); }
 async function copyText(html){
@@ -676,7 +715,7 @@ function pasteFind(){
 }
 function drawProduct(){
  const c=$('dc'), k=ptype; type=k;
- c.innerHTML='<div class="sub">New citation</div><h2 class="dh">'+esc(T[k].n)+'</h2>'+(pnote?'<p class="sub">'+esc(pnote)+'</p>':'')+'<div class="grid" id="pf"></div><p class="sub" style="margin-top:18px">Preview in '+esc(STY[style])+'</p><p class="pv lk" id="ppv"></p><p class="sub" id="pgap" style="margin-top:10px"></p><div class="row" style="margin-top:auto;padding-top:20px"><button class="btn" id="pcn">Cancel</button><span class="sp"></span><button class="btn p" id="pa" disabled>Add to cart · '+cr(costOf(k,style))+'</button></div>';
+ c.innerHTML='<div class="sub">New citation</div><h2 class="dh">'+esc(T[k].n)+'</h2>'+(pnote?'<p class="sub">'+esc(pnote)+'</p>':'')+'<div class="grid" id="pf"></div><p class="sub" style="margin-top:18px">Preview in '+esc(STY[style])+'</p><p class="pv lk" id="ppv"></p><p class="sub" id="pgap" style="margin-top:10px"></p><div class="row" style="margin-top:auto;padding-top:20px"><button class="btn" id="pcn">Cancel</button><button class="btn" id="plk" style="display:none">Look up details</button><span class="sp"></span><button class="btn p" id="pa" disabled>Add to cart · '+cr(costOf(k,style))+'</button></div>';
  const pv=()=>{ const h=makeOf(k,V[k],style); $('ppv').innerHTML=h||'<span class="sub">Add a title to see it.</span>'; $('ppv').classList.toggle('lk',!!h); $('pa').disabled=!h; const g=sparkGaps(k,V[k]); $('pgap').textContent=style==='spark'&&h?(g.length?'Add '+g.join(', ')+' for a stronger citation.':'Complete. Nothing missing.'):''; };
  T[k].f.forEach(([f,l,ph])=>{
   const lab=document.createElement('label'), sp=document.createElement('span'), inp=document.createElement('input');
@@ -687,6 +726,8 @@ function drawProduct(){
   lab.append(sp,inp); $('pf').appendChild(lab);
  });
  $('pcn').onclick=closeD;
+ const canLk=(k==='jour'&&/10\.\d{4}/.test(V[k].url||''))||(k==='book'&&V[k].isbn); $('plk').style.display=canLk?'':'none';
+ $('plk').onclick=async()=>{ if(!S.active){ gate('Lookups are premium. Try premium free for 72 hours.'); return; } try{ toast('Looking it up'); const r=await lookup(k,V[k]); Object.keys(r).forEach(f=>{ if(r[f]) V[k][f]=r[f]; }); drawProduct(); toast('Details filled in'); }catch(e){ toast('Lookup failed. It needs a connection and works when you open the downloaded file, not in embedded previews.'); } };
  $('pa').onclick=()=>{ basket.push({id:Math.random().toString(36).slice(2),t:k,v:{...V[k]}}); fresh(k); pnote=''; render(); closeD(); toast('Added to cart'); };
  pv(); setTimeout(()=>{const f=c.querySelector('input'); if(f) f.focus({preventScroll:true});},500);
 }
@@ -701,7 +742,7 @@ function payCart(){
  if(!S.unl&&S.credits<cost){ closeD(); nav('credits'); toast('Not enough credits. Ask the owner for a key, or wait for next week\u2019s refill.'); return; }
  if(!S.unl) S.credits-=cost;
  const done=basket.map(it=>({t:it.t,s:style,v:{...it.v},h:makeOf(it.t,it.v,style)}));
- done.forEach(d=>S.list.push(d)); if(!S.active&&S.list.length>3) S.list=S.list.slice(-3);
+ addToLib(done);
  basket=[]; receipt=done; save(); render(); dview='receipt'; drawReceipt();
 }
 function drawReceipt(){
@@ -709,30 +750,31 @@ function drawReceipt(){
  c.innerHTML='<div class="sub">Order complete</div><h2 class="dh">'+n+(n>1?' citations':' citation')+' ready</h2>'+receipt.map((d,i)=>'<div class="ci"><div><p class="pv rcp">'+d.h+'</p><p class="sub" style="margin-top:6px">In-text: '+intext(d.t,d.s,d.v)+'</p></div><button class="btn" data-c="'+i+'">Copy</button></div>').join('')+'<div class="row" style="margin-top:auto;padding-top:20px"><button class="btn" id="rall">Copy all</button><button class="btn" id="rmd">Copy Markdown</button><button class="btn" id="rbib">Copy BibTeX</button><span class="sp"></span><button class="btn p" id="rdone">Keep shopping</button></div>';
  c.querySelectorAll('.rcp').forEach(reveal);
  c.querySelectorAll('[data-c]').forEach(b=>b.onclick=async()=>toast(await copyText(receipt[+b.dataset.c].h)?'Copied':'Select the text and copy it manually.'));
- $('rall').onclick=async()=>toast(await copyText(receipt.map(x=>'<p style="margin:0 0 .6em 2em;text-indent:-2em">'+x.h+'</p>').join(''))?'Copied':'Copy did not work.');
+ $('rall').onclick=async()=>toast(await copyText(receipt.map(x=>bibP(x.h)).join(''))?'Copied':'Copy did not work.');
  $('rbib').onclick=async()=>{ if(!S.active){closeD();openSheet('info',true);return;} toast(await copyText(esc(bibtex(receipt)).replace(/\n/g,'<br>'))?'BibTeX copied':'Copy did not work.'); };
  $('rmd').onclick=async()=>toast(await copyText(esc(receipt.map(x=>mdOf(x.h)).join('\n\n')).replace(/\n/g,'<br>'))?'Markdown copied':'Copy did not work.');
  $('rdone').onclick=closeD;
 }
-const sorted=()=>S.active?S.list.slice().sort((a,b)=>plainOf(a.h).replace(/^\u201c/,'').localeCompare(plainOf(b.h).replace(/^\u201c/,''))):S.list;
+const libItems=()=>S.list.filter(x=>(x.p||'main')===(S.proj||'main'));
+const sorted=()=>S.active?libItems().slice().sort((a,b)=>plainOf(a.h).replace(/^\u201c/,'').localeCompare(plainOf(b.h).replace(/^\u201c/,''))):libItems();
 function render(){
- if(style!=='apa'&&!S.active) style='apa';
+ if(style==='spark'&&!S.active) style='apa';
  $('prow').style.display=style==='spark'?'flex':'none'; $('sphint').textContent=style==='spark'?HINT[S.persona]:''; $('rates').textContent='Credits per citation: '+Object.keys(STY).map(k=>STY[k]+': '+costOf('web',k)).join(' · ');
  const after=()=>{ if(drawerOpen()&&dview==='cart') drawCart(); };
- seg($('styles'),Object.keys(STY).map(k=>[k,STY[k],(k!=='apa'&&!S.active)?true:costOf('web',k)+' cr']),style,k=>{ if(k!=='apa'&&!S.active){openSheet('info',true);return;} style=k; render(); after(); });
- seg($('pers'),Object.keys(PERS).map(k=>[k,PERS[k]]),S.persona,k=>{ S.persona=k; save(); render(); after(); });
+ seg($('styles'),Object.keys(STY).map(k=>[k,STY[k],(k==='spark'&&!S.active)?true:costOf('web',k)+' cr']),style,k=>{ if(k==='spark'&&!S.active){openSheet('info',true);return;} style=k; projSave(); render(); after(); });
+ seg($('pers'),Object.keys(PERS).map(k=>[k,PERS[k]]),S.persona,k=>{ S.persona=k; projSave(); render(); after(); });
  const cn=S.unl?'\u221e':String(S.credits); if($('cn').textContent!==cn){ $('cn').textContent=cn; bump($('cp')); } $('cp').classList.toggle('inf',!!S.unl);
  const cb=String(basket.length); if($('cb').textContent!==cb){ $('cb').textContent=cb; bump($('cartb')); } $('cb').style.display=basket.length?'':'none'; $('gb').style.display=tray.length?'':'none';
  $('pp').classList.toggle('on',S.active); $('cp').classList.toggle('on',S.active); $('pl').textContent=S.active?'Premium on':'Premium'; 
  seg($('cats'),Object.keys(CATS).map(k=>[k,CATS[k][0]]),cat,k=>{ cat=k; render(); });
  seg($('cfgmode'),[['ask','Ask me'],['fast','Fast lane'],['slide','Slideshow']],(S.cfg&&S.cfg.mode)||'ask',k=>{ S.cfg.mode=k; save(); render(); });
- seg($('bgmode'),[['on','On'],['off','Off']],S.cfg.bg?'on':'off',k=>{ S.cfg.bg=k==='on'; save(); render(); if(S.cfg.bg) openMini({min:true}); else if(mini){ try{ mini.close(); }catch(e){} } });
+ seg($('bgmode'),[['on','On'],['off','Off']],S.cfg.bg?'on':'off',k=>{ if(k==='on'&&!S.active){ toast('Quiet mode is premium. Try it free for 72 hours.'); openSheet('info',true); return; } S.cfg.bg=k==='on'; save(); render(); if(S.cfg.bg) openMini({min:true}); else if(mini){ try{ mini.close(); }catch(e){} } });
  seg($('askmode'),[['yes','Yes'],['no','No']],S.cfg.askBg===false?'no':'yes',k=>{ S.cfg.askBg=(k==='yes'); save(); render(); });
+ seg($('fmtseg'),[['default','Default'],['word','Word'],['docs','Docs']].map(([k,n])=>[k,n,(k!=='default'&&!S.active)?true:false]),(S.cfg.fmt&&S.active)?S.cfg.fmt:'default',k=>{ if(k!=='default'&&!S.active){ gate(); return; } S.cfg.fmt=k; save(); render(); });
  drawShelf(); drawNav();
- $('lsub').textContent=S.active?'Unlimited. Click an entry to copy it. Copy all sorts A to Z.':'Free keeps your last 3. Click an entry to copy it. Premium keeps everything and exports BibTeX.';
- const lq=($('lq').value||'').toLowerCase(); $('list').innerHTML=S.list.map((x,i)=>[x,i]).filter(([x])=>plainOf(x.h).toLowerCase().includes(lq)).map(([x,i])=>'<div class="item" data-i="'+i+'">'+x.h+'</div>').join('')||'<p class="sub">'+(S.list.length?'No matches.':'Nothing here yet. Check out a citation and it lands here.')+'</p>';
- $('list').querySelectorAll('.item').forEach(el=>el.onclick=async()=>toast(await copyText(S.list[+el.dataset.i].h)?'Copied':'Select the text and copy it manually.'));
- $('copyall').disabled=$('clear').disabled=$('bib').disabled=$('mdl').disabled=!S.list.length; relayoutSegs();
+ $('lsub').textContent=S.active?'Unlimited. Click an entry to copy it. Copy all sorts A to Z.':'Free keeps your last '+FREE.lib+'. Click an entry to copy it. Premium adds projects, notes and export tools.';
+ drawLib(); drawProj();
+ const none=!libItems().length; ['copyall','clear','bib','mdl','ris','prt','fnb','hc'].forEach(id=>{ const e=$(id); if(e) e.disabled=none; }); relayoutSegs();
  if(cur==='fast'&&!/fi|^fl$/.test(document.activeElement.className+'|'+document.activeElement.id)&&document.activeElement.tagName!=='INPUT') drawRows();
 }
 $('cartb').onclick=()=>openD('cart');
@@ -740,16 +782,16 @@ $('veil').onclick=closeD; $('dx').onclick=closeD; $('sx').onclick=()=>$('sheet')
 addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeD(); $('sheet').classList.remove('show'); } });
 $('addp').onclick=pasteFind; $('paste').onkeydown=e=>{ if(e.key==='Enter') pasteFind(); };
 $('paste').addEventListener('paste',()=>setTimeout(()=>{ if($('paste').value.trim()) pasteFind(); },60));
-$('copyall').onclick=async()=>toast(await copyText(sorted().map(x=>'<p style="margin:0 0 .6em 2em;text-indent:-2em">'+x.h+'</p>').join(''))?'Copied':'Copy did not work.');
+$('copyall').onclick=async()=>toast(await copyText(sorted().map(x=>bibP(x.h)).join(''))?'Copied':'Copy did not work.');
 $('bib').onclick=async()=>{ if(!S.active){openSheet('info',true);return;} toast(await copyText(esc(bibtex(sorted())).replace(/\n/g,'<br>'))?'BibTeX copied':'Copy did not work.'); };
 $('mdl').onclick=async()=>toast(await copyText(esc(sorted().map(x=>mdOf(x.h)).join('\n\n')).replace(/\n/g,'<br>'))?'Markdown copied':'Copy did not work.');
-$('clear').onclick=()=>{S.list=[];save();render();};
+$('clear').onclick=()=>{ S.list=S.list.filter(x=>(x.p||'main')!==(S.proj||'main')); save(); render(); };
 document.querySelectorAll('.k').forEach(k=>{k.innerHTML=k.textContent.split(' ').map((w,i)=>'<span class="w" style="animation-delay:'+(i*70)+'ms">'+esc(w)+'</span>').join(' ');});
 // ---- Pages ----
 const PAGES=['shop','fast','library','prompts','credits','settings'];
 const NAV=[['shop','Shop'],['fast','Fast lane'],['library','Library'],['prompts','Prompt log']];
 let cur=(location.hash||'').slice(1); if(!PAGES.includes(cur)) cur='shop';
-function drawNav(){ seg($('nav'),NAV.map(([k,n])=>[k,n,k==='library'&&S.list.length?String(S.list.length):false]),cur,nav); }
+function drawNav(){ seg($('nav'),NAV.map(([k,n])=>[k,n,k==='library'&&libItems().length?String(libItems().length):false]),cur,nav); }
 function route(){
  PAGES.forEach(k=>$('pg-'+k).classList.toggle('on',k===cur));
  $('toolbar').style.display=(cur==='shop'||cur==='fast')?'':'none';
@@ -808,8 +850,8 @@ function parseFast(){
 }
 let openMap={};
 function flInfo(){
- const n=flRows.filter(r=>r.ok).length, cost=flRows.filter(r=>r.ok).reduce((a,r)=>a+costOf(r.t,style),0), miss=flRows.length-n, have=S.unl?'\u221e':S.credits;
- $('flinfo').textContent=!flRows.length?'Paste your sources to begin.':n?cr(cost)+' \u00b7 you have '+have+(miss?' \u00b7 '+miss+' need details':''):'Nothing ready yet. Fill in the details below.';
+ const okR=flRows.filter(r=>r.ok), take=S.active?okR:okR.slice(0,FREE.batch), n=take.length, cost=take.reduce((a,r)=>a+costOf(r.t,style),0), miss=flRows.length-okR.length, wait=okR.length-n, have=S.unl?'\u221e':S.credits;
+ $('flinfo').textContent=!flRows.length?'Paste your sources to begin.':n?cr(cost)+' \u00b7 you have '+have+(miss?' \u00b7 '+miss+' need details':'')+(wait?' \u00b7 '+wait+' wait for the next batch':''):'Nothing ready yet. Fill in the details below.';
  $('flgo').disabled=!n; $('flgo').textContent=n?'Check out '+n+(n>1?' citations':' citation'):'Check out all';
 }
 function drawRows(){
@@ -838,14 +880,14 @@ function drawRows(){
  flInfo();
 }
 function flGo(){
- const rows=flRows.filter(r=>r.ok), n=rows.length; if(!n) return; const cost=rows.reduce((a,r)=>a+costOf(r.t,style),0);
+ const rows=flRows.filter(r=>r.ok).slice(0,S.active?Infinity:FREE.batch), n=rows.length; if(!n) return; const cost=rows.reduce((a,r)=>a+costOf(r.t,style),0);
  if(!S.unl&&S.credits<cost){ toast('Not enough credits. Ask the owner for a key, or wait for next week\u2019s refill.'); nav('credits'); return; }
  if(!S.unl) S.credits-=cost;
  const done=rows.map(r=>({t:r.t,s:style,v:{...r.v},h:makeOf(r.t,r.v,style)}));
- done.forEach(d=>S.list.push(d)); if(!S.active&&S.list.length>3) S.list=S.list.slice(-3);
+ addToLib(done);
  save();
- const L=sortBy(done), html=L.map(x=>'<p style="margin:0 0 .6em 2em;text-indent:-2em">'+x.h+'</p>').join('');
- $('fl').value=flRows.filter(r=>!r.ok).map(r=>r.raw).join('\n'); parseFast(); render(); $('kin').focus();
+ const L=sortBy(done), html=L.map(x=>bibP(x.h)).join('');
+ $('fl').value=flRows.filter(r=>!rows.includes(r)).map(r=>r.raw).join('\n'); parseFast(); render(); $('kin').focus();
  $('flout').innerHTML='<h2>'+n+(n>1?' citations':' citation')+' ready</h2><div class="box">'+L.map(x=>'<p class="pv rcp" style="margin:0 0 12px 2em;text-indent:-2em">'+x.h+'</p>').join('')+'</div><div class="row" style="margin-top:14px"><button class="btn p" id="fcp">Copy all again</button><button class="btn" id="fmd">Copy Markdown</button><button class="btn" id="fnew">Clear results</button></div>';
  $('flout').querySelectorAll('.rcp').forEach(reveal);
  $('fcp').onclick=async()=>toast(await copyText(html)?'Copied':'Copy did not work.');
@@ -930,6 +972,7 @@ function trayAdd(raw0,quiet){
  const own=typeof raw0!=='string', raw=(own?tq('tin').value:raw0).trim(); if(!raw) return false;
  const h=String(cyrb(raw)), r=parseLine(raw); r.raw=shortRaw(raw,r);
  if(tray.some(x=>x.raw===r.raw)||(isCiteJson(raw)&&seenCaps.has(h))){ if(!quiet) toast('Already added.'); if(own) tq('tin').value=''; return false; }
+ if(!S.active&&tray.length>=FREE.tray){ if(!quiet) toast('Free trays hold '+FREE.tray+' sources. Premium holds unlimited.'); return false; }
  if(isCiteJson(raw)){ seenCaps.add(h); S.seenCaps=[...seenCaps].slice(-300); save(); }
  if(r.t==='ai') logPrompt(r.v);
  tray.push(r); if(own) tq('tin').value=''; trayDraw();
@@ -943,7 +986,7 @@ function sendFast(){
  const n=tray.length; tray=[]; trayDraw(); tq('tnote').textContent=n+(n>1?' sources':' source')+' sent to the fast lane.';
  nav('fast'); try{ window.focus(); }catch(e){} toast(n+(n>1?' sources':' source')+' ready in the fast lane');
 }
-function sendSlide(){ const items=tray.slice(); tray=[]; trayDraw(); tq('tnote').textContent='Opened as a slideshow in the main window.'; slOpen(items); try{ window.focus(); }catch(e){} }
+function sendSlide(){ if(!S.active){ toast('The slideshow is premium, so these went to the fast lane.'); return sendFast(); } const items=tray.slice(); tray=[]; trayDraw(); tq('tnote').textContent='Opened as a slideshow in the main window.'; slOpen(items); try{ window.focus(); }catch(e){} }
 function trayDone(){
  if(!tray.length) return;
  const m=S.cfg.mode; if(m==='fast') return sendFast(); if(m==='slide') return sendSlide();
@@ -984,8 +1027,8 @@ function slPay(){
  if(!S.unl&&S.credits<cost){ toast('Not enough credits. Ask the owner for a key, or wait for next week\u2019s refill.'); slClose(); nav('credits'); return; }
  if(!S.unl) S.credits-=cost;
  const done=sl.items.map(r=>({t:r.t,s:style,v:{...r.v},h:makeOf(r.t,r.v,style)}));
- done.forEach(d=>S.list.push(d)); if(!S.active&&S.list.length>3) S.list=S.list.slice(-3); save(); render();
- const L=sortBy(done), html=L.map(x=>'<p style="margin:0 0 .6em 2em;text-indent:-2em">'+x.h+'</p>').join(''), md=esc(L.map(x=>mdOf(x.h)).join('\n\n')).replace(/\n/g,'<br>');
+ addToLib(done); save(); render();
+ const L=sortBy(done), html=L.map(x=>bibP(x.h)).join(''), md=esc(L.map(x=>mdOf(x.h)).join('\n\n')).replace(/\n/g,'<br>');
  $('ov').innerHTML='<div class="ovw"><div class="row"><span class="sub">Slideshow</span><span class="sp"></span><button class="rm" id="slx" aria-label="Close">\u00d7</button></div><h1 class="k2">'+n+(n>1?' citations':' citation')+' ready</h1><div class="box">'+L.map(x=>'<p class="pv rcp" style="margin:0 0 12px 2em;text-indent:-2em">'+x.h+'</p>').join('')+'</div><div class="row" style="margin-top:14px"><button class="btn p" id="slc">Copy all</button><button class="btn" id="slm">Copy Markdown</button><button class="btn" id="sld">Done</button></div></div>';
  $('ov').querySelectorAll('.rcp').forEach(reveal);
  $('slx').onclick=slClose; $('sld').onclick=slClose;
@@ -1064,8 +1107,8 @@ async function clipAdd(auto){
  try{
   const t=((await ((mini&&mini.navigator)||navigator).clipboard.readText())||'').trim();
   if(!t||t===lastClip){ if(!auto) toast('Nothing new on your clipboard.'); return; }
-  const L=capLines(t);
-  if(L.length){ lastClip=t; let n=0; L.forEach(l=>{ if(trayAdd(l,true)) n++; }); if(n) flash(n); else if(!auto) toast('Those are already saved.'); }
+  const L=S.active?capLines(t):capLines(t).slice(-1);
+  if(L.length){ lastClip=t; if(!S.active&&capLines(t).length>1) toast('Free picks up the latest capture only. Premium collects whole batches.'); let n=0; L.forEach(l=>{ if(trayAdd(l,true)) n++; }); if(n) flash(n); else if(!auto) toast('Those are already saved.'); }
   else if(!auto&&LOC.test(t)){ lastClip=t; trayAdd(t); }
   else if(!auto) toast('Your clipboard does not hold a page capture or a link.');
  }catch(e){ if(!auto) toast('Allow clipboard access, or paste with Ctrl or Cmd and V.'); }
@@ -1083,7 +1126,7 @@ function logPrompt(v){
  const k=p=>(p.url||'')+'|'+(p.prompt||'').slice(0,80)+'|'+(p.date||'');
  if(S.prompts.some(p=>k(p)===k(v))) return false;
  S.prompts.unshift({tool:v.tool||'',company:v.company||'',version:v.version||'',date:v.date||today,prompt:v.prompt||'',url:v.url||'',note:v.note||''});
- S.prompts=S.prompts.slice(0,300); save(); if(cur==='prompts') drawPlog(); return true;
+ S.prompts=S.prompts.slice(0,S.active?300:FREE.prompts); save(); if(cur==='prompts') drawPlog(); return true;
 }
 function drawPlog(){
  const L=S.prompts||[];
@@ -1126,7 +1169,9 @@ function addBatchFast(L){
 }
 $('paste').addEventListener('paste',e=>{ const L=capLines((e.clipboardData&&e.clipboardData.getData('text'))||''); if(L.length>1){ e.preventDefault(); addBatchFast(L); nav('fast'); } });
 function drawAsk(){
- const a=$('askbg'); if(!S.cfg.bg&&S.cfg.askBg===false) return; if(S.cfg.bg&&mini) return;
+ const a=$('askbg');
+ if(!S.active){ if(S.trialUsed||S.cfg.askTrial===false) return; a.innerHTML='<b>Try premium free for 72 hours</b><p class="sub" style="margin:6px 0 14px">SparkNews, 13 more source types, batch capture, the slideshow and an unlimited library with projects and tools. No code needed.</p><div class="row"><button class="btn p" id="aq1">Start free trial</button><button class="btn" id="aq2">Not now</button><button class="btn" id="aq3">Don\u2019t ask again</button></div>'; a.classList.add('show'); $('aq1').onclick=()=>{ a.classList.remove('show'); startTrial(); }; $('aq2').onclick=()=>a.classList.remove('show'); $('aq3').onclick=()=>{ S.cfg.askTrial=false; save(); a.classList.remove('show'); }; return; }
+ if(!S.cfg.bg&&S.cfg.askBg===false) return; if(S.cfg.bg&&mini) return;
  a.innerHTML=S.cfg.bg?'<b>Quiet mode is on</b><p class="sub" style="margin:6px 0 14px">Bring back the tiny mini window so cite can keep collecting while you browse.</p><div class="row"><button class="btn p" id="aq1">Open it quietly</button><button class="btn" id="aq2">Turn off</button></div>':'<b>Collect citations while you browse?</b><p class="sub" style="margin:6px 0 14px">Use the Cite this page button on any site. cite keeps collecting quietly in a tiny window, so you never lose your place, and picks everything up when you come back.</p><div class="row"><button class="btn p" id="aq1">Yes, start quietly</button><button class="btn" id="aq2">Not now</button><button class="btn" id="aq3">Don\u2019t ask again</button></div>';
  a.classList.add('show');
  $('aq1').onclick=()=>{ S.cfg.bg=true; S.cfg.askBg=false; save(); a.classList.remove('show'); openMini({min:true}); if(!S.cfg.bmSeen){ S.cfg.bmSeen=true; save(); openSheet('bm',true); } render(); };
@@ -1137,6 +1182,138 @@ setTimeout(drawAsk,900);
 if(document.fonts&&document.fonts.ready) document.fonts.ready.then(relayoutSegs);
 
 trayDraw();
+// ---- Premium split, trial, library tools, commands ----
+const FREE={tray:5,batch:5,lib:20,prompts:10};
+const PRESET={default:'margin:0 0 .6em 2em;text-indent:-2em',word:"margin:0;padding-left:.5in;text-indent:-.5in;font-family:'Times New Roman',Times,serif;font-size:12pt;line-height:2",docs:"margin:0 0 0 .5in;text-indent:-.5in;font-family:Arial,sans-serif;font-size:11pt;line-height:1.5"};
+const bibP=h=>'<p style="'+(PRESET[(S.active&&S.cfg&&S.cfg.fmt)||'default']||PRESET.default)+'">'+h+'</p>';
+S.projects=(S.projects&&S.projects.length)?S.projects:[{id:'main',name:'General',style:'apa',persona:'student'}]; S.proj=S.proj||'main';
+function gate(msg){ toast(msg||'That is a premium tool. Try premium free for 72 hours.'); openSheet('info',true); }
+const prem=fn=>(...a)=>{ if(!S.active){ gate(); return; } return fn(...a); };
+function addToLib(done){
+ done.forEach(d=>{ d.p=S.proj; d.st=''; d.nt=''; S.list.push(d); });
+ if(!S.active){ const extra=S.list.filter(x=>(x.p||'main')===S.proj).length-FREE.lib; if(extra>0){ let k=0; S.list=S.list.filter(x=>!((x.p||'main')===S.proj&&k++<extra)); } }
+}
+// trial
+const TRIAL_MS=72*3600*1000;
+const trialLeft=()=>S.trialEnd?Math.max(0,S.trialEnd-Date.now()):0;
+const fmtLeft=ms=>{ const h=Math.ceil(ms/3600000); return h>=24?Math.floor(h/24)+' d '+(h%24)+' h':h+' h'; };
+function startTrial(){
+ if(S.trialUsed){ toast('You have already used your free trial.'); return; }
+ S.trialUsed=true; S.trialEnd=Date.now()+TRIAL_MS; S.active=true; S.credits+=30; style='spark'; save(); render(); toast('Your 72-hour premium trial has started. 30 bonus credits added.'); setTimeout(drawAsk,1500);
+}
+function trialCheck(silent){
+ if(S.trialEnd&&Date.now()>=S.trialEnd){ S.trialEnd=0; if(!S.redeemed&&!S.emp) S.active=false; if(style==='spark'&&!S.active) style='apa'; save(); if(!silent){ render(); toast('Your premium trial has ended.'); } }
+}
+trialCheck(true); setInterval(()=>trialCheck(false),60000); addEventListener('focus',()=>trialCheck(false));
+// projects
+let projNew=false;
+function projSave(){ const p=S.projects.find(x=>x.id===S.proj); if(p){ p.style=style; p.persona=S.persona; } save(); }
+function drawProj(){
+ const row=$('projrow'); row.innerHTML='<div class="seg" id="projseg"></div>'+(projNew?'<input id="pnin" placeholder="Project name" style="width:200px"><button class="btn p" id="pnok" style="padding:9px 16px">Add</button>':'<button class="btn" id="newproj" style="padding:9px 16px">New project</button>');
+ seg($('projseg'),S.projects.map(p=>[p.id,p.name]),S.proj,k=>{ const p=S.projects.find(x=>x.id===k); S.proj=k; if(p.style&&!(p.style==='spark'&&!S.active)) style=p.style; if(p.persona) S.persona=p.persona; save(); render(); });
+ if(projNew){ $('pnin').focus(); const add=()=>{ const n=$('pnin').value.trim(); if(!n){ projNew=false; drawProj(); return; } const id='p'+Date.now().toString(36); S.projects.push({id,name:n.slice(0,24),style,persona:S.persona}); S.proj=id; projNew=false; save(); render(); }; $('pnok').onclick=add; $('pnin').onkeydown=e=>{ if(e.key==='Enter') add(); else if(e.key==='Escape'){ projNew=false; drawProj(); } }; }
+ else $('newproj').onclick=()=>{ if(!S.active){ gate('Projects are premium. Try premium free for 72 hours.'); return; } projNew=true; drawProj(); };
+}
+// library list with status and notes
+function drawLib(){
+ const lq=($('lq').value||'').toLowerCase(), L=libItems();
+ const rows=S.list.map((x,i)=>[x,i]).filter(([x])=>(x.p||'main')===S.proj&&plainOf(x.h+' '+(x.nt||'')).toLowerCase().includes(lq));
+ $('list').innerHTML=rows.map(([x,i])=>'<div class="li"><div class="item" data-i="'+i+'">'+x.h+'</div>'+(S.active?'<div class="lm"><select data-st="'+i+'" aria-label="Reading status">'+[['','No status'],['to','To read'],['read','Read'],['used','Used']].map(o=>'<option value="'+o[0]+'"'+((x.st||'')===o[0]?' selected':'')+'>'+o[1]+'</option>').join('')+'</select><input data-nt="'+i+'" placeholder="Why I saved this" value="'+esc(x.nt||'')+'"></div>':'')+'</div>').join('')||'<p class="sub">'+(L.length?'No matches.':'Nothing here yet. Check out a citation and it lands here.')+'</p>';
+ $('list').querySelectorAll('.item').forEach(el=>el.onclick=async()=>toast(await copyText(S.list[+el.dataset.i].h)?'Copied':'Select the text and copy it manually.'));
+ $('list').querySelectorAll('[data-st]').forEach(el=>el.onchange=()=>{ S.list[+el.dataset.st].st=el.value; save(); });
+ $('list').querySelectorAll('[data-nt]').forEach(el=>el.oninput=()=>{ S.list[+el.dataset.nt].nt=el.value; save(); });
+ seg($('restyle'),Object.keys(STY).map(k=>[k,STY[k],(k==='spark'&&!S.active)?true:false]),'',k=>{ if(!S.active&&k==='spark'){ gate(); return; } restyle(k); });
+}
+function restyle(k){ let n=0; S.list.forEach(x=>{ if((x.p||'main')===S.proj){ const h=makeOf(x.t,x.v,k); if(h){ x.h=h; x.s=k; n++; } } }); save(); render(); toast('Restyled '+n+(n===1?' entry':' entries')+' as '+STY[k]); }
+// exports
+const RISTY={book:'BOOK',jour:'JOUR',web:'ELEC',news:'NEWS',video:'VIDEO',pod:'SOUND',post:'ELEC',film:'MPCT',img:'FIGURE',rep:'RPRT',data:'DATA',soft:'COMP',thesis:'THES',intv:'PCOMM',conf:'CONF',ency:'ENCYC',case:'CASE',chap:'CHAP',lect:'GEN',ai:'GEN'};
+function toRis(items){ return items.map(it=>{ const v=it.v,t=it.t,L=['TY  - '+(RISTY[t]||'GEN')]; (t==='ai'?[{l:v.company||'',f:''}]:(t==='rep'||t==='data')?[{l:v.author||'',f:''}]:people(v.author)).forEach(p=>{ if(p.l) L.push('AU  - '+p.l+(p.f?', '+p.f:'')); }); const ti=t==='ai'?jn(v.tool,v.version):v.title; if(ti) L.push('TI  - '+ti); const y=v.year||(D(v.date)||{}).y; if(y) L.push('PY  - '+y); if(v.date) L.push('DA  - '+v.date.replace(/-/g,'/')); const jt=v.journal||v.site; if(jt) L.push('T2  - '+jt); if(v.volume) L.push('VL  - '+v.volume); if(v.issue) L.push('IS  - '+v.issue); if(v.pages){ const [a,b]=String(v.pages).split(/[-\u2013]/); L.push('SP  - '+a); if(b) L.push('EP  - '+b); } if(v.publisher) L.push('PB  - '+v.publisher); if(v.url) L.push('UR  - '+v.url); L.push('ER  - '); return L.join('\n'); }).join('\n\n'); }
+function printBib(){
+ const L=sorted(); if(!L.length) return;
+ $('ov').innerHTML='<div class="ovw"><div class="row noprint"><span class="sub">Print-ready bibliography</span><span class="sp"></span><button class="btn p" id="pr1">Print</button><button class="btn" id="pr2">Close</button></div><h1 class="k2" style="font-family:\'Times New Roman\',serif;text-align:center;font-size:20pt">References</h1><div class="printbib">'+L.map(x=>'<p>'+x.h+'</p>').join('')+'</div></div>';
+ $('ov').classList.add('on'); $('pr1').onclick=()=>{ try{ window.print(); }catch(e){ toast('Printing is blocked here. Open the downloaded file to print.'); } }; $('pr2').onclick=slClose;
+}
+function parseBib(txt){
+ const out=[];
+ txt.split(/(?=@\w+\s*\{)/).forEach(ch=>{
+  const m=/^@(\w+)\s*\{\s*[^,]*,/.exec(ch.trim()); if(!m) return;
+  const typ=m[1].toLowerCase(), f={};
+  ch.slice(ch.indexOf(',')+1).replace(/(\w+)\s*=\s*(?:\{((?:[^{}]|\{[^{}]*\})*)\}|"([^"]*)"|(\d+))/g,(a,k,b1,b2,b3)=>{ f[k.toLowerCase()]=(b1!==undefined?b1:b2!==undefined?b2:b3||'').replace(/[{}]/g,'').trim(); return a; });
+  const t=typ==='book'?'book':typ==='article'?'jour':(typ==='phdthesis'||typ==='mastersthesis')?'thesis':(typ==='inproceedings'||typ==='conference')?'conf':typ==='techreport'?'rep':'web';
+  const v={author:(f.author||'').replace(/\s+and\s+/g,'; '),title:f.title||'',year:f.year||'',journal:f.journal||f.booktitle||'',volume:f.volume||'',issue:f.number||'',pages:(f.pages||'').replace(/--/g,'-'),publisher:f.publisher||f.institution||f.school||'',url:f.url||(f.doi?'https://doi.org/'+f.doi:''),site:f.howpublished||''};
+  if(f.year) v.date=f.year+'-01-01';
+  out.push({t,v});
+ });
+ return out;
+}
+function importRefs(){
+ const txt=$('imp').value.trim(); if(!txt) return;
+ const bibs=parseBib(txt);
+ if(bibs.length){ const items=bibs.map(r=>({t:r.t,s:style,v:r.v,h:makeOf(r.t,r.v,style)})).filter(x=>x.h); addToLib(items); save(); render(); $('imp').value=''; toast(items.length+(items.length===1?' entry':' entries')+' imported'); }
+ else { const lines=txt.split('\n').map(s=>s.trim()).filter(Boolean); addBatchFast(lines); $('imp').value=''; nav('fast'); }
+}
+function footnotes(){ noteMode=true; let html=''; try{ html=libItems().map((x,i)=>bibP((i+1)+'. '+makeOf(x.t,x.v,'chi'))).join(''); }finally{ noteMode=false; } return html; }
+// health and essay check
+function health(){
+ const out=[], seen={}, now=new Date().getFullYear();
+ libItems().forEach(x=>{
+  const v=x.v, key=(v.url||'').toLowerCase()||('t:'+(v.title||'').toLowerCase()+'|'+(v.author||'').toLowerCase());
+  if(seen[key]) out.push({k:'dup',x,msg:'Duplicate of an earlier entry'}); else seen[key]=1;
+  const g=sparkGaps(x.t,v); if(g.length) out.push({k:'gap',x,msg:'Missing '+g.join(', ')});
+  const y=+(v.year||(D(v.date)||{}).y||0); if(y&&now-y>10) out.push({k:'old',x,msg:'Published '+y+', over 10 years old'});
+  if(['web','news','post','video'].includes(x.t)&&v.url&&!/archive\.(org|is)/.test(v.url)) out.push({k:'arc',x,msg:'Needs an archive copy',url:'https://web.archive.org/save/'+v.url});
+ });
+ return out;
+}
+function checkEssay(txt){
+ const cites=[];
+ (txt.match(/\(([^()]*?(?:\d{4}|n\.d\.)[a-z]?[^()]*?)\)/g)||[]).forEach(par=>{ par.slice(1,-1).split(';').forEach(seg=>{ const m=/^\s*(?:see\s+|e\.g\.,\s*)?([^,&]+?)(?:\s*(?:&|and)\s*([^,]+?))?(?:\s+et al\.)?,\s*(\d{4}|n\.d\.)[a-z]?/i.exec(seg); if(m) cites.push({sur:m[1].trim().split(/\s+/).pop().toLowerCase(),y:m[3],raw:seg.trim()}); }); });
+ const lib=libItems().map(x=>({x,sur:((people(x.v.author)[0]||{}).l||(x.t==='ai'?x.v.company:x.v.author)||'').toLowerCase().split(/\s+/).pop(),y:String(x.v.year||(D(x.v.date)||{}).y||'n.d.')}));
+ return {n:cites.length,missing:cites.filter(c=>!lib.some(l=>l.sur===c.sur&&l.y===c.y)),unused:lib.filter(l=>!cites.some(c=>c.sur===l.sur&&c.y===l.y))};
+}
+$('hc').onclick=prem(()=>{
+ const o=health();
+ $('hout').innerHTML=o.length?'<p class="sub" style="margin:12px 0 4px">'+o.length+' things to look at</p>'+o.slice(0,60).map(r=>'<div class="ci"><div style="min-width:0;flex:1"><div class="sub">'+esc(r.msg)+'</div><div style="font-size:15px;margin-top:2px">'+esc(plainOf(r.x.h).slice(0,110))+'</div></div>'+(r.k==='dup'?'<button class="btn" data-hd="'+S.list.indexOf(r.x)+'">Remove</button>':'')+(r.k==='arc'?'<a class="btn" style="text-decoration:none" target="_blank" rel="noopener" href="'+esc(r.url)+'">Archive it</a>':'')+'</div>').join(''):'<p class="sub" style="margin-top:12px">Nothing to fix. Your library looks healthy.</p>';
+ $('hout').querySelectorAll('[data-hd]').forEach(b=>b.onclick=()=>{ S.list.splice(+b.dataset.hd,1); save(); render(); $('hc').click(); });
+});
+$('essb').onclick=prem(()=>{
+ const r=checkEssay($('ess').value);
+ $('eout').innerHTML='<p class="sub" style="margin:12px 0 4px">'+r.n+' in-text citation'+(r.n===1?'':'s')+' found.</p>'+(r.missing.length?'<p style="margin:8px 0 2px"><b>Not in your library</b></p>'+r.missing.map(c=>'<div class="sub">'+esc(c.raw)+'</div>').join(''):'<p class="sub">Every in-text citation has a library entry.</p>')+(r.unused.length?'<p style="margin:12px 0 2px"><b>In your library but never cited</b></p>'+r.unused.map(l=>'<div class="sub">'+esc(plainOf(l.x.h).slice(0,100))+'</div>').join(''):'');
+});
+$('ris').onclick=prem(async()=>toast(await copyText(esc(toRis(sorted())).replace(/\n/g,'<br>'))?'RIS copied':'Copy did not work.'));
+$('prt').onclick=prem(printBib);
+$('fnb').onclick=prem(async()=>toast(await copyText(footnotes())?'Numbered notes copied':'Copy did not work.'));
+$('impb').onclick=prem(importRefs);
+// lookups (work when the file is opened directly with a connection)
+async function lookup(t,v){
+ if(t==='jour'){ const m=/10\.\d{4,9}\/[^\s]+/.exec(v.url||''); if(!m) throw new Error('nodoi'); const r=await fetch('https://api.crossref.org/works/'+encodeURIComponent(m[0])); if(!r.ok) throw new Error('http'); const w=(await r.json()).message, d=(w.issued&&w.issued['date-parts']&&w.issued['date-parts'][0])||[]; return {title:(w.title||[])[0]||'',author:(w.author||[]).map(a=>(a.family||'')+(a.given?', '+a.given:'')).filter(Boolean).join('; '),journal:(w['container-title']||[])[0]||'',volume:w.volume||'',issue:w.issue||'',pages:w.page||'',year:d[0]?String(d[0]):'',date:d[0]?d[0]+'-'+String(d[1]||1).padStart(2,'0')+'-'+String(d[2]||1).padStart(2,'0'):'',publisher:w.publisher||''}; }
+ if(t==='book'){ const isbn=(v.isbn||'').replace(/[^0-9X]/gi,''); if(!isbn) throw new Error('noisbn'); const r=await fetch('https://openlibrary.org/api/books?bibkeys=ISBN:'+isbn+'&format=json&jscmd=data'); if(!r.ok) throw new Error('http'); const b=(await r.json())['ISBN:'+isbn]; if(!b) throw new Error('none'); return {title:b.title+(b.subtitle?': '+b.subtitle:''),author:(b.authors||[]).map(a=>a.name).join('; '),publisher:(b.publishers||[]).map(p=>p.name).join(', '),year:((b.publish_date||'').match(/\d{4}/)||[''])[0]}; }
+ throw new Error('type');
+}
+// house style, paste style
+function hsApply(code){
+ const m=/^HS-(apa|mla|chi|spark)-(student|res|jour|work|all)$/i.exec((code||'').trim()); if(!m) return [false,'That house style code is not valid.'];
+ const st=m[1].toLowerCase(), pe=m[2].toLowerCase(); if(st==='spark'&&!S.active) return [false,'That house style uses SparkNews, which needs premium.'];
+ style=st; S.persona=pe; S.cfg.house=code.trim(); projSave(); render(); return [true,'House style applied: '+STY[st]+(st==='spark'?' for '+PERS[pe]:'')+'.'];
+}
+$('hsb').onclick=()=>{ const [ok,m]=hsApply($('hsin').value); toast(m); };
+// command palette
+const CMDS=()=>[
+ ['Go to Shop',()=>nav('shop')],['Go to Fast lane',()=>nav('fast')],['Go to Library',()=>nav('library')],['Go to Prompt log',()=>nav('prompts')],['Go to Credits',()=>nav('credits')],['Go to Settings',()=>nav('settings')],
+ ['Open Cite as you go',()=>openMini()],['Get the Cite this page button',()=>openSheet('bm',true)],['Open the cart',()=>openD('cart')],
+ ...Object.keys(STY).map(k=>['Format: '+STY[k],()=>{ if(k==='spark'&&!S.active){ gate(); return; } style=k; projSave(); render(); }]),
+ ...(S.active?[]:[[S.trialUsed?'Premium details':'Start free 72-hour trial',()=>S.trialUsed?openSheet('info',true):startTrial()]]),
+ ...Object.keys(T).filter(k=>!T[k].x||S.active).map(k=>['Cite a '+T[k].n.toLowerCase(),()=>{ nav('shop'); chooseType(k); }]),
+ ['Copy my whole library',()=>{ nav('library'); $('copyall').click(); }],['Check my library',()=>{ nav('library'); $('tools').open=true; $('hc').click(); }]
+];
+let cmdSel=0, cmdList=[];
+function cmdDraw(){ const q=$('cmdin').value.toLowerCase(); cmdList=CMDS().filter(c=>c[0].toLowerCase().includes(q)).slice(0,9); cmdSel=Math.min(cmdSel,Math.max(0,cmdList.length-1)); $('cmdl').innerHTML=cmdList.map((c,i)=>'<div class="ci2'+(i===cmdSel?' on':'')+'" data-i="'+i+'">'+esc(c[0])+'</div>').join('')||'<div class="ci2">No match</div>'; $('cmdl').querySelectorAll('[data-i]').forEach(el=>el.onclick=()=>cmdRun(+el.dataset.i)); }
+function cmdRun(i){ const c=cmdList[i]; if(!c) return; $('cmd').classList.remove('show'); c[1](); }
+function cmdOpen(){ $('cmd').classList.add('show'); $('cmdin').value=''; cmdSel=0; cmdDraw(); setTimeout(()=>$('cmdin').focus(),30); }
+$('cmdin').addEventListener('input',()=>{ cmdSel=0; cmdDraw(); });
+$('cmdin').addEventListener('keydown',e=>{ if(e.key==='ArrowDown'){ e.preventDefault(); cmdSel=Math.min(cmdSel+1,cmdList.length-1); cmdDraw(); } else if(e.key==='ArrowUp'){ e.preventDefault(); cmdSel=Math.max(0,cmdSel-1); cmdDraw(); } else if(e.key==='Enter'){ e.preventDefault(); cmdRun(cmdSel); } else if(e.key==='Escape'){ $('cmd').classList.remove('show'); } });
+addEventListener('keydown',e=>{ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){ e.preventDefault(); if($('cmd').classList.contains('show')) $('cmd').classList.remove('show'); else cmdOpen(); } });
+
 $('fcr').onclick=()=>nav('credits'); $('fst').onclick=()=>nav('settings'); $('sbm').onclick=()=>openSheet('bm',true); $('moreb').onclick=()=>{ showAll=!showAll; shelfSig=''; drawShelf(); relayoutSegs(); };
 addEventListener('resize',()=>render());
 route(); render();
