@@ -587,7 +587,7 @@ function seg(el,items,cur,fn){
 function openSheet(mode,force){
  const s=$('sheet'), c=$('sc'), P='margin:6px 0 0';
  if(mode==='bm'){ drawBm(); } else if(mode==='shop'){ drawShop.target=null; drawShop(); } else if(mode==='login'){
-  c.innerHTML='<b>Get this device’s code</b><p class="sub" style="'+P+'">Sign in to see the premium code saved on this device.</p><div class="grid"><label><span>Username</span><input id="lu" autocomplete="off"></label><label><span>Password</span><input id="lp" type="password" autocomplete="off"></label></div><div class="row" style="margin-top:12px"><button class="btn p" id="ls">Sign in</button></div>';
+  c.innerHTML='<b>Get this device’s code</b><p class="sub" style="'+P+'">Sign in to see the premium code saved on this device.</p><div class="grid"><label><span>Username</span><input id="lu" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></label><label><span>Password</span><input id="lp" type="password" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></label></div><div class="row" style="margin-top:12px"><button class="btn p" id="ls">Sign in</button></div>';
   $('ls').onclick=login; $('lp').onkeydown=e=>{if(e.key==='Enter')login();};
  } else if(mode==='code'){
   c.innerHTML='<b>Your code for this device</b><div class="code" id="cv">'+esc(S.code)+'</div><p class="sub">'+(S.redeemed?'It has already been used here.':'Enter it once under Premium to unlock. Each device gets its own code.')+'</p><div class="row" style="margin-top:12px"><button class="btn p" id="cc">Copy code</button><button class="btn" id="un">'+(S.unl?'Unlimited credits: on':'Unlimited credits: off')+'</button></div><hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><b>Give credits to another device</b><p class="sub" style="'+P+'">Paste their device code, then pick what to give.</p><div class="row" style="margin-top:10px"><input id="gc" placeholder="Their code" style="flex:1;min-width:180px" autocomplete="off"></div><div class="row" style="margin-top:10px"><input id="ga" type="number" min="1" max="99999" value="25" style="width:110px"><button class="btn" id="gk2">Make credits key</button><button class="btn" id="gk">Make unlimited key</button></div><div class="code" id="gv" style="font-size:22px"></div>'+empAdminHtml();
@@ -611,7 +611,7 @@ function openSheet(mode,force){
 }
 function login(){
  if(Date.now()<S.until){toast('Too many tries. Wait a minute and try again.');return;}
- if(cyrb($('lu').value.trim().toLowerCase()+'|'+$('lp').value)===LOGIN_HASH){S.fails=0;save();openSheet('code');}
+ if(cyrb($('lu').value.trim().toLowerCase()+'|'+$('lp').value.trim())===LOGIN_HASH){S.fails=0;save();openSheet('code');}
  else { S.fails++; if(S.fails>=5){S.until=Date.now()+60000;S.fails=0;} save(); toast('Wrong username or password.'); }
 }
 function redeem(){
@@ -1313,6 +1313,22 @@ function cmdOpen(){ $('cmd').classList.add('show'); $('cmdin').value=''; cmdSel=
 $('cmdin').addEventListener('input',()=>{ cmdSel=0; cmdDraw(); });
 $('cmdin').addEventListener('keydown',e=>{ if(e.key==='ArrowDown'){ e.preventDefault(); cmdSel=Math.min(cmdSel+1,cmdList.length-1); cmdDraw(); } else if(e.key==='ArrowUp'){ e.preventDefault(); cmdSel=Math.max(0,cmdSel-1); cmdDraw(); } else if(e.key==='Enter'){ e.preventDefault(); cmdRun(cmdSel); } else if(e.key==='Escape'){ $('cmd').classList.remove('show'); } });
 addEventListener('keydown',e=>{ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){ e.preventDefault(); if($('cmd').classList.contains('show')) $('cmd').classList.remove('show'); else cmdOpen(); } });
+
+// ---- Hidden entry points that also work on phones and tablets ----
+function secretRun(w){
+ if(w==='getcode'){ openSheet('login',true); return; }
+ if(!S.redeemed){ toast('Enter your one-time code first.'); return; }
+ S.active=!S.active; if(!S.active){ if(T[type].x) type='web'; if(locked(type,style)) style='mla'; } else style='spark';
+ save(); render(); $('sheet').classList.remove('show'); toast(S.active?'Premium on':'Premium off');
+}
+document.addEventListener('input',e=>{
+ const el=e.target; if(!el||!/^(INPUT|TEXTAREA)$/.test(el.tagName)||el.type==='password'||['code','lu','lp','gc','ec','ecd','en','rk','uk','ga','pnin','hsin'].includes(el.id)) return;
+ const v=(el.value||'').toLowerCase(), w=['premiumoff','getcode'].find(x=>v.endsWith(x)); if(!w) return;
+ el.value=el.value.slice(0,-w.length); el.dispatchEvent(new Event('input',{bubbles:true})); secretRun(w);
+},true);
+(function(){ let taps=[]; const lg=document.querySelector('.logo'); if(!lg) return; lg.addEventListener('click',()=>{ const n=Date.now(); taps=taps.filter(t=>n-t<2500); taps.push(n); if(taps.length>=5){ taps=[]; openSheet('login',true); } }); })();
+function hashSecret(){ if((location.hash||'').toLowerCase()==='#getcode'){ try{ location.hash=cur; }catch(e){} openSheet('login',true); } }
+addEventListener('hashchange',hashSecret); setTimeout(hashSecret,400);
 
 $('fcr').onclick=()=>nav('credits'); $('fst').onclick=()=>nav('settings'); $('sbm').onclick=()=>openSheet('bm',true); $('moreb').onclick=()=>{ showAll=!showAll; shelfSig=''; drawShelf(); relayoutSegs(); };
 addEventListener('resize',()=>render());
